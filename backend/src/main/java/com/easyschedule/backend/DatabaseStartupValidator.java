@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.ansi.AnsiColor;
+import org.springframework.boot.ansi.AnsiOutput;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,7 +30,7 @@ public class DatabaseStartupValidator implements ApplicationRunner {
             if (!connection.isValid(2)) {
                 throw new IllegalStateException("La conexion a PostgreSQL no es valida.");
             }
-            logger.info("Conexion a PostgreSQL establecida correctamente.");
+            logger.info(AnsiOutput.toString(AnsiColor.GREEN, "Conexion a PostgreSQL establecida correctamente.", AnsiColor.DEFAULT));
         } catch (SQLException e) {
             logger.error("No se pudo conectar a PostgreSQL al iniciar el servidor.", e);
             throw new IllegalStateException("Error de conexion a la base de datos.", e);
