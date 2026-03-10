@@ -57,3 +57,12 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+VERSIONES DEL PROYECTO
+Node	    20.19.0
+npm	        10.8.2
+Angular CLI	20.3.19
+Java	    17.0.18
+javac	    17.0.18
+Maven	    3.9.12	
