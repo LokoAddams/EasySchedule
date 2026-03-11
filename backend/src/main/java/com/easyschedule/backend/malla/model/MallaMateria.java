@@ -1,7 +1,6 @@
 package com.easyschedule.backend.malla.model;
 
 import com.easyschedule.backend.materia.model.Materia;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,7 +12,7 @@ import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "malla_materia", uniqueConstraints = {
-    @UniqueConstraint(name = "uq_malla_materia", columnNames = {"malla_id", "materia_id"})
+        @UniqueConstraint(name = "uq_malla_materia", columnNames = { "malla_id", "materia_id" })
 })
 public class MallaMateria {
 
