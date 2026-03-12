@@ -2,8 +2,9 @@
 @port = 8080
 @host = http://{{hostname}}:{{port}}
 
-### 1. Registrar un nuevo estudiante (EXITO - 201)
-POST {{host}}/api/registro
+
+### 1. Registrar un nuevo estudiante (ÉXITO - 201)
+POST {{host}}/api/auth/register
 Content-Type: application/json
 
 {
@@ -20,7 +21,7 @@ Content-Type: application/json
 }
 
 ### 2. Intentar registrar el mismo correo (CONFLICTO - 409)
-POST {{host}}/api/registro
+POST {{host}}/api/auth/register
 Content-Type: application/json
 
 {
@@ -37,5 +38,7 @@ Content-Type: application/json
 }
 
 
+
 ### 3. Obtener todos los estudiantes (Verificar registro)
 GET {{host}}/api/estudiantes
+
