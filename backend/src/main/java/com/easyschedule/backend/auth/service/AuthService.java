@@ -1,77 +1,53 @@
+
 package com.easyschedule.backend.auth.service;
 
-import com.easyschedule.backend.auth.dto.RegistroRequest;
-import com.easyschedule.backend.estudiante.dto.EstudianteResponse;
-import com.easyschedule.backend.estudiante.model.Estudiante;
-import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
-import com.easyschedule.backend.malla.model.Malla;
-import com.easyschedule.backend.malla.repository.MallaRepository;
-import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
-import org.springframework.http.HttpStatus;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.time.OffsetDateTime;
+import com.easyschedule.backend.auth.dto.request.SignupRequest;
+import com.easyschedule.backend.auth.models.ERole;
+import com.easyschedule.backend.auth.models.Role;
+import com.easyschedule.backend.auth.models.User;
+
+import com.easyschedule.backend.auth.repositories.RoleRepository;
+import com.easyschedule.backend.auth.repositories.UserRepository;
+import com.easyschedule.backend.shared.exception.UserAlreadyExistsException;
 
 @Service
 public class AuthService {
 
-    private final EstudianteRepository estudianteRepository;
-    private final MallaRepository mallaRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder encoder;
 
-    public AuthService(EstudianteRepository estudianteRepository, MallaRepository mallaRepository, PasswordEncoder passwordEncoder) {
-        this.estudianteRepository = estudianteRepository;
-        this.mallaRepository = mallaRepository;
-        this.passwordEncoder = passwordEncoder;
+    public AuthService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.encoder = encoder;
     }
 
-    public EstudianteResponse register(RegistroRequest request) {
-        if (estudianteRepository.existsByCorreo(request.correo())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El correo ya está registrado");
-        }
-        if (estudianteRepository.existsByUsername(request.username())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre de usuario ya existe");
-        }
+    public void registerUser(SignupRequest signUpRequest) {
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+           throw new UserAlreadyExistsException("Error: El nombre de usuario ya está en uso");        }
 
-        Malla malla = getMallaOrThrow(request.mallaId());
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            throw new UserAlreadyExistsException("Error: El correo electrónico ya está registrado");        }
 
-        Estudiante estudiante = new Estudiante();
-        estudiante.setUsername(request.username());
-        estudiante.setNombre(request.nombre());
-        estudiante.setApellido(request.apellido());
-        estudiante.setCorreo(request.correo());
-        estudiante.setPasswordHash(passwordEncoder.encode(request.password())); // Encriptar con BCrypt
-        estudiante.setCarnetIdentidad(request.carnetIdentidad());
-        estudiante.setFechaNacimiento(request.fechaNacimiento());
-        estudiante.setSemestreActual(request.semestreActual());
-        estudiante.setCarrera(request.carrera());
-        estudiante.setMalla(malla); 
-        estudiante.setFechaRegistro(OffsetDateTime.now());
+        User user = new User(signUpRequest.getUsername(),
+                signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()));
 
-        Estudiante guardado = estudianteRepository.save(estudiante);
-        return toResponse(guardado);
-    }
+        Set<Role> roles = new HashSet<>();
 
-    private Malla getMallaOrThrow(Long id) {
-        return mallaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Malla no encontrada con id: " + id));
-    }
+        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                .orElseThrow(() -> new RuntimeException("Error: No se encontró el rol solicitado."));
+        roles.add(userRole);
 
-    private EstudianteResponse toResponse(Estudiante estudiante) {
-        return new EstudianteResponse(
-                estudiante.getId(),
-                estudiante.getUsername(),
-                estudiante.getNombre(),
-                estudiante.getApellido(),
-                estudiante.getCorreo(),
-                estudiante.getCarnetIdentidad(),
-                estudiante.getFechaNacimiento(),
-                estudiante.getFechaRegistro(),
-                estudiante.getSemestreActual(),
-                estudiante.getCarrera(),
-                estudiante.getMalla().getId()
-        );
+        user.setRoles(roles);
+        
+        userRepository.save(user);
     }
 }

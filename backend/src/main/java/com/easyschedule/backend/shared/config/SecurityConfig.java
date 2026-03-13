@@ -29,7 +29,7 @@ public class SecurityConfig {
             // Definir reglas de autorización
             .authorizeHttpRequests(auth -> auth
                 // Permitir acceso público al endpoint de registro
-                .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/registro").permitAll()
                 // Permitir acceso público a los endpoints de estudiantes (para pruebas)
                 .requestMatchers("/api/estudiantes/**").permitAll()
                 // Permitir acceso público a los endpoints de mallas (para pruebas)

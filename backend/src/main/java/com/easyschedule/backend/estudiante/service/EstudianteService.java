@@ -1,7 +1,7 @@
 package com.easyschedule.backend.estudiante.service;
 
-import com.easyschedule.backend.estudiante.dto.EstudianteRequest;
 import com.easyschedule.backend.estudiante.dto.EstudianteResponse;
+import com.easyschedule.backend.estudiante.dto.EstudianteUpdateRequest;
 import com.easyschedule.backend.estudiante.model.Estudiante;
 import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
 import com.easyschedule.backend.malla.model.Malla;
@@ -9,7 +9,6 @@ import com.easyschedule.backend.malla.repository.MallaRepository;
 import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -31,39 +30,24 @@ public class EstudianteService {
         return toResponse(getEstudianteOrThrow(id));
     }
 
-    public EstudianteResponse create(EstudianteRequest request) {
-        Malla malla = getMallaOrThrow(request.mallaId());
-
-        Estudiante estudiante = new Estudiante();
-        fillFromRequest(estudiante, request, malla);
-        estudiante.setFechaRegistro(OffsetDateTime.now());
-        return toResponse(estudianteRepository.save(estudiante));
-    }
-
-    public EstudianteResponse update(Long id, EstudianteRequest request) {
+    public EstudianteResponse update(Long id, EstudianteUpdateRequest request) {
         Estudiante estudiante = getEstudianteOrThrow(id);
         Malla malla = getMallaOrThrow(request.mallaId());
 
-        fillFromRequest(estudiante, request, malla);
+        estudiante.setNombre(request.nombre());
+        estudiante.setApellido(request.apellido());
+        estudiante.setCarnetIdentidad(request.carnetIdentidad());
+        estudiante.setFechaNacimiento(request.fechaNacimiento());
+        estudiante.setSemestreActual(request.semestreActual());
+        estudiante.setCarrera(request.carrera());
+        estudiante.setMalla(malla);
+
         return toResponse(estudianteRepository.save(estudiante));
     }
 
     public void delete(Long id) {
         Estudiante estudiante = getEstudianteOrThrow(id);
         estudianteRepository.delete(estudiante);
-    }
-
-    private void fillFromRequest(Estudiante estudiante, EstudianteRequest request, Malla malla) {
-        estudiante.setUsername(request.username());
-        estudiante.setNombre(request.nombre());
-        estudiante.setApellido(request.apellido());
-        estudiante.setCorreo(request.correo());
-        estudiante.setPasswordHash(request.passwordHash());
-        estudiante.setCarnetIdentidad(request.carnetIdentidad());
-        estudiante.setFechaNacimiento(request.fechaNacimiento());
-        estudiante.setSemestreActual(request.semestreActual());
-        estudiante.setCarrera(request.carrera());
-        estudiante.setMalla(malla);
     }
 
     private Estudiante getEstudianteOrThrow(Long id) {
@@ -77,18 +61,22 @@ public class EstudianteService {
     }
 
     private EstudianteResponse toResponse(Estudiante estudiante) {
+        Long mallaId = estudiante.getMalla() != null ? estudiante.getMalla().getId() : null;
+        String username = estudiante.getUser() != null ? estudiante.getUser().getUsername() : null;
+        String email = estudiante.getUser() != null ? estudiante.getUser().getEmail() : null;
+
         return new EstudianteResponse(
             estudiante.getId(),
-            estudiante.getUsername(),
+            username,
             estudiante.getNombre(),
             estudiante.getApellido(),
-            estudiante.getCorreo(),
+            email,
             estudiante.getCarnetIdentidad(),
             estudiante.getFechaNacimiento(),
             estudiante.getFechaRegistro(),
             estudiante.getSemestreActual(),
             estudiante.getCarrera(),
-            estudiante.getMalla().getId()
+            mallaId
         );
     }
 }

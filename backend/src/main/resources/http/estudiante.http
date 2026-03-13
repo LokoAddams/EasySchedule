@@ -3,42 +3,27 @@
 @host = http://{{hostname}}:{{port}}
 
 
-### 1. Registrar un nuevo estudiante (ÉXITO - 201)
-POST {{host}}/api/auth/register
+### 1. Registrar un nuevo usuario (ÉXITO - 201)
+POST {{host}}/api/registro
 Content-Type: application/json
 
 {
-  "username": "PedroGomez",
-  "password": "miPasswordSeguro123",
-  "correo": "pedro_gomez@universidad.edu",
-  "nombre": "Pedro",
-  "apellido": "Gómez",
-  "carnetIdentidad": "51353436",
-  "fechaNacimiento": "2002-05-15",
-  "semestreActual": 7,
-  "carrera": "Ingeniería de Sistemas",
-  "mallaId": 1
+  "username": "test4user",
+  "password": "password",
+  "email": "test4user@example.com"
 }
 
-### 2. Intentar registrar el mismo correo (CONFLICTO - 409)
-POST {{host}}/api/auth/register
+### 2. Intentar registrar el mismo usuario (Error)
+POST {{host}}/api/registro
 Content-Type: application/json
 
 {
-  "username": "PedroGomez",
-  "password": "miPasswordSeguro123",
-  "correo": "pedro_gomez@universidad.edu",
-  "nombre": "Pedro",
-  "apellido": "Gómez",
-  "carnetIdentidad": "51353436",
-  "fechaNacimiento": "2002-05-15",
-  "semestreActual": 7,
-  "carrera": "Ingeniería de Sistemas",
-  "mallaId": 1
+  "username": "test5user",
+  "password": "password",
+  "email": "testuser@example.com"
 }
 
 
 
 ### 3. Obtener todos los estudiantes (Verificar registro)
 GET {{host}}/api/estudiantes
-
