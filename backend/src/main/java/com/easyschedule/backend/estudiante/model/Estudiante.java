@@ -1,5 +1,6 @@
 package com.easyschedule.backend.estudiante.model;
 
+import com.easyschedule.backend.auth.models.User;
 import com.easyschedule.backend.horario.model.HorarioRecomendado;
 import com.easyschedule.backend.malla.model.Malla;
 import com.easyschedule.backend.oferta.model.Oferta;
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -27,39 +29,43 @@ public class Estudiante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, columnDefinition = "citext")
+    @Column(nullable = false, length = 20, unique = true)
     private String username;
 
-    @Column(nullable = false, length = 100)
-    private String nombre;
-
-    @Column(nullable = false, length = 100)
-    private String apellido;
-
-    @Column(nullable = false, unique = true, columnDefinition = "citext")
+    @Column(nullable = false, length = 50, unique = true)
     private String correo;
 
-    @Column(name = "password_hash", nullable = false, columnDefinition = "text")
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @Column(name = "carnet_identidad", nullable = false, unique = true, length = 30)
+    @Column(nullable = true, length = 100)
+    private String nombre;
+
+    @Column(nullable = true, length = 100)
+    private String apellido;
+
+    @Column(name = "carnet_identidad", nullable = true, unique = true, length = 30)
     private String carnetIdentidad;
 
-    @Column(name = "fecha_nacimiento", nullable = false)
+    @Column(name = "fecha_nacimiento", nullable = true)
     private LocalDate fechaNacimiento;
 
     @Column(name = "fecha_registro", nullable = false)
     private OffsetDateTime fechaRegistro;
 
-    @Column(name = "semestre_actual", nullable = false)
+    @Column(name = "semestre_actual", nullable = true)
     private Short semestreActual;
 
-    @Column(nullable = false, length = 120)
+    @Column(nullable = true, length = 120)
     private String carrera;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "malla_id", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "malla_id", nullable = true)
     private Malla malla;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     @OneToMany(mappedBy = "estudiante")
     private List<TomaMateria> tomasMateria = new ArrayList<>();
@@ -81,28 +87,16 @@ public class Estudiante {
         this.id = id;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
     }
 
     public String getCorreo() {
@@ -119,6 +113,18 @@ public class Estudiante {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
     }
 
     public String getCarnetIdentidad() {
@@ -167,6 +173,14 @@ public class Estudiante {
 
     public void setMalla(Malla malla) {
         this.malla = malla;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<TomaMateria> getTomasMateria() {

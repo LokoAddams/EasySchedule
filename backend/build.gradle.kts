@@ -1,7 +1,11 @@
+import org.gradle.testing.jacoco.tasks.JacocoReport
+import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
+
 plugins {
 	java
 	id("org.springframework.boot") version "3.5.11"
 	id("io.spring.dependency-management") version "1.1.7"
+	jacoco
 }
 
 group = "com.easyschedule"
@@ -19,13 +23,90 @@ repositories {
 }
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testRuntimeOnly("com.h2database:h2")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+		csv.required.set(false)
+	}
+}
+
+tasks.jacocoTestCoverageVerification {
+	dependsOn(tasks.test)
+	violationRules {
+		rule {
+			limit {
+				counter = "LINE"
+				value = "COVEREDRATIO"
+				minimum = "0.60".toBigDecimal()
+			}
+		}
+	}
+}
+
+val registroCoverageIncludes = listOf(
+	"com/easyschedule/backend/auth/**",
+	"com/easyschedule/backend/shared/exception/**",
+	"com/easyschedule/backend/shared/config/SecurityConfig*"
+)
+
+tasks.register<JacocoReport>("jacocoRegistroReport") {
+	dependsOn(tasks.test)
+
+	classDirectories.setFrom(
+		sourceSets.main.get().output.asFileTree.matching {
+			include(registroCoverageIncludes)
+		}
+	)
+	sourceDirectories.setFrom(sourceSets.main.get().allSource.srcDirs)
+	executionData.setFrom(fileTree(layout.buildDirectory).include("jacoco/test.exec", "jacoco/test*.exec"))
+
+	reports {
+		xml.required.set(true)
+		xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/registro/jacocoRegistroReport.xml"))
+		html.required.set(true)
+		html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/registro/html"))
+		csv.required.set(false)
+	}
+}
+
+tasks.register<JacocoCoverageVerification>("jacocoRegistroCoverageVerification") {
+	dependsOn(tasks.test)
+
+	classDirectories.setFrom(
+		sourceSets.main.get().output.asFileTree.matching {
+			include(registroCoverageIncludes)
+		}
+	)
+	sourceDirectories.setFrom(sourceSets.main.get().allSource.srcDirs)
+	executionData.setFrom(fileTree(layout.buildDirectory).include("jacoco/test.exec", "jacoco/test*.exec"))
+
+	violationRules {
+		rule {
+			limit {
+				counter = "LINE"
+				value = "COVEREDRATIO"
+				minimum = "0.65".toBigDecimal()
+			}
+		}
+	}
+}
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
 }

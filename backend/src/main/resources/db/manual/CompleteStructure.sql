@@ -24,6 +24,10 @@ COMMENT ON COLUMN malla.universidad IS 'Universidad mostrada en la interfaz.';
 COMMENT ON COLUMN malla.version IS 'Versión de la malla, 
 ya que una misma carrera tiene varias mallas, por ejemplo: 2024, 2017,etc.';
 
+INSERT INTO malla (carrera, universidad, version)
+VALUES ('carrera default', 'universidad default', 'version default')
+ON CONFLICT (carrera, universidad, version) DO NOTHING;
+
 
 -- =========================================================
 -- TABLA: estudiante
