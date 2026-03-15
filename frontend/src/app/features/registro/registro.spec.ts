@@ -61,7 +61,7 @@ describe('Registro Component', () => {
 
     component.registrar();
 
-    const req = httpMock.expectOne('/api/registro');
+    const req = httpMock.expectOne('/api/estudiantes/registro');
 
     expect(req.request.method).toBe('POST');
 
@@ -82,7 +82,7 @@ describe('Registro Component', () => {
 
     component.registrar();
 
-    const req = httpMock.expectOne('/api/registro');
+    const req = httpMock.expectOne('/api/estudiantes/registro');
 
     req.flush(
       { message: 'correo existente' },
