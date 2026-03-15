@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="es" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="home.title" datatype="html">
+        <source>EasySchedule</source>
+        <target>EasySchedule</target>
+      </trans-unit>
+      <trans-unit id="home.backendStatusLabel" datatype="html">
+        <source>Estado de comunicacion con backend:</source>
+        <target>Backend communication status:</target>
+      </trans-unit>
+      <trans-unit id="home.checkingConnection" datatype="html">
+        <source>Comprobando conexion...</source>
+        <target>Checking connection...</target>
+      </trans-unit>
+      <trans-unit id="home.connectionSuccess" datatype="html">
+        <source>Conexion exitosa</source>
+        <target>Connection successful</target>
+      </trans-unit>
+      <trans-unit id="home.connectionError" datatype="html">
+        <source>Error de conexion:</source>
+        <target>Connection error:</target>
+      </trans-unit>
+      <trans-unit id="navbar.aria.goHome" datatype="html">
+        <source>Ir al inicio</source>
+        <target>Go to home</target>
+      </trans-unit>
+      <trans-unit id="navbar.link.home" datatype="html">
+        <source>Home</source>
+        <target>Home</target>
+      </trans-unit>
+      <trans-unit id="navbar.link.curriculum" datatype="html">
+        <source>Malla</source>
+        <target>Curriculum</target>
+      </trans-unit>
+      <trans-unit id="navbar.link.courseSelection" datatype="html">
+        <source>Toma de Materias</source>
+        <target>Course Selection</target>
+      </trans-unit>
+      <trans-unit id="navbar.link.login" datatype="html">
+        <source>Iniciar sesion</source>
+        <target>Sign in</target>
+      </trans-unit>
+      <trans-unit id="navbar.link.signup" datatype="html">
+        <source>Registrarse</source>
+        <target>Sign up</target>
+      </trans-unit>
+      <trans-unit id="navbar.aria.profile" datatype="html">
+        <source>Ir al perfil</source>
+        <target>Go to profile</target>
+      </trans-unit>
+      <trans-unit id="registro.title" datatype="html">
+        <source>Registro</source>
+        <target>Sign up</target>
+      </trans-unit>
+      <trans-unit id="registro.label.username" datatype="html">
+        <source>Usuario</source>
+        <target>Username</target>
+      </trans-unit>
+      <trans-unit id="registro.placeholder.username" datatype="html">
+        <source>Ingresar Nombre de Usuario</source>
+        <target>Enter username</target>
+      </trans-unit>
+      <trans-unit id="registro.validation.usernameRequired" datatype="html">
+        <source>El usuario es obligatorio</source>
+        <target>Username is required</target>
+      </trans-unit>
+      <trans-unit id="registro.label.email" datatype="html">
+        <source>Email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="registro.placeholder.email" datatype="html">
+        <source>Ingresar Email</source>
+        <target>Enter email</target>
+      </trans-unit>
+      <trans-unit id="registro.validation.emailRequired" datatype="html">
+        <source>El correo es obligatorio</source>
+        <target>Email is required</target>
+      </trans-unit>
+      <trans-unit id="registro.validation.emailInvalid" datatype="html">
+        <source>Formato de correo invalido</source>
+        <target>Invalid email format</target>
+      </trans-unit>
+      <trans-unit id="registro.label.password" datatype="html">
+        <source>Contrasena</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="registro.validation.passwordMin" datatype="html">
+        <source>La contrasena debe tener minimo 8 caracteres</source>
+        <target>Password must be at least 8 characters</target>
+      </trans-unit>
+      <trans-unit id="registro.label.confirmPassword" datatype="html">
+        <source>Repetir Contrasena</source>
+        <target>Repeat Password</target>
+      </trans-unit>
+      <trans-unit id="registro.validation.confirmRequired" datatype="html">
+        <source>Debes confirmar tu contrasena</source>
+        <target>You must confirm your password</target>
+      </trans-unit>
+      <trans-unit id="registro.validation.passwordMismatch" datatype="html">
+        <source>Las contrasenas no coinciden</source>
+        <target>Passwords do not match</target>
+      </trans-unit>
+      <trans-unit id="registro.button.submit" datatype="html">
+        <source>Registrarse</source>
+        <target>Sign up</target>
+      </trans-unit>
+      <trans-unit id="registro.button.gotoLogin" datatype="html">
+        <source>Ir a Iniciar Sesion</source>
+        <target>Go to Sign in</target>
+      </trans-unit>
+      <trans-unit id="registro.button.backHome" datatype="html">
+        <source>Volver al inicio</source>
+        <target>Back to home</target>
+      </trans-unit>
+      <trans-unit id="registro.loading" datatype="html">
+        <source>Registrando usuario...</source>
+        <target>Creating account...</target>
+      </trans-unit>
+      <trans-unit id="registro.success" datatype="html">
+        <source>Registro exitoso. Redirigiendo...</source>
+        <target>Registration successful. Redirecting...</target>
+      </trans-unit>
+      <trans-unit id="registro.error.userExists" datatype="html">
+        <source>El usuario ya esta registrado</source>
+        <target>Username already registered</target>
+      </trans-unit>
+      <trans-unit id="registro.error.emailExists" datatype="html">
+        <source>El correo ya esta registrado</source>
+        <target>Email already registered</target>
+      </trans-unit>
+      <trans-unit id="registro.error.invalidData" datatype="html">
+        <source>Datos invalidos</source>
+        <target>Invalid data</target>
+      </trans-unit>
+      <trans-unit id="registro.error.backendConnection" datatype="html">
+        <source>No se pudo conectar con el backend</source>
+        <target>Could not connect to backend</target>
+      </trans-unit>
+      <trans-unit id="registro.error.server" datatype="html">
+        <source>Error del servidor. Intenta nuevamente</source>
+        <target>Server error. Try again</target>
+      </trans-unit>
+      <trans-unit id="login.placeholder" datatype="html">
+        <source>Login Works!</source>
+        <target>Login Works!</target>
+      </trans-unit>
+      <trans-unit id="perfil.placeholder" datatype="html">
+        <source>Perfil Works!</source>
+        <target>Profile Works!</target>
+      </trans-unit>
+      <trans-unit id="perfil.edit" datatype="html">
+        <source>Editar Perfil</source>
+        <target>Edit Profile</target>
+      </trans-unit>
+      <trans-unit id="perfil.edit.placeholder" datatype="html">
+        <source>Editar Perfil Works!</source>
+        <target>Edit Profile Works!</target>
+      </trans-unit>
+      <trans-unit id="malla.placeholder" datatype="html">
+        <source>Malla Works!</source>
+        <target>Curriculum Works!</target>
+      </trans-unit>
+      <trans-unit id="malla.update" datatype="html">
+        <source>Actualizar Malla</source>
+        <target>Update Curriculum</target>
+      </trans-unit>
+      <trans-unit id="malla.update.placeholder" datatype="html">
+        <source>Actualizar Malla works!</source>
+        <target>Update Curriculum Works!</target>
+      </trans-unit>
+      <trans-unit id="materias.placeholder" datatype="html">
+        <source>Toma de Materias Works!</source>
+        <target>Course Selection Works!</target>
+      </trans-unit>
+      <trans-unit id="materias.link.subject" datatype="html">
+        <source>Materia</source>
+        <target>Subject</target>
+      </trans-unit>
+      <trans-unit id="materia.placeholder" datatype="html">
+        <source>Materia Works!</source>
+        <target>Subject Works!</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

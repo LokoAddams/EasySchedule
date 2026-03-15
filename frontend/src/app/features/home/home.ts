@@ -9,18 +9,18 @@ import { ApiService } from '../../services/api.service';
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {
-  protected readonly healthStatus = signal<string>('Comprobando conexión...');
+  protected readonly healthStatus = signal<string>($localize`:@@home.checkingConnection:Comprobando conexión...`);
 
   constructor(private readonly apiService: ApiService) {}
 
   ngOnInit(): void {
     this.apiService.get<unknown[]>('/api/estudiantes').subscribe({
       next: () => {
-        this.healthStatus.set('Conexión exitosa');
+        this.healthStatus.set($localize`:@@home.connectionSuccess:Conexión exitosa`);
       },
       error: (error) => {
         this.healthStatus.set(
-          `Error de conexión: ${error.message}`,
+          $localize`:@@home.connectionError:Error de conexión: ${error.message}`,
         );
       },
     });

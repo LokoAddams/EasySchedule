@@ -1,5 +1,5 @@
 <nav class="navbar">
-  <a class="navbar__brand" routerLink="/home" aria-label="Ir al inicio">
+  <a class="navbar__brand" routerLink="/home" i18n-aria-label="@@navbar.aria.goHome" aria-label="Ir al inicio">
     <span class="brand-logo">
       <span class="brand-logo__main">EASY</span>
       <span class="brand-logo__sub">SCHEDULE</span>
@@ -8,21 +8,21 @@
 
   <ul class="navbar__links">
     <li>
-      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n="@@navbar.link.home">Home</a>
     </li>
     <li>
-      <a routerLink="/malla" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Malla</a>
+      <a routerLink="/malla" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n="@@navbar.link.curriculum">Malla</a>
     </li>
     <li>
-      <a routerLink="/toma-de-materias" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Toma de Materias</a>
+      <a routerLink="/toma-de-materias" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n="@@navbar.link.courseSelection">Toma de Materias</a>
     </li>
   </ul>
 
   <div class="navbar__actions">
-    <a class="navbar__auth-link" routerLink="/login" routerLinkActive="active-auth">Iniciar sesión</a>
-    <a class="navbar__auth-btn" routerLink="/registro" routerLinkActive="active-auth">Registrarse</a>
+    <a class="navbar__auth-link" routerLink="/login" routerLinkActive="active-auth" i18n="@@navbar.link.login">Iniciar sesión</a>
+    <a class="navbar__auth-btn" routerLink="/registro" routerLinkActive="active-auth" i18n="@@navbar.link.signup">Registrarse</a>
 
-    <a class="navbar__profile" routerLink="/perfil" aria-label="Ir al perfil">
+    <a class="navbar__profile" routerLink="/perfil" i18n-aria-label="@@navbar.aria.profile" aria-label="Ir al perfil">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path
           d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm0 3.2A3.4 3.4 0 1 1 8.6 8.6 3.41 3.41 0 0 1 12 5.2Zm0 13.8a7 7 0 0 1-5.2-2.32 6.2 6.2 0 0 1 10.4 0A7 7 0 0 1 12 19Z"

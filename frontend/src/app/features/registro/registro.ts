@@ -85,7 +85,7 @@ export class Registro {
     this.apiService.post<void, typeof payload>(endpoint, payload).subscribe({
       next: () => {
         this.loading = false;
-        this.successMessage = 'Registro exitoso. Redirigiendo...';
+        this.successMessage = $localize`:@@registro.success:Registro exitoso. Redirigiendo...`;
 
         setTimeout(() => {
           this.router.navigateByUrl('/login');
@@ -101,15 +101,15 @@ export class Registro {
         const backendMessage = this.extractBackendMessage(err);
 
         if (err.status === 409 && backendMessage.includes('usuario')) {
-          this.errorMessage = 'El usuario ya está registrado';
+          this.errorMessage = $localize`:@@registro.error.userExists:El usuario ya está registrado`;
         } else if (err.status === 409 && backendMessage.includes('correo')) {
-          this.errorMessage = 'El correo ya está registrado';
+          this.errorMessage = $localize`:@@registro.error.emailExists:El correo ya está registrado`;
         } else if (err.status === 400) {
-          this.errorMessage = 'Datos inválidos';
+          this.errorMessage = $localize`:@@registro.error.invalidData:Datos inválidos`;
         } else if (err.status === 0) {
-          this.errorMessage = 'No se pudo conectar con el backend';
+          this.errorMessage = $localize`:@@registro.error.backendConnection:No se pudo conectar con el backend`;
         } else {
-          this.errorMessage = 'Error del servidor. Intenta nuevamente';
+          this.errorMessage = $localize`:@@registro.error.server:Error del servidor. Intenta nuevamente`;
         }
       },
     });

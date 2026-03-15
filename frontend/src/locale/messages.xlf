@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="es" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="home.title" datatype="html">
+        <source>EasySchedule</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.html</context>
+          <context context-type="linenumber">2,3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.backendStatusLabel" datatype="html">
+        <source>Estado de comunicación con backend:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.checkingConnection" datatype="html">
+        <source>Comprobando conexión...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.ts</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.connectionSuccess" datatype="html">
+        <source>Conexión exitosa</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.connectionError" datatype="html">
+        <source>Error de conexión: <x id="PH" equiv-text="error.message"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="login.placeholder" datatype="html">
+        <source>Login Works!</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/login/login.html</context>
+          <context context-type="linenumber">1,2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="malla.update.placeholder" datatype="html">
+        <source>Actualizar Malla works!</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/malla/actualizar-malla/actualizar-malla.html</context>
+          <context context-type="linenumber">1,2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="malla.placeholder" datatype="html">
+        <source>Malla Works!</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/malla/malla.html</context>
+          <context context-type="linenumber">1,2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="malla.update" datatype="html">
+        <source>Actualizar Malla</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/malla/malla.html</context>
+          <context context-type="linenumber">2,3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="perfil.edit.placeholder" datatype="html">
+        <source>Editar Perfil Works!</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/perfil/editar-perfil/editar-perfil.html</context>
+          <context context-type="linenumber">1,2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="perfil.placeholder" datatype="html">
+        <source>Perfil Works!</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/perfil/perfil.html</context>
+          <context context-type="linenumber">1,2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="perfil.edit" datatype="html">
+        <source>Editar Perfil</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/perfil/perfil.html</context>
+          <context context-type="linenumber">2,3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.title" datatype="html">
+        <source>Registro</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">11,13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.label.username" datatype="html">
+        <source>Usuario</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">15,16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.placeholder.username" datatype="html">
+        <source>Ingresar Nombre de Usuario</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">16,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.validation.usernameRequired" datatype="html">
+        <source>El usuario es obligatorio</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">17,20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.label.email" datatype="html">
+        <source>Email</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">21,22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.placeholder.email" datatype="html">
+        <source>Ingresar Email</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">22,23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.validation.emailRequired" datatype="html">
+        <source>El correo es obligatorio</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">23,24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.validation.emailInvalid" datatype="html">
+        <source>Formato de correo inválido</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">24,27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.label.password" datatype="html">
+        <source>Contraseña</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">28,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.validation.passwordMin" datatype="html">
+        <source>La contraseña debe tener mínimo 8 caracteres</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">30,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.label.confirmPassword" datatype="html">
+        <source>Repetir Contraseña</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">34,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.validation.confirmRequired" datatype="html">
+        <source>Debes confirmar tu contraseña</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">36,37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.validation.passwordMismatch" datatype="html">
+        <source>Las contraseñas no coinciden</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">37,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.button.submit" datatype="html">
+        <source>Registrarse</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">40,41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.button.gotoLogin" datatype="html">
+        <source>Ir a Iniciar Sesión</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">41,42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.button.backHome" datatype="html">
+        <source>Volver al inicio</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">42,44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.loading" datatype="html">
+        <source>Registrando usuario...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.html</context>
+          <context context-type="linenumber">44,45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.success" datatype="html">
+        <source>Registro exitoso. Redirigiendo...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.ts</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.error.userExists" datatype="html">
+        <source>El usuario ya está registrado</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.ts</context>
+          <context context-type="linenumber">104</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.error.emailExists" datatype="html">
+        <source>El correo ya está registrado</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.ts</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.error.invalidData" datatype="html">
+        <source>Datos inválidos</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.ts</context>
+          <context context-type="linenumber">108</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.error.backendConnection" datatype="html">
+        <source>No se pudo conectar con el backend</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.ts</context>
+          <context context-type="linenumber">110</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registro.error.server" datatype="html">
+        <source>Error del servidor. Intenta nuevamente</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/registro/registro.ts</context>
+          <context context-type="linenumber">112</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="materia.placeholder" datatype="html">
+        <source>Materia Works!</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/toma-de-materias/materia/materia.html</context>
+          <context context-type="linenumber">1,2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="materias.placeholder" datatype="html">
+        <source>Toma de Materias Works!</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/toma-de-materias/toma-de-materias.html</context>
+          <context context-type="linenumber">1,2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="materias.link.subject" datatype="html">
+        <source>Materia</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/toma-de-materias/toma-de-materias.html</context>
+          <context context-type="linenumber">2,3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navbar.aria.goHome" datatype="html">
+        <source>Ir al inicio</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/navbar/navbar.component.html</context>
+          <context context-type="linenumber">2,3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navbar.link.home" datatype="html">
+        <source>Home</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/navbar/navbar.component.html</context>
+          <context context-type="linenumber">11,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navbar.link.curriculum" datatype="html">
+        <source>Malla</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/navbar/navbar.component.html</context>
+          <context context-type="linenumber">14,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navbar.link.courseSelection" datatype="html">
+        <source>Toma de Materias</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/navbar/navbar.component.html</context>
+          <context context-type="linenumber">17,21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navbar.link.login" datatype="html">
+        <source>Iniciar sesión</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/navbar/navbar.component.html</context>
+          <context context-type="linenumber">22,23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navbar.link.signup" datatype="html">
+        <source>Registrarse</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/navbar/navbar.component.html</context>
+          <context context-type="linenumber">23,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navbar.aria.profile" datatype="html">
+        <source>Ir al perfil</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/navbar/navbar.component.html</context>
+          <context context-type="linenumber">25,26</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
