@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-registro',
@@ -15,8 +16,9 @@ import { CommonModule } from '@angular/common';
 export class Registro {
 
   form: FormGroup;
+  loading = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private http: HttpClient) {
 
     this.form = this.fb.group({
       nombre: ['', Validators.required],
@@ -41,13 +43,30 @@ export class Registro {
 
     return null;
   }
-
   registrar() {
 
     if (this.form.invalid) return;
-
-    console.log(this.form.value);
-
+  
+    this.loading = true;
+  
+    const payload = {
+      username: this.form.value.nombre + this.form.value.apellido,
+      email: this.form.value.correo,
+      password: this.form.value.password
+    };
+  
+    this.http.post('http://localhost:8080/api/estudiantes/registro', payload)
+      .subscribe({
+        next: (response) => {
+          console.log('Registro exitoso', response);
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error en registro', error);
+          this.loading = false;
+        }
+      });
+  
   }
 
 }

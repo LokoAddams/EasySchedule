@@ -33,8 +33,11 @@
       Las contraseñas no coinciden
     </small>
   
-    <button type="submit" [disabled]="form.invalid">
+    <button type="submit" [disabled]="form.invalid || loading">
       Registrarse
     </button>
+    <p *ngIf="loading">
+      Registrando usuario...
+    </p>
   
   </form>
