@@ -1,1 +1,40 @@
-<p>registro works!</p>
+<form [formGroup]="form" (ngSubmit)="registrar()" class="registro-form">
+
+    <label>Nombre</label>
+    <input type="text" formControlName="nombre">
+    <small *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">
+      El nombre es obligatorio
+    </small>
+  
+    <label>Apellido</label>
+    <input type="text" formControlName="apellido">
+    <small *ngIf="form.get('apellido')?.touched && form.get('apellido')?.invalid">
+      El apellido es obligatorio
+    </small>
+  
+    <label>Correo electrónico</label>
+    <input type="email" formControlName="correo">
+    <small *ngIf="form.get('correo')?.errors?.['required']">
+      El correo es obligatorio
+    </small>
+    <small *ngIf="form.get('correo')?.errors?.['email']">
+      Formato de correo inválido
+    </small>
+  
+    <label>Contraseña</label>
+    <input type="password" formControlName="password">
+    <small *ngIf="form.get('password')?.errors?.['minlength']">
+      La contraseña debe tener mínimo 8 caracteres
+    </small>
+  
+    <label>Confirmar contraseña</label>
+    <input type="password" formControlName="confirmPassword">
+    <small *ngIf="form.get('confirmPassword')?.errors?.['mismatch']">
+      Las contraseñas no coinciden
+    </small>
+  
+    <button type="submit" [disabled]="form.invalid">
+      Registrarse
+    </button>
+  
+  </form>

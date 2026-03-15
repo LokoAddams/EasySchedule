@@ -1,0 +1,29 @@
+.registro-form {
+    max-width: 420px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  input {
+    padding: 8px;
+    width: 100%;
+  }
+  
+  button {
+    padding: 10px;
+  }
+  
+  small {
+    color: red;
+    font-size: 12px;
+  }
+  
+  @media (max-width: 600px) {
+  
+    .registro-form {
+      width: 90%;
+    }
+  
+  }
