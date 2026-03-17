@@ -130,7 +130,7 @@ export class Perfil implements OnInit {
       nombre: this.editForm.controls.nombre.value.trim(),
       apellido: this.editForm.controls.apellido.value.trim(),
       carnetIdentidad: this.editForm.controls.carnetIdentidad.value.trim(),
-      fechaNacimiento: this.editForm.controls.fechaNacimiento.value,
+      fechaNacimiento: this.formatDateForApi(this.editForm.controls.fechaNacimiento.value),
       semestreActual: this.perfil.semestreActual ?? 1,
       carrera,
       mallaId: mallaSeleccionada.id,
