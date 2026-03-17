@@ -31,3 +31,15 @@ GET {{host}}/api/estudiantes
 
 ### 4. Perfil del estudiante registrado (ÉXITO - 200)
 GET {{host}}/api/estudiantes/perfil/test8user
+### 5. Editar el perfil del estudiante (ÉXITO - 200)
+PUT {{host}}/api/estudiantes/perfil/test8user
+Content-Type: application/json
+
+{
+  "nombre": "Test User 8",
+  "apellido": "Apellido 8",
+  "universidad": "Universidad 8",
+  "carrera": "Carrera 8",
+  "carnetIdentidad": "CI-8888888"
+}
+
