@@ -12,6 +12,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:es": "ng build --configuration production,es",
+    "build:en": "ng build --configuration production,en",
+    "extract-i18n": "ng extract-i18n --output-path src/locale",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -33,6 +36,7 @@
     "@angular/compiler": "^20.3.0",
     "@angular/core": "^20.3.0",
     "@angular/forms": "^20.3.0",
+    "@angular/localize": "20.3.17",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
     "@ngx-translate/core": "^17.0.0",

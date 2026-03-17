@@ -24,6 +24,7 @@ export function initializeLanguage(languageService: LanguageService): () => Prom
 }
 
 
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
