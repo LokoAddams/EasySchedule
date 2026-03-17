@@ -46,7 +46,7 @@ Config por defecto en `backend/src/main/resources/application.properties`:
 - Usuario: `postgres`
 - Password: `postgres`
 
-Puedes sobrescribir por variables de entorno:
+NO sobrescribir por variables de entorno:
 
 - `DB_URL`
 - `DB_USERNAME`
@@ -62,8 +62,15 @@ Referencia: `backend/.env.example`
 cd backend
 ./gradlew bootRun
 ```
+En caso de que no funcione probar:
+```bash
+cd backend
+chmod +x gradlew
+./gradlew bootRun
+```
 
-Healthcheck: `http://localhost:8080/health`
+Healthcheck: src/main/resources/http/test.http
+aca encontraras el rest para probar endpoints
 
 ## 3) Levantar frontend
 
