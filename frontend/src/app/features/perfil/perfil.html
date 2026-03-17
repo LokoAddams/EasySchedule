@@ -109,7 +109,22 @@
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.fechaNacimiento' | translate }}</span>
-					<input type="date" formControlName="fechaNacimiento" />
+					<div class="perfil-date-picker">
+						<input
+							type="text"
+							class="perfil-datepicker-input"
+							formControlName="fechaNacimiento"
+							ngbDatepicker
+							#fechaNacimientoPicker="ngbDatepicker"
+							[autoClose]="'outside'"
+							placement="bottom-start"
+							[container]="'body'"
+							[readonly]="true"
+						/>
+						<button type="button" class="perfil-date-toggle" (click)="fechaNacimientoPicker.toggle()">
+							<img src="assets/img/calendar.webp" alt="calendar icon" />
+						</button>
+					</div>
 				</label>
 			</div>
 

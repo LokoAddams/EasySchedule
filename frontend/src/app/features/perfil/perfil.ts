@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbDateStruct, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthSessionService } from '../../core/services/auth-session.service';
@@ -14,14 +15,14 @@ type PerfilEditForm = FormGroup<{
   apellido: FormControl<string>;
   email: FormControl<string>;
   carnetIdentidad: FormControl<string>;
-  fechaNacimiento: FormControl<string>;
+  fechaNacimiento: FormControl<NgbDateStruct | null>;
   carrera: FormControl<string>;
   universidad: FormControl<string>;
 }>;
 
 @Component({
   selector: 'app-perfil',
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, NgbDatepickerModule, TranslatePipe],
   templateUrl: './perfil.html',
   styleUrl: './perfil.scss',
 })
@@ -42,16 +43,16 @@ export class Perfil implements OnInit {
     private readonly authSessionService: AuthSessionService,
     private readonly languageService: LanguageService,
   ) {
-    this.editForm = this.fb.nonNullable.group({
-      username: ['', [Validators.required]],
-      nombre: ['', [Validators.required]],
-      apellido: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      carnetIdentidad: ['', [Validators.required]],
-      fechaNacimiento: ['', [Validators.required]],
-      carrera: ['', [Validators.required]],
-      universidad: ['', [Validators.required]],
-    });
+    this.editForm = this.fb.group({
+      username: this.fb.nonNullable.control('', [Validators.required]),
+      nombre: this.fb.nonNullable.control('', [Validators.required]),
+      apellido: this.fb.nonNullable.control('', [Validators.required]),
+      email: this.fb.nonNullable.control('', [Validators.required, Validators.email]),
+      carnetIdentidad: this.fb.nonNullable.control('', [Validators.required]),
+      fechaNacimiento: this.fb.control<NgbDateStruct | null>(null, [Validators.required]),
+      carrera: this.fb.nonNullable.control('', [Validators.required]),
+      universidad: this.fb.nonNullable.control('', [Validators.required]),
+    }) as PerfilEditForm;
   }
 
   ngOnInit(): void {
@@ -196,10 +197,41 @@ export class Perfil implements OnInit {
       apellido: perfil.apellido ?? '',
       email: perfil.email ?? '',
       carnetIdentidad: perfil.carnetIdentidad ?? '',
-      fechaNacimiento: perfil.fechaNacimiento ?? '',
+      fechaNacimiento: this.toDateStruct(perfil.fechaNacimiento),
       carrera: perfil.carrera ?? '',
       universidad: perfil.universidad ?? '',
     });
+  }
+
+  private toDateStruct(rawDate: string | null): NgbDateStruct | null {
+    if (!rawDate) {
+      return null;
+    }
+
+    const dateParts = rawDate.split('-');
+    if (dateParts.length !== 3) {
+      return null;
+    }
+
+    const year = Number(dateParts[0]);
+    const month = Number(dateParts[1]);
+    const day = Number(dateParts[2]);
+
+    if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
+      return null;
+    }
+
+    return { year, month, day };
+  }
+
+  private formatDateForApi(dateStruct: NgbDateStruct | null): string {
+    if (!dateStruct) {
+      return '';
+    }
+
+    const month = String(dateStruct.month).padStart(2, '0');
+    const day = String(dateStruct.day).padStart(2, '0');
+    return `${dateStruct.year}-${month}-${day}`;
   }
 
   private buscarMalla(carrera: string, universidad: string): MallaResponse | undefined {

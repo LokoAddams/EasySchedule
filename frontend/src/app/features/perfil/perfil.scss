@@ -119,6 +119,62 @@
 	font-size: 0.95rem;
 }
 
+.perfil-date-picker {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 0.45rem;
+	align-items: center;
+}
+
+.perfil-datepicker-input {
+	min-width: 0;
+}
+
+.perfil-date-toggle {
+	height: 2.7rem;
+	min-width: 2.7rem;
+	border-radius: 999px;
+	border: 1.5px solid rgb(30 41 59 / 55%);
+	background: color-mix(in srgb, var(--perfil-bg) 80%, white);
+	color: #1f3658;
+	cursor: pointer;
+	font-size: 1rem;
+	line-height: 1;
+}
+
+.perfil-date-toggle img {
+	width: 1.1rem;
+	height: 1.1rem;
+	object-fit: contain;
+	display: block;
+	margin: 0 auto;
+}
+
+:host ::ng-deep .ngb-dp-months {
+	font-family: 'Nunito Sans', sans-serif;
+}
+
+:host ::ng-deep .ngb-dp-header {
+	background: #6f89ac;
+	color: #fff;
+}
+
+:host ::ng-deep .ngb-dp-weekday,
+:host ::ng-deep .ngb-dp-week-number,
+:host ::ng-deep .ngb-dp-day {
+	font-family: 'Nunito Sans', sans-serif;
+}
+
+:host ::ng-deep .ngb-dp-day .btn-light {
+	border-radius: 0.45rem;
+}
+
+:host ::ng-deep .ngb-dp-day .bg-primary,
+:host ::ng-deep .ngb-dp-day .btn-primary {
+	background-color: #2f4f73 !important;
+	border-color: #2f4f73 !important;
+}
+
 .perfil-edit-btn {
 	display: inline-grid;
 	place-items: center;
@@ -195,6 +251,7 @@
 	background: #162a47;
 	transform: translateY(-1px);
 }
+
 
 @media (max-width: 900px) {
 	.perfil-layout {
