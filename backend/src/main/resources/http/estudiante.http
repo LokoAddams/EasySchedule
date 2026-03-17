@@ -38,8 +38,11 @@ Content-Type: application/json
 {
   "nombre": "Test User 8",
   "apellido": "Apellido 8",
-  "universidad": "Universidad 8",
-  "carrera": "Carrera 8",
-  "carnetIdentidad": "CI-8888888"
+  "universidad": "Universidad Catolica Boliviana San Pablo",
+  "carrera": "Ingenieria de Sistemas",
+  "carnetIdentidad": "CI-8888888",
+  "fechaNacimiento": "1998-08-08",
+  "email": "test8user@example.com",
+  "username": "test8user"
 }
 
