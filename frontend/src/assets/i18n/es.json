@@ -67,11 +67,22 @@
     },
     "actions": {
       "edit": "Editar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "saving": "Guardando...",
       "changePassword": "Cambiar Contrasena"
+    },
+    "validation": {
+      "required": "Completa todos los campos obligatorios antes de guardar."
+    },
+    "success": {
+      "updated": "Perfil actualizado correctamente."
     },
     "error": {
       "noSession": "No hay un usuario autenticado en esta sesion. Inicia sesion para ver tu perfil.",
-      "loadFailed": "No se pudo cargar la informacion del perfil."
+      "loadFailed": "No se pudo cargar la informacion del perfil.",
+      "saveFailed": "No se pudo actualizar el perfil. Intenta nuevamente.",
+      "mallaNotFound": "No existe una malla con la carrera y universidad seleccionadas."
     }
   },
   "registro": {

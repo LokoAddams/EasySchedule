@@ -67,11 +67,22 @@
     },
     "actions": {
       "edit": "Editar",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "saving": "Salvando...",
       "changePassword": "Alterar Senha"
+    },
+    "validation": {
+      "required": "Preencha todos os campos obrigatorios antes de salvar."
+    },
+    "success": {
+      "updated": "Perfil atualizado com sucesso."
     },
     "error": {
       "noSession": "Nenhum usuario autenticado encontrado nesta sessao. Faca login para ver seu perfil.",
-      "loadFailed": "Nao foi possivel carregar as informacoes do perfil."
+      "loadFailed": "Nao foi possivel carregar as informacoes do perfil.",
+      "saveFailed": "Nao foi possivel atualizar o perfil. Tente novamente.",
+      "mallaNotFound": "Nao existe uma grade para o curso e universidade selecionados."
     }
   },
   "registro": {

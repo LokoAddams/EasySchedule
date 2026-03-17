@@ -6,6 +6,7 @@
 
 	<p class="perfil-page__status" *ngIf="loading">{{ 'perfil.loading' | translate }}</p>
 	<p class="perfil-page__status perfil-page__status--error" *ngIf="!loading && errorKey">{{ errorKey | translate }}</p>
+	<p class="perfil-page__status perfil-page__status--success" *ngIf="!loading && successKey">{{ successKey | translate }}</p>
 
 	<div class="perfil-layout" *ngIf="!loading && perfil">
 		<article class="perfil-avatar-card">
@@ -20,7 +21,7 @@
 			</div>
 		</article>
 
-		<article class="perfil-data-card">
+		<article class="perfil-data-card" *ngIf="!editMode">
 			<div class="perfil-grid">
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.username' | translate }}</span>
@@ -64,9 +65,65 @@
 			</div>
 
 			<div class="perfil-actions">
-				<a class="perfil-edit-btn" routerLink="/perfil/editar">{{ 'perfil.actions.edit' | translate }}</a>
+				<button class="perfil-edit-btn" type="button" (click)="activarEdicion()">{{ 'perfil.actions.edit' | translate }}</button>
 				<button class="perfil-password-btn" type="button">{{ 'perfil.actions.changePassword' | translate }}</button>
 			</div>
 		</article>
+
+		<form class="perfil-data-card" *ngIf="editMode" [formGroup]="editForm" (ngSubmit)="guardarEdicion()">
+			<div class="perfil-grid">
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.username' | translate }}</span>
+					<input type="text" formControlName="username" />
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.email' | translate }}</span>
+					<input type="email" formControlName="email" />
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.nombre' | translate }}</span>
+					<input type="text" formControlName="nombre" />
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.universidad' | translate }}</span>
+					<input type="text" formControlName="universidad" />
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.apellido' | translate }}</span>
+					<input type="text" formControlName="apellido" />
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.carrera' | translate }}</span>
+					<input type="text" formControlName="carrera" />
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.carnet' | translate }}</span>
+					<input type="text" formControlName="carnetIdentidad" />
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.fechaNacimiento' | translate }}</span>
+					<input type="date" formControlName="fechaNacimiento" />
+				</label>
+			</div>
+
+			<p class="perfil-validation" *ngIf="editForm.invalid && editForm.touched">
+				{{ 'perfil.validation.required' | translate }}
+			</p>
+
+			<div class="perfil-actions">
+				<button class="perfil-edit-btn" type="submit" [disabled]="saving">
+					{{ saving ? ('perfil.actions.saving' | translate) : ('perfil.actions.save' | translate) }}
+				</button>
+				<button class="perfil-cancel-btn" type="button" (click)="cancelarEdicion()">{{ 'perfil.actions.cancel' | translate }}</button>
+				<button class="perfil-password-btn" type="button">{{ 'perfil.actions.changePassword' | translate }}</button>
+			</div>
+		</form>
 	</div>
 </section>

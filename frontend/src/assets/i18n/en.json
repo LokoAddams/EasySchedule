@@ -67,11 +67,22 @@
     },
     "actions": {
       "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saving": "Saving...",
       "changePassword": "Change Password"
+    },
+    "validation": {
+      "required": "Complete all required fields before saving."
+    },
+    "success": {
+      "updated": "Profile updated successfully."
     },
     "error": {
       "noSession": "No authenticated user found in this session. Sign in to view your profile.",
-      "loadFailed": "Could not load profile information."
+      "loadFailed": "Could not load profile information.",
+      "saveFailed": "Could not update profile. Please try again.",
+      "mallaNotFound": "No curriculum was found for the selected career and university."
     }
   },
   "registro": {

@@ -45,6 +45,11 @@
 	font-weight: 700;
 }
 
+.perfil-page__status--success {
+	color: #166534;
+	font-weight: 700;
+}
+
 .perfil-layout {
 	display: grid;
 	gap: 1.5rem;
@@ -117,6 +122,7 @@
 .perfil-edit-btn {
 	display: inline-grid;
 	place-items: center;
+	border: none;
 	min-width: 9.2rem;
 	height: 2.4rem;
 	padding: 0 1.3rem;
@@ -127,6 +133,7 @@
 	font-weight: 700;
 	font-size: 1rem;
 	line-height: 1;
+	cursor: pointer;
 	transition: transform 150ms ease, background-color 150ms ease;
 }
 
@@ -156,6 +163,32 @@
 	line-height: 1;
 	cursor: pointer;
 	transition: transform 150ms ease, background-color 150ms ease;
+}
+
+.perfil-cancel-btn {
+	min-width: 9.2rem;
+	height: 2.4rem;
+	padding: 0 1.3rem;
+	border-radius: 0.5rem;
+	border: 1px solid #64748b;
+	background: #e2e8f0;
+	color: #0f172a;
+	font-weight: 700;
+	font-size: 1rem;
+	line-height: 1;
+	cursor: pointer;
+	transition: transform 150ms ease, background-color 150ms ease;
+}
+
+.perfil-cancel-btn:hover {
+	background: #cbd5e1;
+	transform: translateY(-1px);
+}
+
+.perfil-validation {
+	margin: 0.8rem 0 0;
+	font-weight: 600;
+	color: #b91c1c;
 }
 
 .perfil-password-btn:hover {
