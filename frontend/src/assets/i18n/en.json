@@ -51,7 +51,28 @@
   "perfil": {
     "placeholder": "Profile Works!",
     "edit": "Edit Profile",
-    "editPlaceholder": "Edit Profile Works!"
+    "editPlaceholder": "Edit Profile Works!",
+    "title": "Profile",
+    "loading": "Loading profile data...",
+    "avatarAlt": "User avatar",
+    "fields": {
+      "username": "Username",
+      "nombre": "First Name",
+      "apellido": "Last Name",
+      "email": "Email",
+      "carnet": "Identity Card",
+      "fechaNacimiento": "Birth Date",
+      "carrera": "Career",
+      "universidad": "University"
+    },
+    "actions": {
+      "edit": "Edit",
+      "changePassword": "Change Password"
+    },
+    "error": {
+      "noSession": "No authenticated user found in this session. Sign in to view your profile.",
+      "loadFailed": "Could not load profile information."
+    }
   },
   "registro": {
     "title": "Register",

@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ApiService } from '../../services/api.service';
+import { AuthSessionService } from '../../core/services/auth-session.service';
 
 @Component({
   selector: 'app-registro',
@@ -37,6 +38,7 @@ export class Registro {
   constructor(
     private readonly fb: FormBuilder,
     private readonly apiService: ApiService,
+    private readonly authSessionService: AuthSessionService,
     private readonly router: Router,
   ) {
 
@@ -88,6 +90,7 @@ export class Registro {
       next: () => {
         this.loading = false;
         this.successMessageKey = 'registro.success';
+        this.authSessionService.setCurrentUsername(payload.username);
 
         setTimeout(() => {
           this.router.navigateByUrl('/login');

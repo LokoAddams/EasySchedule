@@ -51,7 +51,28 @@
   "perfil": {
     "placeholder": "Perfil Works!",
     "edit": "Editar Perfil",
-    "editPlaceholder": "Editar Perfil Works!"
+    "editPlaceholder": "Editar Perfil Works!",
+    "title": "Perfil",
+    "loading": "Cargando datos del perfil...",
+    "avatarAlt": "Avatar del usuario",
+    "fields": {
+      "username": "Nombre de Usuario",
+      "nombre": "Nombre",
+      "apellido": "Apellidos",
+      "email": "Correo Electronico",
+      "carnet": "Carnet de Identidad",
+      "fechaNacimiento": "Fecha de Nacimiento",
+      "carrera": "Carrera",
+      "universidad": "Universidad"
+    },
+    "actions": {
+      "edit": "Editar",
+      "changePassword": "Cambiar Contrasena"
+    },
+    "error": {
+      "noSession": "No hay un usuario autenticado en esta sesion. Inicia sesion para ver tu perfil.",
+      "loadFailed": "No se pudo cargar la informacion del perfil."
+    }
   },
   "registro": {
     "title": "Registro",
