@@ -27,3 +27,7 @@ Content-Type: application/json
 
 ### 3. Obtener todos los estudiantes (Verificar registro)
 GET {{host}}/api/estudiantes
+
+
+### 4. Perfil del estudiante registrado (ÉXITO - 200)
+GET {{host}}/api/estudiantes/perfil/test8user

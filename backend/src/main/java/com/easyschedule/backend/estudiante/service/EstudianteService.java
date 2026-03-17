@@ -53,6 +53,13 @@ public class EstudianteService {
         return toResponse(getEstudianteOrThrow(id));
     }
 
+    public EstudianteResponse findByUsername(String username) {
+        Estudiante estudiante = estudianteRepository.findByUsernameIgnoreCase(username)
+            .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado con username: " + username));
+
+        return toResponse(estudiante);
+    }
+
     public EstudianteResponse update(Long id, EstudianteUpdateRequest request) {
         Estudiante estudiante = getEstudianteOrThrow(id);
         Malla malla = getMallaOrThrow(request.mallaId());
@@ -131,6 +138,7 @@ public class EstudianteService {
 
     private EstudianteResponse toResponse(Estudiante estudiante) {
         Long mallaId = estudiante.getMalla() != null ? estudiante.getMalla().getId() : null;
+        String universidad = estudiante.getMalla() != null ? estudiante.getMalla().getUniversidad() : null;
         String username = estudiante.getUser() != null ? estudiante.getUser().getUsername() : null;
         String email = estudiante.getUser() != null ? estudiante.getUser().getEmail() : null;
 
@@ -145,7 +153,8 @@ public class EstudianteService {
             estudiante.getFechaRegistro(),
             estudiante.getSemestreActual(),
             estudiante.getCarrera(),
-            mallaId
+            mallaId,
+            universidad
         );
     }
 }

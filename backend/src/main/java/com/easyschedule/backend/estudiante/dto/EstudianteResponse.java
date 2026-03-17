@@ -14,6 +14,7 @@ public record EstudianteResponse(
     OffsetDateTime fechaRegistro,
     Short semestreActual,
     String carrera,
-    Long mallaId
+    Long mallaId,
+    String universidad
 ) {
 }

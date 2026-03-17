@@ -40,6 +40,11 @@ public class EstudianteController {
         return estudianteService.findById(id);
     }
 
+    @GetMapping("/perfil/{username}")
+    public EstudianteResponse findProfileByUsername(@PathVariable String username) {
+        return estudianteService.findByUsername(username);
+    }
+
     @PutMapping("/{id}")
     public EstudianteResponse update(@PathVariable Long id, @RequestBody EstudianteUpdateRequest request) {
         return estudianteService.update(id, request);
