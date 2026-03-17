@@ -1,2 +1,4 @@
-<p class="placeholder-page">{{ 'malla.placeholder' | translate }}</p>
-<a routerLink="/malla/actualizar">{{ 'malla.update' | translate }}</a>
+<ng-container *ngIf="mallaEnabled">
+	<p class="placeholder-page">{{ 'malla.placeholder' | translate }}</p>
+	<a routerLink="/malla/actualizar">{{ 'malla.update' | translate }}</a>
+</ng-container>

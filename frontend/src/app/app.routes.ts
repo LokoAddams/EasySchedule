@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { featureGuard } from './feature.guard';
+
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
@@ -9,11 +11,13 @@ export const routes: Routes = [
   },
   {
     path: 'malla',
+    canActivate: [featureGuard('malla')],
     loadChildren: () =>
       import('./features/malla/malla.routes').then((m) => m.MALLA_ROUTES),
   },
   {
     path: 'toma-de-materias',
+    canActivate: [featureGuard('tomaMaterias')],
     loadChildren: () =>
       import('./features/toma-de-materias/toma-de-materias.routes').then(
         (m) => m.TOMA_DE_MATERIAS_ROUTES,
