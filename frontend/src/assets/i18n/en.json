@@ -28,6 +28,11 @@
       "checkingConnection": "Checking connection...",
       "connectionSuccess": "Connection successful",
       "connectionError": "Connection error: {{message}}"
+    },
+    "subtitle": "Design your academic path without complications",
+    "description":"Our platform analyzes your requirements and goals in real time to offer you the perfect combination of subjects for your next term. We don't just create a schedule; we show you exactly how each choice today accelerates your graduation tomorrow. Take control of your academic path and stop guessing!",
+    "button":{
+    "start": "Get Started"
     }
   },
   "login": {

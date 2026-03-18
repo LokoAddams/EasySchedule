@@ -28,7 +28,12 @@
       "checkingConnection": "Verificando conexão...",
       "connectionSuccess": "Conexão realizada com sucesso",
       "connectionError": "Erro de conexão: {{message}}"
-    }
+    },
+    "subtitle": "Designe seu caminho acadêmico sem complicações",
+    "description":"Nossa plataforma analisa seus requisitos e objetivos em tempo real para oferecer você a combinação perfeita de matérias para seu próximo semestre. Nós não apenas criamos um horário; mostramos exatamente como cada escolha de hoje acelera sua graduação de amanhã. Assuma o controle do seu caminho acadêmico e pare de adivinhar!",
+      "button":{
+      "start": "Começar"
+      }
   },
   "login": {
     "title": "Entrar",

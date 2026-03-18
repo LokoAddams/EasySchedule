@@ -28,6 +28,11 @@
       "checkingConnection": "Comprobando conexion...",
       "connectionSuccess": "Conexion exitosa",
       "connectionError": "Error de conexion: {{message}}"
+    },
+    "subtitle": "Diseña tu camino académico sin complicaciones",
+    "description":"Nuestra plataforma analiza tus requisitos y objetivos en tiempo real para ofrecerte la combinación perfecta de materias para tu próximo semestre. No solo creamos un horario; te mostramos exactamente cómo cada elección de hoy acelera tu graduación de mañana. ¡Toma el control de tu camino académico y deja de adivinar!",
+    "button":{
+    "start": "Comenzar"
     }
   },
   "login": {
