@@ -33,6 +33,19 @@
     "description":"Nuestra plataforma analiza tus requisitos y objetivos en tiempo real para ofrecerte la combinación perfecta de materias para tu próximo semestre. No solo creamos un horario; te mostramos exactamente cómo cada elección de hoy acelera tu graduación de mañana. ¡Toma el control de tu camino académico y deja de adivinar!",
     "button":{
     "start": "Comenzar"
+    },
+    "aboutUs":{
+      "title": "Sobre Nosotros",
+    "pharagraph1": "En Easy Schedule, entendemos que la vida universitaria es lo suficientemente compleja sin que la planificación de cursos se convierta en un obstáculo adicional. Nacimos de la visión de Lucas Alcoba y Adrian Claros, con el objetivo de empoderar a los estudiantes de pregrado y posgrado a través de la tecnología inteligente.",
+    "pharagraph2": "A diferencia de las herramientas tradicionales de consulta de mallas curriculares, ofrecemos una solución integral: una plataforma web interactiva que procesa tus requisitos específicos y genera sugerencias personalizadas. Creemos que cada estudiante merece un camino académico claro, eficiente y libre de errores administrativos.",
+    "pharagraph3": "Nuestra plataforma está diseñada específicamente para integrarse con las realidades académicas de instituciones líderes, como la Universidad Católica Boliviana campus Cochabamba, la Universidad Mayor de San Simón y la Universidad Mayor de San Andrés."
+    },
+    "questions":{
+      "title": "Preguntas Frecuentes",
+      "question1": "¿Cómo funciona EasySchedule?",
+      "answer1": "EasySchedule utiliza un algoritmo inteligente para analizar tus requisitos académicos y objetivos. Procesa esta información en tiempo real para generar sugerencias personalizadas de cursos para tu próximo semestre, ayudándote a diseñar un camino académico eficiente.",
+      "question2": "¿Es EasySchedule gratuito?",
+      "answer2": "Sí, EasySchedule es completamente gratuito para los estudiantes. Creemos que cada estudiante debería tener acceso a herramientas que los ayuden a tener éxito académico sin ningún costo."
     }
   },
   "login": {

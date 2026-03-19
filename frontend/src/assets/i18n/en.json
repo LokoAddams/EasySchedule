@@ -33,7 +33,20 @@
     "description":"Our platform analyzes your requirements and goals in real time to offer you the perfect combination of subjects for your next term. We don't just create a schedule; we show you exactly how each choice today accelerates your graduation tomorrow. Take control of your academic path and stop guessing!",
     "button":{
     "start": "Get Started"
-    }
+    },
+    "aboutUs":{
+      "title": "About Us",
+    "pharagraph1": "At Easy Schedule, we understand that university life is complex enough without course planning becoming an additional obstacle. We were born from the vision of Lucas Alcoba and Adrian Claros, with the goal of empowering undergraduate and graduate students through intelligent technology.",
+    "pharagraph2": "Unlike traditional curriculum consultation tools, we offer a comprehensive solution: an interactive web platform that processes your specific requirements and generates personalized suggestions. We believe every student deserves a clear, efficient academic path free of administrative errors.",
+    "pharagraph3": "Our platform is specifically designed to integrate with the academic realities of leading institutions, such as the Universidad Católica Boliviana Cochabamba campus, the Universidad Mayor de San Simón, and the Universidad Mayor de San Andrés."
+  },
+  "questions": {
+    "title": "Frequently Asked Questions",
+    "question1": "How does EasySchedule work?",
+    "answer1": "EasySchedule uses an intelligent algorithm to analyze your academic requirements and goals. It processes this information in real time to generate personalized course suggestions for your next semester, helping you design an efficient academic path.",
+    "question2": "Is EasySchedule free?",
+    "answer2": "Yes, EasySchedule is completely free for students. We believe every student should have access to tools that help them succeed academically without any cost."
+  }
   },
   "login": {
     "title": "Login",
