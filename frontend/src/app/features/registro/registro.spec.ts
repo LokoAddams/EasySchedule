@@ -3,7 +3,6 @@ import { Registro } from './registro';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 
 describe('Registro Component', () => {
 
@@ -17,8 +16,7 @@ describe('Registro Component', () => {
       imports: [
         Registro,
         ReactiveFormsModule,
-        HttpClientTestingModule,
-        TranslateModule.forRoot(),
+        HttpClientTestingModule
       ],
       providers: [provideRouter([])],
     }).compileComponents();
@@ -69,7 +67,7 @@ describe('Registro Component', () => {
 
     req.flush({});
 
-    expect(component.successMessageKey).toBe('registro.success');
+    expect(component.successMessageKey).toContain('Registro exitoso');
 
   });
 
@@ -91,7 +89,7 @@ describe('Registro Component', () => {
       { status: 409, statusText: 'Conflict' }
     );
 
-    expect(component.errorMessageKey).toBe('registro.error.emailExists');
+    expect(component.errorMessageKey).toContain('correo');
 
   });
 

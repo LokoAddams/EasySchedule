@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.easyschedule.backend.auth.dto.request.LoginRequest;
 import com.easyschedule.backend.auth.dto.request.SignupRequest;
 import com.easyschedule.backend.auth.service.AuthService;
 
@@ -30,4 +31,9 @@ public class AuthController {
         authService.registerUser(signUpRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        return authService.login(request);
+}    
+
 }

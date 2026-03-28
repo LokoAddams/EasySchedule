@@ -27,3 +27,14 @@ Content-Type: application/json
 
 ### 3. Obtener todos los estudiantes (Verificar registro)
 GET {{host}}/api/estudiantes
+
+
+
+### 4. Login
+POST {{host}}/api/login
+Content-Type: application/json
+
+{
+  "identifier": "eduardo",
+  "password": "123456"
+}
