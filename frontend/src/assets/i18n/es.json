@@ -16,6 +16,7 @@
     "tomaMaterias": "Toma de Materias",
     "login": "Iniciar sesion",
     "signup": "Registrarse",
+    "logout": "Cerrar sesión",
     "menu": {
       "profile": "Ir al perfil",
       "language": "Cambiar idioma"
@@ -64,12 +65,30 @@
       "copyright": "Derechos de Autor @ 2022 Agency Creative. Todos los Derechos Reservados"
     }
   },
-  "login": {
-    "title": "Login",
-    "email": "Correo",
-    "password": "Contrasena",
-    "placeholder": "Login Works!"
+"login": {
+  "title": "Iniciar sesión",
+  "label": {
+    "identifier": "Correo o usuario",
+    "password": "Contraseña"
   },
+  "placeholder": {
+    "identifier": "Ingresa tu correo o usuario",
+    "password": "Ingresa tu contraseña"
+  },
+  "button": {
+    "submit": "Ingresar",
+    "gotoRegister": "Crear cuenta",
+    "backHome": "Volver al inicio"
+  },
+  "validation": {
+    "required": "Este campo es obligatorio"
+  },
+  "loading": "Iniciando sesión...",
+  "error": {
+    "invalidCredentials": "Credenciales inválidas",
+    "generic": "Error inesperado"
+  }
+},
   "malla": {
     "placeholder": "Malla Works!",
     "update": "Actualizar Malla",

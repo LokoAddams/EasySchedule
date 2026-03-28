@@ -29,4 +29,12 @@ export class NavbarComponent implements OnInit {
   protected setLanguage(lang: string): void {
     this.languageService.setLanguage(lang);
   }
+  protected isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
+  
+  protected logout(): void {
+    localStorage.removeItem('token');
+    window.location.href = '/home'; 
+  }
 }

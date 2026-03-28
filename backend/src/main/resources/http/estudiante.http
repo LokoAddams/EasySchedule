@@ -30,11 +30,11 @@ GET {{host}}/api/estudiantes
 
 
 
-### 4. Login
+### 4. Login (funcionando con credenciales correctas e incorrectas)
 POST {{host}}/api/login
 Content-Type: application/json
 
 {
-  "identifier": "eduardo",
-  "password": "123456"
+  "identifier": "test6user",
+  "password": "password"
 }

@@ -19,8 +19,19 @@
   </ul>
 
   <div class="navbar__actions">
-    <a class="navbar__auth-link" routerLink="/login" routerLinkActive="active-auth">{{ 'navbar.login' | translate }}</a>
-    <a class="navbar__auth-btn" routerLink="/registro" routerLinkActive="active-auth">{{ 'navbar.signup' | translate }}</a>
+<!-- NO logueado -->
+<a *ngIf="!isLoggedIn()" routerLink="/login">
+  {{ 'navbar.login' | translate }}
+</a>
+
+<a *ngIf="!isLoggedIn()" routerLink="/registro">
+  {{ 'navbar.signup' | translate }}
+</a>
+
+<!-- LOGUEADO -->
+<a *ngIf="isLoggedIn()" (click)="logout()">
+  {{ 'navbar.logout' | translate }}
+</a>
 
     <details class="navbar__profile-menu">
       <summary class="navbar__profile" [attr.aria-label]="'navbar.aria.profile' | translate">

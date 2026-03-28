@@ -1,1 +1,75 @@
-<p class="placeholder-page">{{ 'login.placeholder' | translate }}</p>
+<div class="registro-page">
+    <div class="registro-shell">
+  
+      <section class="registro-image" aria-hidden="true"></section>
+  
+      <section class="registro-panel">
+  
+        <div class="logo" aria-hidden="true">
+          {{ 'brand.main' | translate }}
+          <span>{{ 'brand.sub' | translate }}</span>
+        </div>
+  
+        <h1>{{ 'login.title' | translate }}</h1>
+  
+        <form [formGroup]="form" (ngSubmit)="login()" class="registro-form" novalidate>
+  
+          <!-- IDENTIFIER -->
+          <div class="form-group">
+            <label for="identifier">{{ 'login.label.identifier' | translate }}</label>
+  
+            <input
+              id="identifier"
+              type="text"
+              formControlName="identifier"
+              [placeholder]="'login.placeholder.identifier' | translate"
+            />
+  
+            <small *ngIf="form.get('identifier')?.touched && form.get('identifier')?.invalid">
+              {{ 'login.validation.required' | translate }}
+            </small>
+          </div>
+  
+          <!-- PASSWORD -->
+          <div class="form-group">
+            <label for="password">{{ 'login.label.password' | translate }}</label>
+  
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              [placeholder]="'login.placeholder.password' | translate"
+            />
+  
+            <small *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+              {{ 'login.validation.required' | translate }}
+            </small>
+          </div>
+  
+          <!-- BOTÓN -->
+          <button type="submit" class="btn-primary" [disabled]="form.invalid || loading">
+            {{ 'login.button.submit' | translate }}
+          </button>
+  
+          <!-- LINKS -->
+          <a routerLink="/registro" class="btn-secondary">
+            {{ 'login.button.gotoRegister' | translate }}
+          </a>
+  
+          <a routerLink="/home" class="btn-back">
+            {{ 'login.button.backHome' | translate }}
+          </a>
+  
+          <!-- ESTADOS -->
+          <p *ngIf="loading" class="loading">
+            {{ 'login.loading' | translate }}
+          </p>
+  
+          <p *ngIf="errorMessageKey" class="error-message">
+            {{ errorMessageKey | translate }}
+          </p>
+  
+        </form>
+      </section>
+    </div>
+  </div>

@@ -16,6 +16,7 @@
     "tomaMaterias": "Seleção de Disciplinas",
     "login": "Entrar",
     "signup": "Cadastrar-se",
+    "logout": "Sair",
     "menu": {
       "profile": "Ir para o perfil",
       "language": "Mudar idioma"
@@ -65,12 +66,30 @@
   }
 
   },
-  "login": {
-    "title": "Entrar",
-    "email": "Email",
-    "password": "Senha",
-    "placeholder": "Login funcionando!"
+"login": {
+  "title": "Entrar",
+  "label": {
+    "identifier": "Email ou usuário",
+    "password": "Senha"
   },
+  "placeholder": {
+    "identifier": "Digite seu email ou usuário",
+    "password": "Digite sua senha"
+  },
+  "button": {
+    "submit": "Entrar",
+    "gotoRegister": "Criar conta",
+    "backHome": "Voltar ao início"
+  },
+  "validation": {
+    "required": "Este campo é obrigatório"
+  },
+  "loading": "Entrando...",
+  "error": {
+    "invalidCredentials": "Credenciais inválidas",
+    "generic": "Erro inesperado"
+  }
+},
   "malla": {
     "placeholder": "Currículo funcionando!",
     "update": "Atualizar currículo",

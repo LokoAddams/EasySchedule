@@ -1,12 +1,76 @@
 import { Component } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common'; 
+import { RouterModule } from '@angular/router'; 
 
 @Component({
   selector: 'app-login',
-  imports: [TranslatePipe],
+  standalone: true,
+  imports: [ReactiveFormsModule, TranslateModule, CommonModule, RouterModule],
+  
   templateUrl: './login.html',
-  styleUrl: './login.scss',
+  styleUrls: ['./login.scss']
 })
-export class Login {
+export class LoginComponent {
 
+  loading = false;
+  errorMessageKey: string | null = null;
+
+
+  form!: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router
+  ) {
+
+    this.form = this.fb.group({
+      identifier: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
+
+  async login(): Promise<void> {
+
+    // Validacion
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.errorMessageKey = 'login.validation.required';
+      return;
+    }
+
+    this.loading = true;
+    this.errorMessageKey = null;
+
+    try {
+      const res = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.form.value)
+      });
+
+      // Manejo de errores HTTP
+      if (!res.ok) {
+        this.errorMessageKey = res.status === 401
+          ? 'login.error.invalidCredentials'
+          : 'login.error.generic';
+        return;
+      }
+
+      const data = await res.json();
+
+      // Guardar token
+      localStorage.setItem('token', data.token);
+
+      // Redirección
+      this.router.navigate(['/home']);
+
+    } catch {
+      this.errorMessageKey = 'login.error.generic';
+    } finally {
+      this.loading = false;
+    }
+  }
 }

@@ -16,6 +16,7 @@
     "tomaMaterias": "Course Selection",
     "login": "Sign In",
     "signup": "Sign Up",
+    "logout": "Log out",
     "menu": {
       "profile": "Go to profile",
       "language": "Change language"
@@ -64,11 +65,30 @@
     "copyright": "Copyright @ 2022 Agency Creative. All Right Reserved"
   }
   },
-  "login": {
-    "title": "Login",
-    "email": "Email",
-    "password": "Password",
-    "placeholder": "Login Works!"
+"login": {
+  "title": "Sign In",
+  "label": {
+    "identifier": "Email or Username",
+    "password": "Password"
+  },
+  "placeholder": {
+    "identifier": "Enter your email or username",
+    "password": "Enter your password"
+  },
+  "button": {
+    "submit": "Sign In",
+    "gotoRegister": "Create account",
+    "backHome": "Back to home"
+  },
+  "validation": {
+    "required": "This field is required"
+  },
+  "loading": "Signing in...",
+  "error": {
+    "invalidCredentials": "Invalid credentials",
+    "generic": "Unexpected error"
+  }
+
   },
   "malla": {
     "placeholder": "Curriculum Works!",
