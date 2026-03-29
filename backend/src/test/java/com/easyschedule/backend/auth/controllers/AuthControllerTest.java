@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.easyschedule.backend.auth.dto.request.SignupRequest;
 import com.easyschedule.backend.auth.service.AuthService;
+import com.easyschedule.backend.shared.config.BearerTokenAuthenticationFilter;
 import com.easyschedule.backend.shared.exception.GlobalExceptionHandler;
 import com.easyschedule.backend.shared.exception.UserAlreadyExistsException;
 
@@ -32,6 +33,9 @@ class AuthControllerTest {
 
     @MockitoBean
     private AuthService authService;
+
+    @MockitoBean
+    private BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter;
 
     @Test
     void registerUserReturnsCreatedWhenRequestIsValid() throws Exception {
@@ -88,5 +92,22 @@ class AuthControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(authService, never()).registerUser(any(SignupRequest.class));
+    }
+
+    @Test
+    void changePasswordReturnsOkWhenRequestIsValid() throws Exception {
+        String requestBody = """
+                {
+                  "currentPassword": "actual1234",
+                  "newPassword": "nuevaPassword123",
+                  "confirmNewPassword": "nuevaPassword123"
+                }
+                """;
+
+        mockMvc.perform(post("/api/change-password")
+                        .principal(() -> "19")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk());
     }
 }

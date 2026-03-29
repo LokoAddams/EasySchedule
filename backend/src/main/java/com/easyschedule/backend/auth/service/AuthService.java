@@ -8,12 +8,15 @@ import com.easyschedule.backend.auth.dto.request.SignupRequest;
 import com.easyschedule.backend.auth.models.User;
 
 import com.easyschedule.backend.auth.repositories.UserRepository;
+import com.easyschedule.backend.auth.dto.request.ChangePasswordRequest;
 import com.easyschedule.backend.shared.exception.UserAlreadyExistsException;
 import java.util.Optional;
 import java.util.Map;
+import java.time.OffsetDateTime;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.easyschedule.backend.auth.dto.request.LoginRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService {
@@ -83,6 +86,29 @@ public class AuthService {
         String token = extractBearerToken(authorizationHeader);
         sessionTokenService.revokeToken(token);
         return ResponseEntity.ok().body(Map.of("message", "Sesion cerrada correctamente"));
+    }
+
+    public ResponseEntity<?> changePassword(Long userId, ChangePasswordRequest request) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        if (!encoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contrasenia actual es incorrecta");
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La nueva contrasenia y su confirmacion no coinciden");
+        }
+
+        if (encoder.matches(request.getNewPassword(), user.getPasswordHash())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La nueva contrasenia debe ser diferente a la actual");
+        }
+
+        user.setPasswordHash(encoder.encode(request.getNewPassword()));
+        user.setUpdatedAt(OffsetDateTime.now());
+        userRepository.save(user);
+
+        return ResponseEntity.ok().body(Map.of("message", "Contrasenia actualizada correctamente"));
     }
 
     private String extractBearerToken(String authorizationHeader) {

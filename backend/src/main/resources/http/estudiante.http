@@ -7,6 +7,7 @@
 @newUsername = security_demo_user_v2
 @newEmail = security_demo_user_v2@example.com
 @token = REPLACE_WITH_LOGIN_TOKEN
+@newPassword = DemoPass1234
 
 ### 1) Registro (201)
 POST {{host}}/api/estudiantes/registro
@@ -69,3 +70,14 @@ Authorization: Bearer {{token}}
 ### 7) Verificar perfil actualizado (200)
 GET {{host}}/api/estudiantes/perfil/{{newUsername}}
 Authorization: Bearer {{token}}
+
+### 8) Cambiar contrasenia (200)
+POST {{host}}/api/change-password
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "currentPassword": "{{password}}",
+  "newPassword": "{{newPassword}}",
+  "confirmNewPassword": "{{newPassword}}"
+}

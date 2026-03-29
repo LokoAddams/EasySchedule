@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.easyschedule.backend.estudiante.dto.EstudianteResponse;
 import com.easyschedule.backend.estudiante.dto.PerfilUpdateRequest;
 import com.easyschedule.backend.estudiante.service.EstudianteService;
+import com.easyschedule.backend.shared.config.BearerTokenAuthenticationFilter;
 import com.easyschedule.backend.shared.exception.GlobalExceptionHandler;
 
 @WebMvcTest(EstudianteController.class)
@@ -36,19 +37,25 @@ class EstudianteControllerTest {
     @MockitoBean
     private EstudianteService estudianteService;
 
+    @MockitoBean
+    private BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter;
+
     @Test
     void findProfileByUsernameReturnsOk() throws Exception {
+        when(estudianteService.canAccessProfile("diego", 1L)).thenReturn(true);
         when(estudianteService.findByUsername("diego")).thenReturn(mockResponse("diego"));
 
-        mockMvc.perform(get("/api/estudiantes/perfil/diego"))
+        mockMvc.perform(get("/api/estudiantes/perfil/diego").principal(() -> "1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.username").value("diego"));
 
+        verify(estudianteService).canAccessProfile("diego", 1L);
         verify(estudianteService).findByUsername("diego");
     }
 
     @Test
     void updateProfileReturnsOkWhenRequestIsValid() throws Exception {
+        when(estudianteService.canAccessProfile("diego", 1L)).thenReturn(true);
         when(estudianteService.updateProfile(any(), any())).thenReturn(mockResponse("diego2"));
 
         String body = """
@@ -65,11 +72,13 @@ class EstudianteControllerTest {
             """;
 
         mockMvc.perform(put("/api/estudiantes/perfil/diego")
+                .principal(() -> "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.username").value("diego2"));
 
+        verify(estudianteService).canAccessProfile("diego", 1L);
         verify(estudianteService).updateProfile(any(String.class), any(PerfilUpdateRequest.class));
     }
 
@@ -89,6 +98,7 @@ class EstudianteControllerTest {
             """;
 
         mockMvc.perform(put("/api/estudiantes/perfil/diego")
+                .principal(() -> "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidBody))
             .andExpect(status().isBadRequest());

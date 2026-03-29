@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.server.ResponseStatusException;
+import java.security.Principal;
 
 import java.util.List;
 
@@ -63,9 +63,9 @@ public class EstudianteController {
     @GetMapping("/perfil/{username}")
     public EstudianteResponse findProfileByUsername(
         @PathVariable("username") String username,
-        Authentication authentication
+        Principal principal
     ) {
-        validateProfileOwnership(username, authentication);
+        validateProfileOwnership(username, principal);
         return estudianteService.findByUsername(username);
     }
 
@@ -73,20 +73,20 @@ public class EstudianteController {
     public EstudianteResponse updateProfile(
         @PathVariable("username") String username,
         @Valid @RequestBody PerfilUpdateRequest request,
-        Authentication authentication
+        Principal principal
     ) {
-        validateProfileOwnership(username, authentication);
+        validateProfileOwnership(username, principal);
         return estudianteService.updateProfile(username, request);
     }
 
-    private void validateProfileOwnership(String username, Authentication authentication) {
-        if (authentication == null || authentication.getName() == null) {
+    private void validateProfileOwnership(String username, Principal principal) {
+        if (principal == null || principal.getName() == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sesión inválida");
         }
 
         Long userId;
         try {
-            userId = Long.valueOf(authentication.getName());
+            userId = Long.valueOf(principal.getName());
         } catch (NumberFormatException ex) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sesión inválida");
         }
