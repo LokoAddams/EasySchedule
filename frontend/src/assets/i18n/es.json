@@ -157,6 +157,33 @@
     "success": {
       "updated": "Perfil actualizado correctamente."
     },
+    "password": {
+      "title": "Cambiar contraseña",
+      "subtitle": "Actualiza tu contraseña para mantener segura tu cuenta.",
+      "fields": {
+        "currentPassword": "Contraseña actual",
+        "newPassword": "Nueva contraseña",
+        "confirmNewPassword": "Repetir nueva contraseña"
+      },
+      "actions": {
+        "save": "Guardar contraseña",
+        "saving": "Guardando..."
+      },
+      "validation": {
+        "minLength": "La nueva contraseña debe tener al menos 8 caracteres.",
+        "mismatch": "La nueva contraseña y su repetición no coinciden."
+      },
+      "success": {
+        "updated": "Contraseña actualizada correctamente."
+      },
+      "error": {
+        "currentIncorrect": "La contraseña actual no es correcta.",
+        "sameAsCurrent": "La nueva contraseña debe ser distinta a la actual.",
+        "mismatch": "La nueva contraseña y su repetición no coinciden.",
+        "unauthorized": "Tu sesión expiró. Vuelve a iniciar sesión.",
+        "generic": "No se pudo cambiar la contraseña. Intenta nuevamente."
+      }
+    },
     "modal": {
       "updatedTitle": "Perfil actualizado",
       "accept": "Aceptar",

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { Perfil } from './perfil';
@@ -33,7 +33,7 @@ describe('Perfil Component', () => {
   };
 
   beforeEach(async () => {
-    perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername', 'updatePerfil']);
+    perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername', 'updatePerfil', 'changePassword']);
     authSessionSpy = jasmine.createSpyObj<AuthSessionService>(
       'AuthSessionService',
       ['getCurrentUsername', 'setCurrentUsername', 'setProfileCompleted', 'clearSession'],
@@ -42,6 +42,7 @@ describe('Perfil Component', () => {
     toastServiceSpy = jasmine.createSpyObj<ToastService>('ToastService', ['success', 'error']);
 
     perfilServiceSpy.getPerfilByUsername.and.returnValue(of(perfilMock));
+    perfilServiceSpy.changePassword.and.returnValue(of({ message: 'ok' }));
     languageServiceSpy.getCurrentLanguage.and.returnValue('es');
     authSessionSpy.getCurrentUsername.and.returnValue('diego');
 
@@ -133,5 +134,45 @@ describe('Perfil Component', () => {
     expect(toastServiceSpy.success).toHaveBeenCalledWith('perfil.success.updated');
     expect((component as any).editMode).toBeFalse();
     expect(authSessionSpy.setCurrentUsername).toHaveBeenCalledWith('diego2');
+  });
+
+  it('changes password and emits success toast', () => {
+    fixture.detectChanges();
+
+    (component as any).abrirCambioContrasenia();
+    (component as any).passwordForm.patchValue({
+      currentPassword: 'actual1234',
+      newPassword: 'nueva1234',
+      confirmNewPassword: 'nueva1234',
+    });
+
+    (component as any).guardarCambioContrasenia();
+
+    expect(perfilServiceSpy.changePassword).toHaveBeenCalledWith({
+      currentPassword: 'actual1234',
+      newPassword: 'nueva1234',
+      confirmNewPassword: 'nueva1234',
+    });
+    expect(toastServiceSpy.success).toHaveBeenCalledWith('perfil.password.success.updated');
+    expect((component as any).showChangePasswordModal).toBeFalse();
+  });
+
+  it('shows toast when current password is incorrect', () => {
+    perfilServiceSpy.changePassword.and.returnValue(
+      throwError(() => ({ status: 400, error: { message: 'La contrasenia actual es incorrecta' } })),
+    );
+    fixture.detectChanges();
+
+    (component as any).abrirCambioContrasenia();
+    (component as any).passwordForm.patchValue({
+      currentPassword: 'incorrecta',
+      newPassword: 'nueva1234',
+      confirmNewPassword: 'nueva1234',
+    });
+
+    (component as any).guardarCambioContrasenia();
+
+    expect(toastServiceSpy.error).toHaveBeenCalledWith('perfil.password.error.currentIncorrect');
+    expect((component as any).showChangePasswordModal).toBeTrue();
   });
 });

@@ -65,7 +65,7 @@
 
 			<div class="perfil-actions">
 				<button class="perfil-edit-btn" type="button" (click)="activarEdicion()">{{ 'perfil.actions.edit' | translate }}</button>
-				<button class="perfil-password-btn" type="button">{{ 'perfil.actions.changePassword' | translate }}</button>
+				<button class="perfil-password-btn" type="button" (click)="abrirCambioContrasenia()">{{ 'perfil.actions.changePassword' | translate }}</button>
 			</div>
 		</article>
 
@@ -155,9 +155,58 @@
 					{{ saving ? ('perfil.actions.saving' | translate) : ('perfil.actions.save' | translate) }}
 				</button>
 				<button class="perfil-cancel-btn" type="button" (click)="cancelarEdicion()">{{ 'perfil.actions.cancel' | translate }}</button>
-				<button class="perfil-password-btn" type="button">{{ 'perfil.actions.changePassword' | translate }}</button>
+				<button class="perfil-password-btn" type="button" (click)="abrirCambioContrasenia()">{{ 'perfil.actions.changePassword' | translate }}</button>
 			</div>
 		</form>
+	</div>
+
+	<div class="perfil-modal-backdrop" *ngIf="showChangePasswordModal" (click)="cerrarCambioContraseniaBackdrop($event)">
+		<section class="perfil-modal perfil-modal--password" role="dialog" aria-modal="true" [attr.aria-label]="'perfil.password.title' | translate">
+			<div class="perfil-modal__icon" aria-hidden="true">!</div>
+			<h2 class="perfil-modal__title">{{ 'perfil.password.title' | translate }}</h2>
+			<p class="perfil-modal__text">{{ 'perfil.password.subtitle' | translate }}</p>
+
+			<form class="perfil-password-form" [formGroup]="passwordForm" (ngSubmit)="guardarCambioContrasenia()">
+				<label class="perfil-field">
+					<span>{{ 'perfil.password.fields.currentPassword' | translate }}</span>
+					<input type="password" formControlName="currentPassword" autocomplete="current-password" />
+					<small class="form-error" *ngIf="passwordForm.controls.currentPassword.touched && passwordForm.controls.currentPassword.invalid">
+						{{ 'perfil.validation.required' | translate }}
+					</small>
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.password.fields.newPassword' | translate }}</span>
+					<input type="password" formControlName="newPassword" autocomplete="new-password" />
+					<small class="form-error" *ngIf="passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.errors?.['required']">
+						{{ 'perfil.validation.required' | translate }}
+					</small>
+					<small class="form-error" *ngIf="passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.errors?.['minlength']">
+						{{ 'perfil.password.validation.minLength' | translate }}
+					</small>
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.password.fields.confirmNewPassword' | translate }}</span>
+					<input type="password" formControlName="confirmNewPassword" autocomplete="new-password" />
+					<small class="form-error" *ngIf="passwordForm.controls.confirmNewPassword.touched && passwordForm.controls.confirmNewPassword.invalid">
+						{{ 'perfil.validation.required' | translate }}
+					</small>
+					<small class="form-error" *ngIf="showPasswordMismatchError()">
+						{{ 'perfil.password.validation.mismatch' | translate }}
+					</small>
+				</label>
+
+				<div class="perfil-modal__actions">
+					<button type="button" class="perfil-modal__btn perfil-modal__btn--ghost" (click)="cerrarCambioContrasenia()">
+						{{ 'perfil.modal.cancel' | translate }}
+					</button>
+					<button type="submit" class="perfil-modal__btn" [disabled]="!canSubmitPasswordChange()">
+						{{ changingPassword ? ('perfil.password.actions.saving' | translate) : ('perfil.password.actions.save' | translate) }}
+					</button>
+				</div>
+			</form>
+		</section>
 	</div>
 
 	<div class="perfil-modal-backdrop" *ngIf="showIdentityConfirmModal" (click)="cerrarConfirmacionCambioIdentidadBackdrop($event)">

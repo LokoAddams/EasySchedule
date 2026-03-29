@@ -33,3 +33,9 @@ export interface PerfilUpdateRequest {
 	carrera: string;
 	universidad: string;
 }
+
+export interface ChangePasswordRequest {
+	currentPassword: string;
+	newPassword: string;
+	confirmNewPassword: string;
+}

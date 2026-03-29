@@ -8,7 +8,7 @@ describe('PerfilService', () => {
   let apiServiceSpy: jasmine.SpyObj<ApiService>;
 
   beforeEach(() => {
-    apiServiceSpy = jasmine.createSpyObj<ApiService>('ApiService', ['get', 'put']);
+    apiServiceSpy = jasmine.createSpyObj<ApiService>('ApiService', ['get', 'put', 'post']);
     service = new PerfilService(apiServiceSpy);
   });
 
@@ -37,5 +37,19 @@ describe('PerfilService', () => {
     service.updatePerfil('juan perez', payload).subscribe();
 
     expect(apiServiceSpy.put).toHaveBeenCalledWith('/api/estudiantes/perfil/juan%20perez', payload);
+  });
+
+  it('calls change password endpoint', () => {
+    apiServiceSpy.post.and.returnValue(of({ message: 'ok' } as never));
+
+    const payload = {
+      currentPassword: 'oldPass123',
+      newPassword: 'newPass1234',
+      confirmNewPassword: 'newPass1234',
+    };
+
+    service.changePassword(payload).subscribe();
+
+    expect(apiServiceSpy.post).toHaveBeenCalledWith('/api/change-password', payload);
   });
 });
