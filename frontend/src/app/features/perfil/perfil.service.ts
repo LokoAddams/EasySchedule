@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiService } from '../../services/api.service';
-import { MallaResponse, PerfilResponse, PerfilUpdateRequest } from './perfil.model';
+import { ChangePasswordRequest, MallaResponse, PerfilResponse, PerfilUpdateRequest } from './perfil.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -22,5 +22,9 @@ export class PerfilService {
 	updatePerfil(currentUsername: string, payload: PerfilUpdateRequest): Observable<PerfilResponse> {
 		const encodedUsername = encodeURIComponent(currentUsername);
 		return this.apiService.put<PerfilResponse, PerfilUpdateRequest>(`/api/estudiantes/perfil/${encodedUsername}`, payload);
+	}
+
+	changePassword(payload: ChangePasswordRequest): Observable<{ message: string }> {
+		return this.apiService.post<{ message: string }, ChangePasswordRequest>('/api/change-password', payload);
 	}
 }

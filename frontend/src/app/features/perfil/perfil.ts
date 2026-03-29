@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { NgbDateStruct, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { LanguageService } from '../../core/services/language.service';
 import { ToastService } from '../../core/services/toast.service';
-import { PerfilResponse, PerfilUpdateRequest } from './perfil.model';
+import { ChangePasswordRequest, PerfilResponse, PerfilUpdateRequest } from './perfil.model';
 import { PerfilService } from './perfil.service';
 
 type PerfilEditForm = FormGroup<{
@@ -21,6 +21,12 @@ type PerfilEditForm = FormGroup<{
   universidad: FormControl<string>;
 }>;
 
+type PasswordChangeForm = FormGroup<{
+  currentPassword: FormControl<string>;
+  newPassword: FormControl<string>;
+  confirmNewPassword: FormControl<string>;
+}>;
+
 @Component({
   selector: 'app-perfil',
   imports: [CommonModule, ReactiveFormsModule, NgbDatepickerModule, TranslatePipe],
@@ -32,11 +38,14 @@ export class Perfil implements OnInit {
   protected editMode = false;
   protected loading = true;
   protected saving = false;
+  protected changingPassword = false;
   protected errorKey = '';
   protected showIdentityConfirmModal = false;
+  protected showChangePasswordModal = false;
   protected readonly fechaNacimientoMinDate: NgbDateStruct = { year: 1950, month: 1, day: 1 };
   protected readonly fechaNacimientoMaxDate: NgbDateStruct;
   protected readonly editForm: PerfilEditForm;
+  protected readonly passwordForm: PasswordChangeForm;
   private pendingUpdatePayload: PerfilUpdateRequest | null = null;
 
   constructor(
@@ -64,6 +73,15 @@ export class Perfil implements OnInit {
       carrera: this.fb.nonNullable.control(''),
       universidad: this.fb.nonNullable.control(''),
     }) as PerfilEditForm;
+
+    this.passwordForm = this.fb.group(
+      {
+        currentPassword: this.fb.nonNullable.control('', [Validators.required]),
+        newPassword: this.fb.nonNullable.control('', [Validators.required, Validators.minLength(8)]),
+        confirmNewPassword: this.fb.nonNullable.control('', [Validators.required]),
+      },
+      { validators: this.passwordsMatchValidator },
+    ) as PasswordChangeForm;
   }
 
   ngOnInit(): void {
@@ -176,6 +194,88 @@ export class Perfil implements OnInit {
     this.ejecutarGuardado(updatePayload);
   }
 
+  protected abrirCambioContrasenia(): void {
+    this.passwordForm.reset({
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    });
+    this.passwordForm.markAsPristine();
+    this.passwordForm.markAsUntouched();
+    this.showChangePasswordModal = true;
+  }
+
+  protected cerrarCambioContrasenia(): void {
+    this.showChangePasswordModal = false;
+    this.changingPassword = false;
+  }
+
+  protected cerrarCambioContraseniaBackdrop(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.cerrarCambioContrasenia();
+    }
+  }
+
+  protected guardarCambioContrasenia(): void {
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    const payload: ChangePasswordRequest = {
+      currentPassword: this.passwordForm.controls.currentPassword.value,
+      newPassword: this.passwordForm.controls.newPassword.value,
+      confirmNewPassword: this.passwordForm.controls.confirmNewPassword.value,
+    };
+
+    this.changingPassword = true;
+    this.perfilService.changePassword(payload).subscribe({
+      next: () => {
+        this.changingPassword = false;
+        this.cerrarCambioContrasenia();
+        this.toastService.success('perfil.password.success.updated');
+      },
+      error: (error: { status?: number; error?: { message?: string } }) => {
+        this.changingPassword = false;
+        const backendMessage = this.normalizeBackendMessage(error.error?.message);
+
+        if (error.status === 401) {
+          this.toastService.error('perfil.password.error.unauthorized');
+          return;
+        }
+
+        if (backendMessage.includes('contrasenia actual es incorrecta') || backendMessage.includes('contrasena actual es incorrecta')) {
+          this.toastService.error('perfil.password.error.currentIncorrect');
+          return;
+        }
+
+        if (backendMessage.includes('confirmacion no coinciden') || backendMessage.includes('no coinciden')) {
+          this.toastService.error('perfil.password.error.mismatch');
+          return;
+        }
+
+        if (backendMessage.includes('debe ser diferente')) {
+          this.toastService.error('perfil.password.error.sameAsCurrent');
+          return;
+        }
+
+        this.toastService.error('perfil.password.error.generic');
+      },
+    });
+  }
+
+  protected showPasswordMismatchError(): boolean {
+    const confirmControl = this.passwordForm.controls.confirmNewPassword;
+    const newPasswordControl = this.passwordForm.controls.newPassword;
+
+    return (confirmControl.touched || newPasswordControl.touched)
+      && Boolean(this.passwordForm.errors?.['passwordMismatch']);
+  }
+
+  protected canSubmitPasswordChange(): boolean {
+    return !this.changingPassword && this.passwordForm.valid;
+  }
+
   private ejecutarGuardado(updatePayload: PerfilUpdateRequest): void {
     if (!this.perfil) {
       return;
@@ -233,7 +333,19 @@ export class Perfil implements OnInit {
 
   private extractBackendMessage(error: { error?: { message?: string } }): string {
     const message = error.error?.message;
-    return typeof message === 'string' ? message.toLowerCase() : '';
+    return this.normalizeBackendMessage(message);
+  }
+
+  private normalizeBackendMessage(message?: string): string {
+    if (typeof message !== 'string') {
+      return '';
+    }
+
+    return message
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
   }
 
   protected getNombreCompleto(): string {
@@ -333,4 +445,15 @@ export class Perfil implements OnInit {
     const day = String(dateStruct.day).padStart(2, '0');
     return `${dateStruct.year}-${month}-${day}`;
   }
+
+  private passwordsMatchValidator = (form: FormGroup): ValidationErrors | null => {
+    const newPassword = form.get('newPassword')?.value;
+    const confirmNewPassword = form.get('confirmNewPassword')?.value;
+
+    if (!newPassword || !confirmNewPassword) {
+      return null;
+    }
+
+    return newPassword === confirmNewPassword ? null : { passwordMismatch: true };
+  };
 }

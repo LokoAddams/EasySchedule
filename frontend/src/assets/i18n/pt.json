@@ -158,6 +158,33 @@
     "success": {
       "updated": "Perfil atualizado com sucesso."
     },
+    "password": {
+      "title": "Alterar senha",
+      "subtitle": "Atualize sua senha para manter sua conta segura.",
+      "fields": {
+        "currentPassword": "Senha atual",
+        "newPassword": "Nova senha",
+        "confirmNewPassword": "Repetir nova senha"
+      },
+      "actions": {
+        "save": "Salvar senha",
+        "saving": "Salvando..."
+      },
+      "validation": {
+        "minLength": "A nova senha deve ter pelo menos 8 caracteres.",
+        "mismatch": "A nova senha e a confirmação não coincidem."
+      },
+      "success": {
+        "updated": "Senha atualizada com sucesso."
+      },
+      "error": {
+        "currentIncorrect": "A senha atual está incorreta.",
+        "sameAsCurrent": "A nova senha deve ser diferente da senha atual.",
+        "mismatch": "A nova senha e a confirmação não coincidem.",
+        "unauthorized": "Sua sessão expirou. Faça login novamente.",
+        "generic": "Não foi possível alterar a senha. Tente novamente."
+      }
+    },
     "modal": {
       "updatedTitle": "Perfil atualizado",
       "accept": "Aceitar",

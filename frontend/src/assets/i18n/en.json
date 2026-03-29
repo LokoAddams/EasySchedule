@@ -158,6 +158,33 @@
     "success": {
       "updated": "Profile updated successfully."
     },
+    "password": {
+      "title": "Change password",
+      "subtitle": "Update your password to keep your account secure.",
+      "fields": {
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "confirmNewPassword": "Repeat new password"
+      },
+      "actions": {
+        "save": "Save password",
+        "saving": "Saving..."
+      },
+      "validation": {
+        "minLength": "The new password must be at least 8 characters long.",
+        "mismatch": "The new password and confirmation do not match."
+      },
+      "success": {
+        "updated": "Password updated successfully."
+      },
+      "error": {
+        "currentIncorrect": "Current password is incorrect.",
+        "sameAsCurrent": "The new password must be different from the current one.",
+        "mismatch": "The new password and confirmation do not match.",
+        "unauthorized": "Your session expired. Please sign in again.",
+        "generic": "Could not change password. Please try again."
+      }
+    },
     "modal": {
       "updatedTitle": "Profile updated",
       "accept": "Accept",
