@@ -3,10 +3,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, startWith } from 'rxjs';
 import { NavbarComponent } from './layout/navbar/navbar.component';
+import { ToastContainerComponent } from './shared/ui/toast-container/toast-container.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent],
+  imports: [RouterOutlet, NavbarComponent, ToastContainerComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

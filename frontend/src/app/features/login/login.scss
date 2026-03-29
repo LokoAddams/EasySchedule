@@ -30,12 +30,31 @@
   }
   
   .registro-panel {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 2.4rem 2.1rem;
     background: var(--color-sand);
+  }
+
+  .panel-back-link {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.4rem;
+    color: var(--color-blue-dark);
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(47, 79, 115, 0.55);
+    transition: color 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      color: #1f3658;
+      border-color: #1f3658;
+    }
   }
   
   .logo {
@@ -111,9 +130,9 @@
   .btn-primary,
   .btn-secondary {
     align-self: center;
-    width: 11rem;
-    min-height: 2.2rem;
-    border-radius: 0.5rem;
+    width: 14rem;
+    min-height: 2.8rem;
+    border-radius: 0.75rem;
     border: none;
     text-decoration: none;
     display: inline-flex;
@@ -122,24 +141,24 @@
     cursor: pointer;
     font-family: 'Nunito Sans', sans-serif;
     font-weight: 700;
-  }
-  
-  .btn-back {
-    align-self: center;
-    margin-top: 0.1rem;
-    color: #2f4f73;
-    text-decoration: none;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    border-bottom: 1px solid rgba(47, 79, 115, 0.55);
+    font-size: 0.96rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(16, 32, 52, 0.16);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
   }
   
   .btn-primary {
-    margin-top: 0.65rem;
+    margin-top: 0.8rem;
     background: var(--color-blue);
     color: #f4f8ff;
-    font-size: 0.95rem;
   
     &:disabled {
       opacity: 0.55;
@@ -148,19 +167,16 @@
   }
   
   .btn-secondary {
-    width: auto;
-    min-height: 1.45rem;
-    margin-top: 0.2rem;
-    padding: 0 0.95rem;
-    border-radius: 999px;
-    background: #7f95b7;
+    width: 11.5rem;
+    min-height: 2.45rem;
+    margin-top: 0.35rem;
+    background: #5f7ea6;
     color: #f4f8ff;
-    font-size: 0.58rem;
-    letter-spacing: 0.2px;
+    font-size: 0.88rem;
   }
   
   small {
-    color: #962319;
+    color: var(--color-error);
     font-size: 0.78rem;
   }
   
@@ -181,7 +197,7 @@
   }
   
   .error-message {
-    color: #9f2017;
+    color: var(--color-error);
   }
   
   @media (max-width: 980px) {
@@ -210,6 +226,11 @@
   
     .registro-panel {
       padding: 1.6rem 1.25rem 2rem;
+    }
+
+    .panel-back-link {
+      top: 0.9rem;
+      right: 1rem;
     }
   
     .registro-form {

@@ -2,6 +2,7 @@ package com.easyschedule.backend.estudiante.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -12,10 +13,12 @@ import com.easyschedule.backend.auth.models.User;
 import com.easyschedule.backend.auth.repositories.UserRepository;
 import com.easyschedule.backend.auth.service.AuthService;
 import com.easyschedule.backend.estudiante.dto.EstudianteUpdateRequest;
+import com.easyschedule.backend.estudiante.dto.PerfilUpdateRequest;
 import com.easyschedule.backend.estudiante.model.Estudiante;
 import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
 import com.easyschedule.backend.malla.model.Malla;
 import com.easyschedule.backend.malla.repository.MallaRepository;
+import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -25,6 +28,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
 class EstudianteServiceTest {
@@ -101,5 +106,112 @@ class EstudianteServiceTest {
         assertTrue(response.profileCompleted());
         assertEquals(1L, response.universidadId());
         assertEquals(2L, response.carreraId());
+    }
+
+    @Test
+    void findByUsernameReturnsProfileWhenUserExists() {
+        User user = new User("diego", "diego@mail.com", "hashed");
+        user.setId(40L);
+        Estudiante estudiante = buildProfile("diego", "diego@mail.com");
+        estudiante.setId(40L);
+        estudiante.setUser(user);
+
+        when(userRepository.findByUsernameIgnoreCase("diego")).thenReturn(Optional.of(user));
+        when(estudianteRepository.findById(40L)).thenReturn(Optional.of(estudiante));
+
+        var response = estudianteService.findByUsername("diego");
+
+        assertEquals("diego", response.username());
+        assertEquals("diego@mail.com", response.email());
+    }
+
+    @Test
+    void findByUsernameThrowsWhenUserDoesNotExist() {
+        when(userRepository.findByUsernameIgnoreCase("missing")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailIgnoreCase("missing")).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> estudianteService.findByUsername("missing"));
+    }
+
+    @Test
+    void updateProfileUpdatesUserAndProfileData() {
+        User user = new User("diego", "diego@mail.com", "hashed");
+        user.setId(30L);
+
+        Estudiante estudiante = buildProfile("diego", "diego@mail.com");
+        estudiante.setId(30L);
+        estudiante.setUser(user);
+
+        PerfilUpdateRequest request = new PerfilUpdateRequest(
+            "diego2",
+            "Diego",
+            "Suarez",
+            "diego2@mail.com",
+            "998877",
+            LocalDate.of(2001, 5, 10),
+            "",
+            ""
+        );
+
+        when(userRepository.findByUsernameIgnoreCase("diego")).thenReturn(Optional.of(user));
+        when(estudianteRepository.findById(30L)).thenReturn(Optional.of(estudiante));
+        when(userRepository.existsByUsernameIgnoreCase("diego2")).thenReturn(false);
+        when(userRepository.existsByEmailIgnoreCase("diego2@mail.com")).thenReturn(false);
+        when(estudianteRepository.existsByUsernameIgnoreCase("diego2")).thenReturn(false);
+        when(estudianteRepository.existsByCorreoIgnoreCase("diego2@mail.com")).thenReturn(false);
+        when(estudianteRepository.existsByCarnetIdentidadIgnoreCase("998877")).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(estudianteRepository.save(any(Estudiante.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        var response = estudianteService.updateProfile("diego", request);
+
+        assertEquals("diego2", response.username());
+        assertEquals("diego2@mail.com", response.email());
+        assertEquals("Diego", response.nombre());
+        assertEquals("Suarez", response.apellido());
+        assertEquals("998877", response.carnetIdentidad());
+        verify(userRepository).save(any(User.class));
+        verify(estudianteRepository).save(any(Estudiante.class));
+    }
+
+    @Test
+    void updateProfileThrowsConflictWhenUsernameAlreadyExistsIgnoreCase() {
+        User user = new User("diego", "diego@mail.com", "hashed");
+        user.setId(30L);
+
+        Estudiante estudiante = buildProfile("diego", "diego@mail.com");
+        estudiante.setId(30L);
+        estudiante.setUser(user);
+
+        PerfilUpdateRequest request = new PerfilUpdateRequest(
+            "DiegoNuevo",
+            "Diego",
+            "Suarez",
+            "diego@mail.com",
+            "998877",
+            LocalDate.of(2001, 5, 10),
+            "",
+            ""
+        );
+
+        when(userRepository.findByUsernameIgnoreCase("diego")).thenReturn(Optional.of(user));
+        when(estudianteRepository.findById(30L)).thenReturn(Optional.of(estudiante));
+        when(userRepository.existsByUsernameIgnoreCase("DiegoNuevo")).thenReturn(true);
+
+        ResponseStatusException ex = assertThrows(
+            ResponseStatusException.class,
+            () -> estudianteService.updateProfile("diego", request)
+        );
+
+        assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
+    }
+
+    private Estudiante buildProfile(String username, String email) {
+        Estudiante profile = new Estudiante();
+        profile.setUsername(username);
+        profile.setCorreo(email);
+        profile.setFechaRegistro(OffsetDateTime.now());
+        profile.setProfileCompleted(false);
+        return profile;
     }
 }

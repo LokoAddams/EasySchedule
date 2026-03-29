@@ -1,7 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { ApiService } from '../../services/api.service';
+import { AuthSessionService } from '../../core/services/auth-session.service';
 
 @Component({
   selector: 'app-home',
@@ -9,24 +10,23 @@ import { ApiService } from '../../services/api.service';
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home implements OnInit {
-  protected readonly healthStatusKey = signal<string>('home.status.checkingConnection');
-  protected readonly healthStatusParams = signal<Record<string, unknown>>({});
-
+export class Home {
   constructor(
-    private readonly apiService: ApiService,
+    private readonly authSessionService: AuthSessionService,
+    private readonly router: Router,
   ) {}
 
-  ngOnInit(): void {
-    this.apiService.get<unknown[]>('/api/estudiantes').subscribe({
-      next: () => {
-        this.healthStatusKey.set('home.status.connectionSuccess');
-        this.healthStatusParams.set({});
-      },
-      error: (error) => {
-        this.healthStatusKey.set('home.status.connectionError');
-        this.healthStatusParams.set({ message: error.message });
-      },
-    });
+  protected goToStart(): void {
+    if (!this.authSessionService.isLoggedIn()) {
+      void this.router.navigate(['/login']);
+      return;
+    }
+
+    if (!this.authSessionService.isProfileCompleted()) {
+      void this.router.navigate(['/perfil']);
+      return;
+    }
+
+    void this.router.navigate(['/malla']);
   }
 }

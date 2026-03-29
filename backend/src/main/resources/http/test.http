@@ -1,2 +1,9 @@
-GET http://localhost:8080/health
-GET http://localhost:8080/api/estudiantes
+@hostname = localhost
+@port = 8080
+@host = http://{{hostname}}:{{port}}
+
+### Healthcheck backend
+GET {{host}}/health
+
+### Feature flags
+GET {{host}}/api/features

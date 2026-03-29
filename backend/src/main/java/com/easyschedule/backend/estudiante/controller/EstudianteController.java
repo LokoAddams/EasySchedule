@@ -3,6 +3,7 @@ package com.easyschedule.backend.estudiante.controller;
 import com.easyschedule.backend.auth.dto.RegistroRequest;
 import com.easyschedule.backend.estudiante.dto.EstudianteResponse;
 import com.easyschedule.backend.estudiante.dto.EstudianteUpdateRequest;
+import com.easyschedule.backend.estudiante.dto.PerfilUpdateRequest;
 import com.easyschedule.backend.estudiante.service.EstudianteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -36,18 +39,18 @@ public class EstudianteController {
     }
 
     @GetMapping("/{id}")
-    public EstudianteResponse findById(@PathVariable Long id) {
+    public EstudianteResponse findById(@PathVariable("id") Long id) {
         return estudianteService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public EstudianteResponse update(@PathVariable Long id, @RequestBody EstudianteUpdateRequest request) {
+    public EstudianteResponse update(@PathVariable("id") Long id, @RequestBody EstudianteUpdateRequest request) {
         return estudianteService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         estudianteService.delete(id);
     }
 
@@ -55,5 +58,41 @@ public class EstudianteController {
     public ResponseEntity<EstudianteResponse> register(@Valid @RequestBody RegistroRequest request) {
         EstudianteResponse response = estudianteService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/perfil/{username}")
+    public EstudianteResponse findProfileByUsername(
+        @PathVariable("username") String username,
+        Authentication authentication
+    ) {
+        validateProfileOwnership(username, authentication);
+        return estudianteService.findByUsername(username);
+    }
+
+    @PutMapping("/perfil/{username}")
+    public EstudianteResponse updateProfile(
+        @PathVariable("username") String username,
+        @Valid @RequestBody PerfilUpdateRequest request,
+        Authentication authentication
+    ) {
+        validateProfileOwnership(username, authentication);
+        return estudianteService.updateProfile(username, request);
+    }
+
+    private void validateProfileOwnership(String username, Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sesión inválida");
+        }
+
+        Long userId;
+        try {
+            userId = Long.valueOf(authentication.getName());
+        } catch (NumberFormatException ex) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sesión inválida");
+        }
+
+        if (!estudianteService.canAccessProfile(username, userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permisos para acceder a este perfil");
+        }
     }
 }

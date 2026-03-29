@@ -6,6 +6,17 @@
       "pt": "PT"
     }
   },
+  "toast": {
+    "dismiss": "Fechar aviso"
+  },
+  "ngb": {
+    "datepicker": {
+      "select-month": "Selecionar mês",
+      "select-year": "Selecionar ano",
+      "previous-month": "Mês anterior",
+      "next-month": "Próximo mês"
+    }
+  },
   "brand": {
     "main": "EASY",
     "sub": "SCHEDULE"
@@ -34,8 +45,8 @@
       "connectionSuccess": "Conexão realizada com sucesso",
       "connectionError": "Erro de conexão: {{message}}"
     },
-    "subtitle": "Designe seu caminho acadêmico sem complicações",
-    "description":"Nossa plataforma analisa seus requisitos e objetivos em tempo real para oferecer você a combinação perfeita de matérias para seu próximo semestre. Nós não apenas criamos um horário; mostramos exatamente como cada escolha de hoje acelera sua graduação de amanhã. Assuma o controle do seu caminho acadêmico e pare de adivinhar!",
+    "subtitle": "Planeje seu caminho acadêmico sem complicações",
+    "description":"Nossa plataforma analisa seus requisitos e objetivos em tempo real para oferecer a combinação perfeita de matérias para o seu próximo semestre. Nós não apenas criamos um horário, mostramos exatamente como cada escolha de hoje acelera sua graduação de amanhã. Assuma o controle do seu caminho acadêmico e pare de adivinhar!",
       "button":{
       "start": "Começar"
       },
@@ -61,8 +72,8 @@
     "contact": "Para qualquer dúvida ou suporte, entre em contato em ",
     "email": "support@easyschedule.com",
     "phone": "+591 64363462",
-    "address": "123 Rua da Universidade, Cochabamba, Bolivia",
-    "copyright": "Direitos Autorais @ 2022 Agency Creative. Todos os Direitos Reservados"
+    "address": "Av. America Nª9832",
+    "copyright": "Direitos autorais @ 2026 EasyScheduleCompany. Todos os direitos reservados"
   }
 
   },
@@ -85,6 +96,10 @@
     "required": "Este campo é obrigatório"
   },
   "loading": "Entrando...",
+  "success": {
+    "loggedIn": "Login realizado com sucesso.",
+    "completeProfile": "Login realizado. Complete seu perfil para continuar."
+  },
   "error": {
     "invalidCredentials": "Credenciais inválidas",
     "generic": "Erro inesperado"
@@ -105,7 +120,61 @@
   "perfil": {
     "placeholder": "Perfil funcionando!",
     "edit": "Editar perfil",
-    "editPlaceholder": "Edição de perfil funcionando!"
+      "editPlaceholder": "Edição de perfil funcionando!",
+    "title": "Perfil",
+    "readOnly": "Atualiza-se conforme a grade curricular.",
+    "loading": "Carregando dados do perfil...",
+      "avatarAlt": "Avatar do usuário",
+    "fields": {
+      "username": "Nome de usuário",
+      "nombre": "Nome",
+      "apellido": "Sobrenome",
+      "email": "Email",
+      "carnet": "Documento de Identidade",
+      "fechaNacimiento": "Data de Nascimento",
+      "carrera": "Curso",
+      "universidad": "Universidade"
+    },
+    "placeholders": {
+      "nombre": "Clique neste campo para completar seu nome",
+      "apellido": "Clique neste campo para completar seu sobrenome",
+      "email": "Clique neste campo para completar seu email",
+      "carnetIdentidad": "Clique neste campo para completar seu documento de identidade",
+      "fechaNacimiento": "Clique neste campo para completar sua data de nascimento",
+      "carrera": "Atribuído automaticamente de acordo com sua grade curricular",
+      "universidad": "Atribuído automaticamente de acordo com sua grade curricular"
+    },
+    "actions": {
+      "edit": "Editar",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "saving": "Salvando...",
+      "changePassword": "Alterar Senha"
+    },
+    "validation": {
+      "required": "Este campo é obrigatório.",
+      "emailInvalid": "Formato de email inválido."
+    },
+    "success": {
+      "updated": "Perfil atualizado com sucesso."
+    },
+    "modal": {
+      "updatedTitle": "Perfil atualizado",
+      "accept": "Aceitar",
+      "identityChangeTitle": "Confirmar alteração de usuário ou email",
+      "identityChangeBody": "Você vai alterar seu nome de usuário ou email. Isso afeta a forma de fazer login. Deseja continuar?",
+      "cancel": "Cancelar",
+      "confirm": "Sim, salvar"
+    },
+    "error": {
+      "noSession": "Nenhum usuário autenticado encontrado nesta sessão. Faça login para ver seu perfil.",
+      "loadFailed": "Não foi possível carregar as informações do perfil.",
+      "saveFailed": "Não foi possível atualizar o perfil. Tente novamente.",
+      "mallaNotFound": "Não existe uma grade para o curso e universidade selecionados.",
+      "usernameTaken": "Esse nome de usuário já está em uso.",
+      "emailTaken": "Esse email já está cadastrado.",
+      "carnetTaken": "Esse documento de identidade já está em uso."
+    }
   },
   "registro": {
     "title": "Cadastro",
@@ -130,7 +199,7 @@
     },
     "button": {
       "submit": "Cadastrar",
-      "gotoLogin": "Ir para login",
+      "gotoLogin": "Entrar",
       "backHome": "Voltar para o início"
     },
     "loading": "Registrando usuário...",

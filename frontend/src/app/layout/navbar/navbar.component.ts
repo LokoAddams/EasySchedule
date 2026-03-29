@@ -1,11 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { LanguageService } from '../../core/services/language.service';
+import { AuthSessionService } from '../../core/services/auth-session.service';
 import { FeatureToggleService } from '../../services/feature-toggle.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-navbar',
@@ -19,8 +21,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private flagsSubscription?: Subscription;
 
   constructor(
+    private readonly router: Router,
     private readonly languageService: LanguageService,
+    private readonly authSessionService: AuthSessionService,
     private readonly featureToggleService: FeatureToggleService,
+    private readonly apiService: ApiService,
   ) {}
 
   ngOnInit(): void {
@@ -40,11 +45,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.languageService.setLanguage(lang);
   }
   protected isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return this.authSessionService.isLoggedIn();
+  }
+
+  protected isProfileCompleted(): boolean {
+    return this.authSessionService.isProfileCompleted();
   }
   
   protected logout(): void {
-    localStorage.removeItem('token');
-    window.location.href = '/home'; 
+    this.apiService.post<{ message: string }, Record<string, never>>('/api/logout', {}).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+    this.authSessionService.clearSession();
+    void this.router.navigate(['/home']);
   }
 }

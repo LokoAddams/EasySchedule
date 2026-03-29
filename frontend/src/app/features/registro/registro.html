@@ -3,6 +3,8 @@
     <section class="registro-image" aria-hidden="true"></section>
 
     <section class="registro-panel">
+      <a routerLink="/home" class="panel-back-link">{{ 'registro.button.backHome' | translate }}</a>
+
       <div class="logo" aria-hidden="true">
         {{ 'brand.main' | translate }}
         <span>{{ 'brand.sub' | translate }}</span>
@@ -14,36 +16,33 @@
         <div class="form-group">
           <label for="nombre">{{ 'registro.label.username' | translate }}</label>
           <input id="nombre" type="text" formControlName="nombre" [placeholder]="'registro.placeholder.username' | translate" />
-          <small *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">{{ 'registro.validation.usernameRequired' | translate }}</small>
+          <small class="form-error" *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">{{ 'registro.validation.usernameRequired' | translate }}</small>
         </div>
 
         <div class="form-group">
           <label for="correo">{{ 'registro.label.email' | translate }}</label>
           <input id="correo" type="email" formControlName="correo" [placeholder]="'registro.placeholder.email' | translate" />
-          <small *ngIf="form.get('correo')?.touched && form.get('correo')?.errors?.['required']">{{ 'registro.validation.emailRequired' | translate }}</small>
-          <small *ngIf="form.get('correo')?.touched && form.get('correo')?.errors?.['email']">{{ 'registro.validation.emailInvalid' | translate }}</small>
+          <small class="form-error" *ngIf="form.get('correo')?.touched && form.get('correo')?.errors?.['required']">{{ 'registro.validation.emailRequired' | translate }}</small>
+          <small class="form-error" *ngIf="form.get('correo')?.touched && form.get('correo')?.errors?.['email']">{{ 'registro.validation.emailInvalid' | translate }}</small>
         </div>
 
         <div class="form-group">
           <label for="password">{{ 'registro.label.password' | translate }}</label>
           <input id="password" type="password" formControlName="password" [placeholder]="'registro.placeholder.password' | translate" />
-          <small *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['minlength']">{{ 'registro.validation.passwordMin' | translate }}</small>
+          <small class="form-error" *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['minlength']">{{ 'registro.validation.passwordMin' | translate }}</small>
         </div>
 
         <div class="form-group">
           <label for="confirmPassword">{{ 'registro.label.confirmPassword' | translate }}</label>
           <input id="confirmPassword" type="password" formControlName="confirmPassword" [placeholder]="'registro.placeholder.password' | translate" />
-          <small *ngIf="form.get('confirmPassword')?.touched && form.get('confirmPassword')?.errors?.['required']">{{ 'registro.validation.confirmRequired' | translate }}</small>
-          <small *ngIf="form.get('confirmPassword')?.touched && form.errors?.['mismatch']">{{ 'registro.validation.passwordMismatch' | translate }}</small>
+          <small class="form-error" *ngIf="form.get('confirmPassword')?.touched && form.get('confirmPassword')?.errors?.['required']">{{ 'registro.validation.confirmRequired' | translate }}</small>
+          <small class="form-error" *ngIf="form.get('confirmPassword')?.touched && form.errors?.['mismatch']">{{ 'registro.validation.passwordMismatch' | translate }}</small>
         </div>
 
         <button type="submit" class="btn-primary" [disabled]="form.invalid || loading">{{ 'registro.button.submit' | translate }}</button>
         <a routerLink="/login" class="btn-secondary">{{ 'registro.button.gotoLogin' | translate }}</a>
-        <a routerLink="/home" class="btn-back">{{ 'registro.button.backHome' | translate }}</a>
 
         <p *ngIf="loading" class="loading">{{ 'registro.loading' | translate }}</p>
-        <p *ngIf="successMessageKey" class="success-message">{{ successMessageKey | translate }}</p>
-        <p *ngIf="errorMessageKey" class="error-message">{{ errorMessageKey | translate }}</p>
       </form>
     </section>
   </div>

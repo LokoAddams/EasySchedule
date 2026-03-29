@@ -10,10 +10,10 @@
     <li>
       <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'navbar.home' | translate }}</a>
     </li>
-    <li *ngIf="isLoggedIn() && mallaEnabled">
+    <li *ngIf="isLoggedIn() && isProfileCompleted() && mallaEnabled">
       <a routerLink="/malla" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'navbar.malla' | translate }}</a>
     </li>
-    <li *ngIf="isLoggedIn() && tomaMateriasEnabled">
+    <li *ngIf="isLoggedIn() && isProfileCompleted() && tomaMateriasEnabled">
       <a routerLink="/toma-de-materias" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'navbar.tomaMaterias' | translate }}</a>
     </li>
   </ul>
@@ -33,25 +33,26 @@
   {{ 'navbar.logout' | translate }}
 </a>
 
-    <details class="navbar__profile-menu">
-      <summary class="navbar__profile" [attr.aria-label]="'navbar.aria.profile' | translate">
+    <a *ngIf="isLoggedIn()" class="navbar__profile" routerLink="/perfil" [attr.aria-label]="'navbar.aria.profile' | translate">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm0 3.2A3.4 3.4 0 1 1 8.6 8.6 3.41 3.41 0 0 1 12 5.2Zm0 13.8a7 7 0 0 1-5.2-2.32 6.2 6.2 0 0 1 10.4 0A7 7 0 0 1 12 19Z"
+        ></path>
+      </svg>
+    </a>
+
+    <details class="navbar__language-menu">
+      <summary class="navbar__language-trigger" [attr.aria-label]="'navbar.menu.language' | translate">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm0 3.2A3.4 3.4 0 1 1 8.6 8.6 3.41 3.41 0 0 1 12 5.2Zm0 13.8a7 7 0 0 1-5.2-2.32 6.2 6.2 0 0 1 10.4 0A7 7 0 0 1 12 19Z"
-          ></path>
+          <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm6.9 9h-3.05a15.8 15.8 0 0 0-1.2-5A8.04 8.04 0 0 1 18.9 11ZM12 4.04c.8 1.01 1.9 3.27 2.33 6.96H9.67C10.1 7.3 11.2 5.05 12 4.04ZM4.98 13h3.05a15.8 15.8 0 0 0 1.2 5A8.04 8.04 0 0 1 4.98 13ZM8.03 11H4.98a8.04 8.04 0 0 1 4.25-5 15.8 15.8 0 0 0-1.2 5Zm.64 2h4.66c-.43 3.69-1.53 5.95-2.33 6.96-.8-1.01-1.9-3.27-2.33-6.96Zm5.44 5a15.8 15.8 0 0 0 1.2-5h3.05a8.04 8.04 0 0 1-4.25 5Z" />
         </svg>
       </summary>
 
-      <div class="navbar__menu-panel">
-        <a class="navbar__menu-link" routerLink="/perfil">{{ 'navbar.menu.profile' | translate }}</a>
-
-        <div class="navbar__menu-language">
-          <span class="navbar__menu-label">{{ 'navbar.menu.language' | translate }}</span>
-          <div class="navbar__language-options">
-            <button class="navbar__language-btn" type="button" (click)="setLanguage('es')">{{ 'common.language.es' | translate }}</button>
-            <button class="navbar__language-btn" type="button" (click)="setLanguage('en')">{{ 'common.language.en' | translate }}</button>
-            <button class="navbar__language-btn" type="button" (click)="setLanguage('pt')">{{ 'common.language.pt' | translate }}</button>
-          </div>
+      <div class="navbar__menu-panel navbar__menu-panel--language">
+        <div class="navbar__language-options">
+          <button class="navbar__language-btn" type="button" (click)="setLanguage('es')">{{ 'common.language.es' | translate }}</button>
+          <button class="navbar__language-btn" type="button" (click)="setLanguage('en')">{{ 'common.language.en' | translate }}</button>
+          <button class="navbar__language-btn" type="button" (click)="setLanguage('pt')">{{ 'common.language.pt' | translate }}</button>
         </div>
       </div>
     </details>

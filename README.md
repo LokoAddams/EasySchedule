@@ -5,48 +5,39 @@ Monorepo con:
 - `backend/`: Spring Boot + Gradle
 - `frontend/`: Angular
 
-## Versiones objetivo
+## Versiones recomendadas
 
-- Java: 17.0.18
-- Node: 20.19.0
-- npm: 10.8.2
-- Angular CLI: 20.3.19
+- Java: `17`
+- Node: `20.19.0`
+- npm: `10.8.2`
+- Angular CLI: `20.3.19`
 
-## 1) Preparar entorno
+## 1) Requisitos previos
 
-### Node y npm
-
-Verifica versiones instaladas:
+Verifica versiones:
 
 ```bash
+java -version
 node -v
 npm -v
 ```
 
-Versiones requeridas:
+## 2) Base de datos PostgreSQL
 
-- Node: 20.19.0
-- npm: 10.8.2
-
-### Java 17
-
-El backend usa toolchain Java 17. Verifica:
-
-```bash
-java -version
-```
-
-Si tienes varias versiones de Java, usa Java 17 para ejecutar Gradle/Spring Boot.
-
-### PostgreSQL
-
-Config por defecto en `backend/src/main/resources/application.properties`:
+La app espera, por defecto:
 
 - DB: `EasySchedule`
 - Usuario: `postgres`
 - Password: `postgres`
+- Puerto: `5432`
 
-NO sobrescribir por variables de entorno:
+Crea la base manualmente:
+
+```sql
+CREATE DATABASE "EasySchedule";
+```
+
+Variables disponibles (opcionales):
 
 - `DB_URL`
 - `DB_USERNAME`
@@ -56,51 +47,64 @@ NO sobrescribir por variables de entorno:
 
 Referencia: `backend/.env.example`
 
-La estructura de base de datos se inicializa desde un unico archivo:
-
-- `backend/src/main/resources/db/schema.sql`
-
-Ese archivo contiene tablas, constraints e inserciones base de universidades.
-
-Si ya tenias una base previa del modelo anterior, recrea la base para evitar inconsistencias de esquema:
-
-```sql
-DROP DATABASE IF EXISTS "EasySchedule";
-CREATE DATABASE "EasySchedule";
-```
-
-Luego vuelve a levantar backend con `./gradlew bootRun` para que se aplique `schema.sql`.
-
-## 2) Levantar backend
+## 3) Levantar backend
 
 ```bash
 cd backend
 ./gradlew bootRun
 ```
-En caso de que no funcione probar:
-```bash
-cd backend
-chmod +x gradlew
-./gradlew bootRun
+
+En Windows PowerShell, si `./gradlew` no funciona:
+
+```powershell
+.\gradlew.bat bootRun
 ```
 
-Healthcheck: src/main/resources/http/test.http
-aca encontraras el rest para probar endpoints
+Backend: `http://localhost:8080`
 
-## 3) Levantar frontend
+Pruebas manuales de endpoints (HTTP files):
+
+- `backend/src/main/resources/http/test.http`
+- `backend/src/main/resources/http/estudiante.http`
+
+## 4) Levantar frontend
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm start
 ```
 
 Frontend: `http://localhost:4200`
 
-## 4) Verificaciones rapidas
+## 5) Verificaciones rapidas
 
 ```bash
-cd frontend && npm run build
+cd backend
+./gradlew test
 
-cd backend && ./gradlew test
+cd ../frontend
+npm test -- --watch=false --browsers=ChromeHeadless
+npm run build
 ```
+
+## 6) Coverage
+
+Backend (JaCoCo):
+
+```bash
+cd backend
+./gradlew test jacocoTestReport
+```
+
+Frontend (Karma/Istanbul):
+
+```bash
+cd frontend
+npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+```
+
+Reportes:
+
+- Backend: `backend/build/reports/jacoco/test/html/index.html`
+- Frontend: `frontend/coverage/frontend/index.html`

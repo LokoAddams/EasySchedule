@@ -12,8 +12,10 @@
   --navbar-height: 72px;
   --color-sand: #e5e1d3;
   --color-blue: #6f89ac;
+  --color-blue-rgb: 111, 137, 172;
   --color-blue-dark: #2f4f73;
   --color-text: #111111;
+  --color-error: #9f2017;
 }
 
 html,
@@ -37,4 +39,56 @@ body {
   font-size: clamp(1.8rem, 2vw + 1.2rem, 2.6rem);
   font-weight: 700;
   color: #2f4f73;
+}
+
+.perfil-datepicker-theme.ngb-datepicker {
+  --bs-primary-rgb: var(--color-blue-rgb);
+  --bs-link-color: var(--color-blue-dark);
+  --bs-link-hover-color: var(--color-blue-dark);
+  max-width: calc(100vw - 1rem);
+}
+
+.perfil-datepicker-theme .ngb-dp-header {
+  background: var(--color-blue);
+  color: #fff;
+}
+
+.perfil-datepicker-theme .ngb-dp-day .bg-primary,
+.perfil-datepicker-theme .ngb-dp-day .btn-primary {
+  background-color: rgba(var(--bs-primary-rgb), 1) !important;
+  border-color: rgba(var(--bs-primary-rgb), 1) !important;
+}
+
+.perfil-datepicker-theme .ngb-dp-day .btn-light.bg-primary,
+.perfil-datepicker-theme .ngb-dp-day .btn-light.bg-primary:hover,
+.perfil-datepicker-theme .ngb-dp-day .btn-light.bg-primary:focus,
+.perfil-datepicker-theme .ngb-dp-day .btn-light.bg-primary:active {
+  --bs-btn-bg: var(--color-blue);
+  --bs-btn-border-color: var(--color-blue);
+  --bs-btn-hover-bg: var(--color-blue-dark);
+  --bs-btn-hover-border-color: var(--color-blue-dark);
+  --bs-btn-active-bg: var(--color-blue-dark);
+  --bs-btn-active-border-color: var(--color-blue-dark);
+  background-color: var(--color-blue) !important;
+  border-color: var(--color-blue) !important;
+  color: #fff !important;
+}
+
+.perfil-datepicker-theme .btn-link {
+  color: var(--color-blue-dark);
+}
+
+@media (max-width: 620px) {
+  .perfil-datepicker-theme.ngb-datepicker {
+    width: min(19rem, calc(100vw - 1rem));
+  }
+}
+
+.form-error {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--color-error);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
 }

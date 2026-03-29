@@ -1,0 +1,20 @@
+<section class="toast-stack" aria-live="polite" aria-atomic="true">
+  <article
+    class="toast-card"
+    *ngFor="let toast of toastService.toasts()"
+    [class.toast-card--success]="toast.type === 'success'"
+    [class.toast-card--error]="toast.type === 'error'"
+    role="status"
+  >
+    <span class="toast-card__icon" aria-hidden="true">{{ toast.type === 'success' ? '✓' : '!' }}</span>
+    <p class="toast-card__message">{{ toast.messageKey | translate: toast.translateParams }}</p>
+    <button
+      type="button"
+      class="toast-card__close"
+      (click)="dismissToast(toast.id)"
+      [attr.aria-label]="'toast.dismiss' | translate"
+    >
+      ×
+    </button>
+  </article>
+</section>

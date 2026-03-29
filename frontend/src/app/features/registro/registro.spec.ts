@@ -3,22 +3,31 @@ import { Registro } from './registro';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { ToastService } from '../../core/services/toast.service';
 
 describe('Registro Component', () => {
 
   let component: Registro;
   let fixture: ComponentFixture<Registro>;
   let httpMock: HttpTestingController;
+  let toastServiceSpy: jasmine.SpyObj<ToastService>;
 
   beforeEach(async () => {
+
+    toastServiceSpy = jasmine.createSpyObj<ToastService>('ToastService', ['success', 'error']);
 
     await TestBed.configureTestingModule({
       imports: [
         Registro,
         ReactiveFormsModule,
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        TranslateModule.forRoot(),
       ],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: ToastService, useValue: toastServiceSpy },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Registro);
@@ -67,7 +76,7 @@ describe('Registro Component', () => {
 
     req.flush({});
 
-    expect(component.successMessageKey).toContain('Registro exitoso');
+    expect(component.successMessageKey).toBe('registro.success');
 
   });
 
@@ -89,7 +98,7 @@ describe('Registro Component', () => {
       { status: 409, statusText: 'Conflict' }
     );
 
-    expect(component.errorMessageKey).toContain('correo');
+    expect(component.errorMessageKey).toBe('registro.error.emailExists');
 
   });
 

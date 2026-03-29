@@ -1,40 +1,71 @@
 @hostname = localhost
 @port = 8080
 @host = http://{{hostname}}:{{port}}
+@username = security_demo_user
+@email = security_demo_user@example.com
+@password = DemoPass123
+@newUsername = security_demo_user_v2
+@newEmail = security_demo_user_v2@example.com
+@token = REPLACE_WITH_LOGIN_TOKEN
 
-
-### 1. Registrar un nuevo estudiante con datos por defecto (ÉXITO - 201)
+### 1) Registro (201)
 POST {{host}}/api/estudiantes/registro
 Content-Type: application/json
 
 {
-  "username": "test8user",
-  "password": "password",
-  "email": "test8user@example.com"
+  "username": "{{username}}",
+  "password": "{{password}}",
+  "email": "{{email}}"
 }
 
-### 2. Intentar registrar el mismo usuario (Error)
+### 2) Registro repetido (409)
 POST {{host}}/api/estudiantes/registro
 Content-Type: application/json
 
 {
-  "username": "test6user",
-  "password": "password",
-  "email": "test6user@example.com"
+  "username": "{{username}}",
+  "password": "{{password}}",
+  "email": "{{email}}"
 }
 
-
-
-### 3. Obtener todos los estudiantes (Verificar registro)
-GET {{host}}/api/estudiantes
-
-
-
-### 4. Login (funcionando con credenciales correctas e incorrectas)
+### 3) Login OK (200) - Copia token del response
 POST {{host}}/api/login
 Content-Type: application/json
 
 {
-  "identifier": "test6user",
-  "password": "password"
+  "identifier": "{{username}}",
+  "password": "{{password}}"
 }
+
+### 4) Login con password invalido (401)
+POST {{host}}/api/login
+Content-Type: application/json
+
+{
+  "identifier": "{{username}}",
+  "password": "wrong_password"
+}
+
+### 5) Obtener perfil por username (200)
+GET {{host}}/api/estudiantes/perfil/{{username}}
+Authorization: Bearer {{token}}
+
+### 6) Editar perfil (200)
+PUT {{host}}/api/estudiantes/perfil/{{username}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nombre": "Security",
+  "apellido": "Demo",
+  "universidad": "Universidad Catolica Boliviana San Pablo",
+  "carrera": "Ingenieria de Sistemas",
+  "carnetIdentidad": "CI-900001",
+  "fechaNacimiento": "2000-01-15",
+  "email": "{{newEmail}}",
+  "username": "{{newUsername}}"
+}
+
+### 7) Verificar perfil actualizado (200)
+GET {{host}}/api/estudiantes/perfil/{{newUsername}}
+Authorization: Bearer {{token}}

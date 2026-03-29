@@ -9,6 +9,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -20,7 +21,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+        HttpSecurity http,
+        BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter
+    ) throws Exception {
         http
             .cors(cors -> {}) 
             .csrf(csrf -> csrf.disable())
@@ -29,11 +33,12 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
                 .requestMatchers(HttpMethod.POST,"/api/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/registro").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/estudiantes/registro").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/features").permitAll()
                 .requestMatchers(HttpMethod.GET, "/health").permitAll()
-                .requestMatchers("/api/estudiantes/**").permitAll()
                 .anyRequest().authenticated()
-            );
+            )
+            .addFilterBefore(bearerTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     
         return http.build();
     }

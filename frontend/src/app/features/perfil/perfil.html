@@ -1,2 +1,178 @@
-<p class="placeholder-page">{{ 'perfil.placeholder' | translate }}</p>
-<a routerLink="/perfil/editar">{{ 'perfil.edit' | translate }}</a>
+<section class="perfil-page">
+	<header class="perfil-page__header">
+		<p class="perfil-page__eyebrow">{{ 'perfil.title' | translate }}</p>
+		<h1 class="perfil-page__name" *ngIf="!loading && perfil">{{ getNombreCompleto() }}</h1>
+	</header>
+
+	<p class="perfil-page__status" *ngIf="loading">{{ 'perfil.loading' | translate }}</p>
+	<p class="perfil-page__status perfil-page__status--error" *ngIf="!loading && errorKey">{{ errorKey | translate }}</p>
+
+	<div class="perfil-layout" *ngIf="!loading && perfil">
+		<article class="perfil-avatar-card">
+			<div class="perfil-avatar-card__media" [attr.aria-label]="'perfil.avatarAlt' | translate" [title]="'perfil.avatarAlt' | translate">
+				<div class="perfil-avatar-card__avatar">
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path
+							d="M12 2a5 5 0 1 1-5 5 5 5 0 0 1 5-5Zm0 12c4.41 0 8 2.24 8 5v3h-2v-3c0-1.47-2.41-3-6-3s-6 1.53-6 3v3H4v-3c0-2.76 3.59-5 8-5Z"
+						></path>
+					</svg>
+				</div>
+			</div>
+		</article>
+
+		<article class="perfil-data-card" *ngIf="!editMode">
+			<div class="perfil-grid">
+				<div class="perfil-field perfil-field--text">
+					<span>{{ 'perfil.fields.username' | translate }}</span>
+					<p>{{ getValorSeguro(perfil.username) }}</p>
+				</div>
+
+				<div class="perfil-field perfil-field--text">
+					<span>{{ 'perfil.fields.email' | translate }}</span>
+					<p [class.perfil-value--pending]="esCampoEditablePendiente(perfil.email, 'email')">{{ getValorSeguro(perfil.email) }}</p>
+				</div>
+
+				<div class="perfil-field perfil-field--text">
+					<span>{{ 'perfil.fields.nombre' | translate }}</span>
+					<p [class.perfil-value--pending]="esCampoEditablePendiente(perfil.nombre, 'nombre')">{{ getValorSeguro(perfil.nombre) }}</p>
+				</div>
+
+				<div class="perfil-field perfil-field--text">
+					<span>{{ 'perfil.fields.universidad' | translate }}</span>
+					<p class="perfil-value--auto">{{ getReadonlyMallaValue(perfil.universidad) }}</p>
+				</div>
+
+				<div class="perfil-field perfil-field--text">
+					<span>{{ 'perfil.fields.apellido' | translate }}</span>
+					<p [class.perfil-value--pending]="esCampoEditablePendiente(perfil.apellido, 'apellido')">{{ getValorSeguro(perfil.apellido) }}</p>
+				</div>
+
+				<div class="perfil-field perfil-field--text">
+					<span>{{ 'perfil.fields.carrera' | translate }}</span>
+					<p class="perfil-value--auto">{{ getReadonlyMallaValue(perfil.carrera) }}</p>
+				</div>
+
+				<div class="perfil-field perfil-field--text">
+					<span>{{ 'perfil.fields.carnet' | translate }}</span>
+					<p [class.perfil-value--pending]="esCampoEditablePendiente(perfil.carnetIdentidad, 'carnetIdentidad')">{{ getValorSeguro(perfil.carnetIdentidad) }}</p>
+				</div>
+
+				<div class="perfil-field perfil-field--text">
+					<span>{{ 'perfil.fields.fechaNacimiento' | translate }}</span>
+					<p>{{ getFechaNacimientoFormateada() }}</p>
+				</div>
+			</div>
+
+			<div class="perfil-actions">
+				<button class="perfil-edit-btn" type="button" (click)="activarEdicion()">{{ 'perfil.actions.edit' | translate }}</button>
+				<button class="perfil-password-btn" type="button">{{ 'perfil.actions.changePassword' | translate }}</button>
+			</div>
+		</article>
+
+		<form class="perfil-data-card" *ngIf="editMode" [formGroup]="editForm" (ngSubmit)="guardarEdicion()">
+			<div class="perfil-grid">
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.username' | translate }}</span>
+					<input type="text" formControlName="username" />
+					<small class="form-error" *ngIf="editForm.controls.username.touched && editForm.controls.username.invalid">
+						{{ 'perfil.validation.required' | translate }}
+					</small>
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.email' | translate }}</span>
+					<input type="email" formControlName="email" />
+					<small class="form-error" *ngIf="editForm.controls.email.touched && editForm.controls.email.errors?.['required']">
+						{{ 'perfil.validation.required' | translate }}
+					</small>
+					<small class="form-error" *ngIf="editForm.controls.email.touched && editForm.controls.email.errors?.['email']">
+						{{ 'perfil.validation.emailInvalid' | translate }}
+					</small>
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.nombre' | translate }}</span>
+					<input type="text" formControlName="nombre" />
+					<small class="form-error" *ngIf="editForm.controls.nombre.touched && editForm.controls.nombre.invalid">
+						{{ 'perfil.validation.required' | translate }}
+					</small>
+				</label>
+
+				<label class="perfil-field perfil-field--readonly">
+					<span>{{ 'perfil.fields.universidad' | translate }}</span>
+					<input type="text" formControlName="universidad" [placeholder]="'perfil.readOnly' | translate" readonly aria-readonly="true" tabindex="-1" />
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.apellido' | translate }}</span>
+					<input type="text" formControlName="apellido" />
+					<small class="form-error" *ngIf="editForm.controls.apellido.touched && editForm.controls.apellido.invalid">
+						{{ 'perfil.validation.required' | translate }}
+					</small>
+				</label>
+
+				<label class="perfil-field perfil-field--readonly">
+					<span>{{ 'perfil.fields.carrera' | translate }}</span>
+					<input type="text" formControlName="carrera" [placeholder]="'perfil.readOnly' | translate" readonly aria-readonly="true" tabindex="-1" />
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.carnet' | translate }}</span>
+					<input type="text" formControlName="carnetIdentidad" />
+					<small class="form-error" *ngIf="editForm.controls.carnetIdentidad.touched && editForm.controls.carnetIdentidad.invalid">
+						{{ 'perfil.validation.required' | translate }}
+					</small>
+				</label>
+
+				<label class="perfil-field">
+					<span>{{ 'perfil.fields.fechaNacimiento' | translate }}</span>
+					<div class="perfil-date-picker">
+						<input
+							type="text"
+							class="perfil-datepicker-input"
+							formControlName="fechaNacimiento"
+							ngbDatepicker
+							datepickerClass="perfil-datepicker-theme"
+							#fechaNacimientoPicker="ngbDatepicker"
+							[minDate]="fechaNacimientoMinDate"
+							[maxDate]="fechaNacimientoMaxDate"
+							navigation="select"
+							[autoClose]="'outside'"
+							placement="auto"
+							[container]="'body'"
+							[readonly]="true"
+							(click)="fechaNacimientoPicker.toggle()"
+						/>
+					</div>
+					<small class="form-error" *ngIf="editForm.controls.fechaNacimiento.touched && editForm.controls.fechaNacimiento.invalid">
+						{{ 'perfil.validation.required' | translate }}
+					</small>
+				</label>
+			</div>
+
+			<div class="perfil-actions">
+				<button class="perfil-edit-btn" type="submit" [disabled]="saving">
+					{{ saving ? ('perfil.actions.saving' | translate) : ('perfil.actions.save' | translate) }}
+				</button>
+				<button class="perfil-cancel-btn" type="button" (click)="cancelarEdicion()">{{ 'perfil.actions.cancel' | translate }}</button>
+				<button class="perfil-password-btn" type="button">{{ 'perfil.actions.changePassword' | translate }}</button>
+			</div>
+		</form>
+	</div>
+
+	<div class="perfil-modal-backdrop" *ngIf="showIdentityConfirmModal" (click)="cerrarConfirmacionCambioIdentidadBackdrop($event)">
+		<section class="perfil-modal" role="dialog" aria-modal="true" [attr.aria-label]="'perfil.modal.identityChangeTitle' | translate">
+			<div class="perfil-modal__icon" aria-hidden="true">!</div>
+			<h2 class="perfil-modal__title">{{ 'perfil.modal.identityChangeTitle' | translate }}</h2>
+			<p class="perfil-modal__text">{{ 'perfil.modal.identityChangeBody' | translate }}</p>
+			<div class="perfil-modal__actions">
+				<button type="button" class="perfil-modal__btn perfil-modal__btn--ghost" (click)="cerrarConfirmacionCambioIdentidad()">
+					{{ 'perfil.modal.cancel' | translate }}
+				</button>
+				<button type="button" class="perfil-modal__btn" (click)="confirmarCambioIdentidadYGuardar()">
+					{{ 'perfil.modal.confirm' | translate }}
+				</button>
+			</div>
+		</section>
+	</div>
+</section>

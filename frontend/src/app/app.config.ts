@@ -4,7 +4,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -14,6 +14,7 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 import { FeatureToggleService } from './services/feature-toggle.service';
 import { LanguageService } from './core/services/language.service';
+import { AuthTokenInterceptor } from './core/interceptors/auth-token.interceptor';
 
 export function initializeFeatureFlags(featureToggleService: FeatureToggleService): () => Promise<void> {
   return () => featureToggleService.loadFlags();
@@ -52,6 +53,11 @@ export const appConfig: ApplicationConfig = {
       useFactory: initializeLanguage,
       multi: true,
       deps: [LanguageService],
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthTokenInterceptor,
+      multi: true,
     },
   ]
 };

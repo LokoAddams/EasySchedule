@@ -5,7 +5,7 @@
     <h1>{{ 'home.title' | translate }}</h1>
     <h3 class="home-subtitle">{{ 'home.subtitle' | translate }}</h3>
     <p>{{ 'home.description' | translate }}</p>
-    <button class="btn-primary">{{ 'home.button.start' | translate }}</button>
+    <button class="btn-primary" type="button" (click)="goToStart()">{{ 'home.button.start' | translate }}</button>
   </div>
 </section>
 
@@ -49,24 +49,18 @@
 
 </section>
 
-<main class="home-status">
-  <h1>{{ 'home.title' | translate }}</h1>
-  <p>{{ 'home.backendStatusLabel' | translate }}</p>
-  <pre>{{ healthStatusKey() | translate: healthStatusParams() }}</pre>
-</main>
-
-  <section class="home-footer">
-    <div class="footer-content1-terms-and-conditions">
+<section class="home-footer">
+    <div class="footer-col">
       <h4>{{ 'home.footer.subtitle1' | translate }}</h4>
       <p>{{ 'home.footer.terms' | translate }}</p>
       <p>{{ 'home.footer.privacy' | translate }}</p>
     </div>
-    <div class="footer-content2-contact">
+    <div class="footer-col">
       <h4>{{ 'home.footer.subtitle2' | translate }}</h4>
       <p>{{ 'home.footer.email' | translate }}</p>
       <p>{{ 'home.footer.phone' | translate }}</p>
     </div>
-    <div class="footer-content3-ubication">
+    <div class="footer-col">
       <h4>{{ 'home.footer.subtitle3' | translate }}</h4>
       <p>{{ 'home.footer.address' | translate }}</p>
     </div>
@@ -78,4 +72,4 @@
       <img src="/LinkedIn Icon.png" alt="LinkedIn" class="social-icon">
     </div>
     <p class="copyrigth">{{ 'home.footer.copyright' | translate }}</p>
-  </section>
+</section>

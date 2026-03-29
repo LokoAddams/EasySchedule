@@ -20,6 +20,10 @@ export class ApiService {
     return this.http.post<TResponse>(this.buildUrl(path), body);
   }
 
+  put<TResponse, TBody>(path: string, body: TBody): Observable<TResponse> {
+    return this.http.put<TResponse>(this.buildUrl(path), body);
+  }
+
   private buildUrl(path: string): string {
     if (!path.startsWith('/')) {
       return `${this.baseUrl}/${path}`;

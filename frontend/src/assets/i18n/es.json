@@ -6,6 +6,17 @@
       "pt": "PT"
     }
   },
+  "toast": {
+    "dismiss": "Cerrar aviso"
+  },
+  "ngb": {
+    "datepicker": {
+      "select-month": "Seleccionar mes",
+      "select-year": "Seleccionar año",
+      "previous-month": "Mes anterior",
+      "next-month": "Mes siguiente"
+    }
+  },
   "brand": {
     "main": "EASY",
     "sub": "SCHEDULE"
@@ -14,7 +25,7 @@
     "home": "Inicio",
     "malla": "Malla",
     "tomaMaterias": "Toma de Materias",
-    "login": "Iniciar sesion",
+    "login": "Iniciar sesión",
     "signup": "Registrarse",
     "logout": "Cerrar sesión",
     "menu": {
@@ -28,20 +39,20 @@
   },
   "home": {
     "title": "EasySchedule",
-    "backendStatusLabel": "Estado de comunicacion con backend:",
+    "backendStatusLabel": "Estado de comunicación con backend:",
     "status": {
-      "checkingConnection": "Comprobando conexion...",
-      "connectionSuccess": "Conexion exitosa",
-      "connectionError": "Error de conexion: {{message}}"
+      "checkingConnection": "Comprobando conexión...",
+      "connectionSuccess": "Conexión exitosa",
+      "connectionError": "Error de conexión: {{message}}"
     },
     "subtitle": "Diseña tu camino académico sin complicaciones",
-    "description":"Nuestra plataforma analiza tus requisitos y objetivos en tiempo real para ofrecerte la combinación perfecta de materias para tu próximo semestre. No solo creamos un horario; te mostramos exactamente cómo cada elección de hoy acelera tu graduación de mañana. ¡Toma el control de tu camino académico y deja de adivinar!",
+    "description":"Nuestra plataforma analiza tus requisitos y objetivos en tiempo real para ofrecerte la combinación perfecta de materias para tu próximo semestre. No solo creamos un horario, te mostramos exactamente cómo cada elección de hoy acelera tu graduación de mañana. ¡Toma el control de tu camino académico y deja de adivinar!",
     "button":{
     "start": "Comenzar"
     },
     "aboutUs":{
       "title": "Sobre Nosotros",
-    "pharagraph1": "En Easy Schedule, entendemos que la vida universitaria es lo suficientemente compleja sin que la planificación de cursos se convierta en un obstáculo adicional. Nacimos de la visión de Lucas Alcoba y Adrian Claros, con el objetivo de empoderar a los estudiantes de pregrado y posgrado a través de la tecnología inteligente.",
+    "pharagraph1": "En Easy Schedule, entendemos que la vida universitaria es lo suficientemente compleja sin que la planificación de cursos se convierta en un obstáculo adicional. Nacimos de la visión de Lucas Alcoba y Adrián Claros, con el objetivo de empoderar a los estudiantes de pregrado y posgrado a través de la tecnología inteligente.",
     "pharagraph2": "A diferencia de las herramientas tradicionales de consulta de mallas curriculares, ofrecemos una solución integral: una plataforma web interactiva que procesa tus requisitos específicos y genera sugerencias personalizadas. Creemos que cada estudiante merece un camino académico claro, eficiente y libre de errores administrativos.",
     "pharagraph3": "Nuestra plataforma está diseñada específicamente para integrarse con las realidades académicas de instituciones líderes, como la Universidad Católica Boliviana campus Cochabamba, la Universidad Mayor de San Simón y la Universidad Mayor de San Andrés."
     },
@@ -61,8 +72,8 @@
       "contact": "Para cualquier pregunta o soporte, por favor contáctanos en ",
       "email": "support@easyschedule.com",
       "phone": "+591 64363462",
-      "address": "123 Calle Universidad, Cochabamba, Bolivia",
-      "copyright": "Derechos de Autor @ 2022 Agency Creative. Todos los Derechos Reservados"
+      "address": "Av. America Nª9832",
+       "copyright": "Derechos de autor @ 2026 EasyScheduleCompany. Todos los derechos reservados"
     }
   },
 "login": {
@@ -84,6 +95,10 @@
     "required": "Este campo es obligatorio"
   },
   "loading": "Iniciando sesión...",
+  "success": {
+    "loggedIn": "Inicio de sesión exitoso.",
+    "completeProfile": "Sesión iniciada. Completa tu perfil para continuar."
+  },
   "error": {
     "invalidCredentials": "Credenciales inválidas",
     "generic": "Error inesperado"
@@ -104,15 +119,69 @@
   "perfil": {
     "placeholder": "Perfil Works!",
     "edit": "Editar Perfil",
-    "editPlaceholder": "Editar Perfil Works!"
+    "editPlaceholder": "Editar Perfil Works!",
+    "title": "Perfil",
+    "readOnly": "Se actualiza según la malla.",
+    "loading": "Cargando datos del perfil...",
+    "avatarAlt": "Avatar del usuario",
+    "fields": {
+      "username": "Nombre de usuario",
+      "nombre": "Nombre",
+      "apellido": "Apellidos",
+      "email": "Correo electrónico",
+      "carnet": "Carnet de identidad",
+      "fechaNacimiento": "Fecha de nacimiento",
+      "carrera": "Carrera",
+      "universidad": "Universidad"
+    },
+    "placeholders": {
+      "nombre": "Haz clic en este campo para completar tu nombre",
+      "apellido": "Haz clic en este campo para completar tus apellidos",
+      "email": "Haz clic en este campo para completar tu correo",
+      "carnetIdentidad": "Haz clic en este campo para completar tu carnet",
+      "fechaNacimiento": "Haz clic en este campo para completar tu fecha de nacimiento",
+      "carrera": "Se asigna automáticamente según tu malla",
+      "universidad": "Se asigna automáticamente según tu malla"
+    },
+    "actions": {
+      "edit": "Editar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "saving": "Guardando...",
+    "changePassword": "Cambiar contraseña"
+    },
+    "validation": {
+      "required": "Este campo es obligatorio.",
+      "emailInvalid": "Formato de correo electrónico inválido."
+    },
+    "success": {
+      "updated": "Perfil actualizado correctamente."
+    },
+    "modal": {
+      "updatedTitle": "Perfil actualizado",
+      "accept": "Aceptar",
+      "identityChangeTitle": "Confirmar cambio de usuario o correo",
+      "identityChangeBody": "Vas a cambiar tu nombre de usuario o correo electrónico. Esta acción afecta tu forma de iniciar sesión. ¿Deseas continuar?",
+      "cancel": "Cancelar",
+      "confirm": "Sí, guardar"
+    },
+    "error": {
+      "noSession": "No hay un usuario autenticado en esta sesión. Inicia sesión para ver tu perfil.",
+      "loadFailed": "No se pudo cargar la información del perfil.",
+      "saveFailed": "No se pudo actualizar el perfil. Intenta nuevamente.",
+      "mallaNotFound": "No existe una malla con la carrera y universidad seleccionadas.",
+      "usernameTaken": "Ese nombre de usuario ya está en uso.",
+      "emailTaken": "Ese correo electrónico ya está registrado.",
+      "carnetTaken": "Ese carnet de identidad ya está en uso."
+    }
   },
   "registro": {
     "title": "Registro",
     "label": {
       "username": "Usuario",
       "email": "Email",
-      "password": "Contrasena",
-      "confirmPassword": "Repetir Contrasena"
+      "password": "Contraseña",
+      "confirmPassword": "Repetir contraseña"
     },
     "placeholder": {
       "username": "Ingresar Nombre de Usuario",
@@ -122,22 +191,22 @@
     "validation": {
       "usernameRequired": "El usuario es obligatorio",
       "emailRequired": "El correo es obligatorio",
-      "emailInvalid": "Formato de correo invalido",
-      "passwordMin": "La contrasena debe tener minimo 8 caracteres",
-      "confirmRequired": "Debes confirmar tu contrasena",
-      "passwordMismatch": "Las contrasenas no coinciden"
+      "emailInvalid": "Formato de correo inválido",
+      "passwordMin": "La contraseña debe tener mínimo 8 caracteres",
+      "confirmRequired": "Debes confirmar tu contraseña",
+      "passwordMismatch": "Las contraseñas no coinciden"
     },
     "button": {
       "submit": "Registrarse",
-      "gotoLogin": "Ir a Iniciar Sesion",
+      "gotoLogin": "Iniciar sesión",
       "backHome": "Volver al inicio"
     },
     "loading": "Registrando usuario...",
     "success": "Registro exitoso. Redirigiendo...",
     "error": {
-      "userExists": "El usuario ya esta registrado",
-      "emailExists": "El correo ya esta registrado",
-      "invalidData": "Datos invalidos",
+      "userExists": "El usuario ya está registrado",
+      "emailExists": "El correo ya está registrado",
+      "invalidData": "Datos inválidos",
       "backendConnection": "No se pudo conectar con el backend",
       "server": "Error del servidor. Intenta nuevamente"
     }

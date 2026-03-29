@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ApiService } from '../../services/api.service';
+import { AuthSessionService } from '../../core/services/auth-session.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-registro',
@@ -37,7 +39,9 @@ export class Registro {
   constructor(
     private readonly fb: FormBuilder,
     private readonly apiService: ApiService,
+    private readonly authSessionService: AuthSessionService,
     private readonly router: Router,
+    private readonly toastService: ToastService,
   ) {
 
     this.form = this.fb.group({
@@ -88,6 +92,8 @@ export class Registro {
       next: () => {
         this.loading = false;
         this.successMessageKey = 'registro.success';
+        this.toastService.success('registro.success');
+        this.authSessionService.setCurrentUsername(payload.username);
 
         setTimeout(() => {
           this.router.navigateByUrl('/login');
@@ -104,14 +110,19 @@ export class Registro {
 
         if (err.status === 409 && backendMessage.includes('usuario')) {
           this.errorMessageKey = 'registro.error.userExists';
+          this.toastService.error('registro.error.userExists');
         } else if (err.status === 409 && backendMessage.includes('correo')) {
           this.errorMessageKey = 'registro.error.emailExists';
+          this.toastService.error('registro.error.emailExists');
         } else if (err.status === 400) {
           this.errorMessageKey = 'registro.error.invalidData';
+          this.toastService.error('registro.error.invalidData');
         } else if (err.status === 0) {
           this.errorMessageKey = 'registro.error.backendConnection';
+          this.toastService.error('registro.error.backendConnection');
         } else {
           this.errorMessageKey = 'registro.error.server';
+          this.toastService.error('registro.error.server');
         }
       },
     });

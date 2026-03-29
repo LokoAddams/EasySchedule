@@ -6,6 +6,17 @@
       "pt": "PT"
     }
   },
+  "toast": {
+    "dismiss": "Close notification"
+  },
+  "ngb": {
+    "datepicker": {
+      "select-month": "Select month",
+      "select-year": "Select year",
+      "previous-month": "Previous month",
+      "next-month": "Next month"
+    }
+  },
   "brand": {
     "main": "EASY",
     "sub": "SCHEDULE"
@@ -35,7 +46,7 @@
       "connectionError": "Connection error: {{message}}"
     },
     "subtitle": "Design your academic path without complications",
-    "description":"Our platform analyzes your requirements and goals in real time to offer you the perfect combination of subjects for your next term. We don't just create a schedule; we show you exactly how each choice today accelerates your graduation tomorrow. Take control of your academic path and stop guessing!",
+    "description":"Our platform analyzes your requirements and goals in real time to offer you the perfect combination of subjects for your next term. We don't just create a schedule, we show you exactly how each choice today accelerates your graduation tomorrow. Take control of your academic path and stop guessing!",
     "button":{
     "start": "Get Started"
     },
@@ -55,14 +66,14 @@
   "footer":{
     "subtitle1": "Terms and Privacy Policies",
     "subtitle2": "Contact Us",
-    "subtitle3": "Ubication",
+    "subtitle3": "Location",
     "terms": "Terms and Conditions",
     "privacy": "Privacy Policy",
     "contact": "For any questions or support, please contact us at ",
     "email": "support@easyschedule.com",
     "phone": "+591 64363462",
-    "address": "123 University Ave, Cochabamba, Bolivia",
-    "copyright": "Copyright @ 2022 Agency Creative. All Right Reserved"
+    "address": "America Ave. Nª9832",
+    "copyright": "Copyright @ 2026 EasyScheduleCompany. All rights reserved"
   }
   },
 "login": {
@@ -84,6 +95,10 @@
     "required": "This field is required"
   },
   "loading": "Signing in...",
+  "success": {
+    "loggedIn": "Signed in successfully.",
+    "completeProfile": "Signed in. Complete your profile to continue."
+  },
   "error": {
     "invalidCredentials": "Invalid credentials",
     "generic": "Unexpected error"
@@ -105,7 +120,61 @@
   "perfil": {
     "placeholder": "Profile Works!",
     "edit": "Edit Profile",
-    "editPlaceholder": "Edit Profile Works!"
+    "editPlaceholder": "Edit Profile Works!",
+    "title": "Profile",
+    "readOnly": "Updated according to the curriculum.",
+    "loading": "Loading profile data...",
+    "avatarAlt": "User avatar",
+    "fields": {
+      "username": "Username",
+      "nombre": "First Name",
+      "apellido": "Last Name",
+      "email": "Email",
+      "carnet": "Identity Card",
+      "fechaNacimiento": "Birth Date",
+      "carrera": "Career",
+      "universidad": "University"
+    },
+    "placeholders": {
+      "nombre": "Click this field to complete your first name",
+      "apellido": "Click this field to complete your last name",
+      "email": "Click this field to complete your email",
+      "carnetIdentidad": "Click this field to complete your ID card",
+      "fechaNacimiento": "Click this field to complete your birth date",
+      "carrera": "Automatically assigned according to your curriculum",
+      "universidad": "Automatically assigned according to your curriculum"
+    },
+    "actions": {
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "changePassword": "Change Password"
+    },
+    "validation": {
+      "required": "This field is required.",
+      "emailInvalid": "Invalid email format."
+    },
+    "success": {
+      "updated": "Profile updated successfully."
+    },
+    "modal": {
+      "updatedTitle": "Profile updated",
+      "accept": "Accept",
+      "identityChangeTitle": "Confirm username or email change",
+      "identityChangeBody": "You are changing your username or email. This affects how you sign in. Do you want to continue?",
+      "cancel": "Cancel",
+      "confirm": "Yes, save"
+    },
+    "error": {
+      "noSession": "No authenticated user found in this session. Sign in to view your profile.",
+      "loadFailed": "Could not load profile information.",
+      "saveFailed": "Could not update profile. Please try again.",
+      "mallaNotFound": "No curriculum was found for the selected career and university.",
+      "usernameTaken": "That username is already in use.",
+      "emailTaken": "That email is already registered.",
+      "carnetTaken": "That identity card is already in use."
+    }
   },
   "registro": {
     "title": "Register",
@@ -130,7 +199,7 @@
     },
     "button": {
       "submit": "Sign Up",
-      "gotoLogin": "Go to Sign In",
+      "gotoLogin": "Sign In",
       "backHome": "Back to home"
     },
     "loading": "Registering user...",
