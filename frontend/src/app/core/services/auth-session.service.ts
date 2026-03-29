@@ -17,8 +17,8 @@ export class AuthSessionService {
   }
 
   getCurrentUsername(): string | null {
-    let username = localStorage.getItem(this.usernameStorageKey);
-    username = "test8user";
+    const username = localStorage.getItem(this.usernameStorageKey);
+    
     if (!username) {
       return null;
     }

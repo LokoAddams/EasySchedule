@@ -13,8 +13,11 @@ import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
 import com.easyschedule.backend.malla.model.Malla;
 import com.easyschedule.backend.malla.repository.MallaRepository;
 import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -48,13 +51,6 @@ public class EstudianteService {
         return toResponse(getEstudianteOrThrow(id));
     }
 
-    public EstudianteResponse findByUsername(String username) {
-        Estudiante estudiante = estudianteRepository.findByUsernameIgnoreCase(username)
-            .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado con username: " + username));
-
-        return toResponse(estudiante);
-    }
-
     public EstudianteResponse update(Long id, EstudianteUpdateRequest request) {
         Estudiante estudiante = getEstudianteOrThrow(id);
         Malla malla = request.mallaId() == null ? null : getMallaOrThrow(request.mallaId());
@@ -70,58 +66,6 @@ public class EstudianteService {
         estudiante.setProfileCompleted(isProfileCompleted(estudiante));
 
         return toResponse(estudianteRepository.save(estudiante));
-    }
-
-    @Transactional
-    public EstudianteResponse updateProfile(String username, PerfilUpdateRequest request) {
-        Estudiante estudiante = estudianteRepository.findByUsernameIgnoreCase(username)
-            .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado con username: " + username));
-
-        User user = estudiante.getUser();
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "El estudiante no tiene un usuario asociado");
-        }
-
-        String usernameNormalizado = request.username().trim();
-        String emailNormalizado = request.email().trim().toLowerCase();
-        String carnetNormalizado = request.carnetIdentidad().trim();
-        String carreraNormalizada = request.carrera().trim();
-        String universidadNormalizada = request.universidad().trim();
-
-        if (!user.getUsername().equalsIgnoreCase(usernameNormalizado) && userRepository.existsByUsername(usernameNormalizado)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: El nombre de usuario ya está en uso");
-        }
-
-        if (!user.getEmail().equalsIgnoreCase(emailNormalizado) && userRepository.existsByEmail(emailNormalizado)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: El correo electrónico ya está registrado");
-        }
-
-        String carnetActual = estudiante.getCarnetIdentidad() == null ? "" : estudiante.getCarnetIdentidad();
-        if (!carnetActual.equalsIgnoreCase(carnetNormalizado)
-            && estudianteRepository.existsByCarnetIdentidadIgnoreCase(carnetNormalizado)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: El carnet de identidad ya está en uso");
-        }
-
-        Malla malla = mallaRepository.findFirstByCarreraIgnoreCaseAndUniversidadIgnoreCase(carreraNormalizada, universidadNormalizada)
-            .orElseThrow(() -> new ResourceNotFoundException(
-                "No existe una malla para la carrera '" + carreraNormalizada + "' y universidad '" + universidadNormalizada + "'"
-            ));
-
-        user.setUsername(usernameNormalizado);
-        user.setEmail(emailNormalizado);
-
-        estudiante.setUsername(usernameNormalizado);
-        estudiante.setCorreo(emailNormalizado);
-        estudiante.setNombre(request.nombre().trim());
-        estudiante.setApellido(request.apellido().trim());
-        estudiante.setCarnetIdentidad(carnetNormalizado);
-        estudiante.setFechaNacimiento(request.fechaNacimiento());
-        estudiante.setCarrera(carreraNormalizada);
-        estudiante.setMalla(malla);
-
-        userRepository.save(user);
-        Estudiante estudianteActualizado = estudianteRepository.save(estudiante);
-        return toResponse(estudianteActualizado);
     }
 
     public void delete(Long id) {
@@ -195,5 +139,55 @@ public class EstudianteService {
             mallaId,
             estudiante.isProfileCompleted()
         );
+    }
+    public EstudianteResponse findByUsername(String username) {
+        Estudiante estudiante = estudianteRepository.findByUsernameIgnoreCase(username)
+            .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado con username: " + username));
+
+        return toResponse(estudiante);
+    }
+
+    @Transactional
+    public EstudianteResponse updateProfile(String username, PerfilUpdateRequest request) {
+        Estudiante estudiante = estudianteRepository.findByUsernameIgnoreCase(username)
+            .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado con username: " + username));
+
+        User user = estudiante.getUser();
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "El estudiante no tiene un usuario asociado");
+        }
+
+        String usernameNormalizado = request.username().trim();
+        String emailNormalizado = request.email().trim().toLowerCase();
+        String carnetNormalizado = request.carnetIdentidad().trim();
+
+        if (!user.getUsername().equalsIgnoreCase(usernameNormalizado) && userRepository.existsByUsername(usernameNormalizado)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: El nombre de usuario ya está en uso");
+        }
+
+        if (!user.getEmail().equalsIgnoreCase(emailNormalizado) && userRepository.existsByEmail(emailNormalizado)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: El correo electrónico ya está registrado");
+        }
+
+        String carnetActual = estudiante.getCarnetIdentidad() == null ? "" : estudiante.getCarnetIdentidad();
+        if (!carnetActual.equalsIgnoreCase(carnetNormalizado)
+            && estudianteRepository.existsByCarnetIdentidadIgnoreCase(carnetNormalizado)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: El carnet de identidad ya está en uso");
+        }
+
+        user.setUsername(usernameNormalizado);
+        user.setEmail(emailNormalizado);
+
+        estudiante.setUsername(usernameNormalizado);
+        estudiante.setCorreo(emailNormalizado);
+        estudiante.setNombre(request.nombre().trim());
+        estudiante.setApellido(request.apellido().trim());
+        estudiante.setCarnetIdentidad(carnetNormalizado);
+        estudiante.setFechaNacimiento(request.fechaNacimiento());
+        estudiante.setProfileCompleted(isProfileCompleted(estudiante));
+
+        userRepository.save(user);
+        Estudiante estudianteActualizado = estudianteRepository.save(estudiante);
+        return toResponse(estudianteActualizado);
     }
 }

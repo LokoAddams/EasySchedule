@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbDateStruct, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { LanguageService } from '../../core/services/language.service';
@@ -32,7 +33,9 @@ export class Perfil implements OnInit {
   protected loading = true;
   protected saving = false;
   protected errorKey = '';
-  protected successKey = '';
+  protected showSuccessModal = false;
+  protected readonly fechaNacimientoMinDate: NgbDateStruct = { year: 1950, month: 1, day: 1 };
+  protected readonly fechaNacimientoMaxDate: NgbDateStruct;
   protected readonly editForm: PerfilEditForm;
   private mallasDisponibles: MallaResponse[] = [];
 
@@ -41,7 +44,15 @@ export class Perfil implements OnInit {
     private readonly perfilService: PerfilService,
     private readonly authSessionService: AuthSessionService,
     private readonly languageService: LanguageService,
+    private readonly translateService: TranslateService,
   ) {
+    const today = new Date();
+    this.fechaNacimientoMaxDate = {
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+      day: today.getDate(),
+    };
+
     this.editForm = this.fb.group({
       username: this.fb.nonNullable.control('', [Validators.required]),
       nombre: this.fb.nonNullable.control('', [Validators.required]),
@@ -49,8 +60,8 @@ export class Perfil implements OnInit {
       email: this.fb.nonNullable.control('', [Validators.required, Validators.email]),
       carnetIdentidad: this.fb.nonNullable.control('', [Validators.required]),
       fechaNacimiento: this.fb.control<NgbDateStruct | null>(null, [Validators.required]),
-      carrera: this.fb.nonNullable.control('', [Validators.required]),
-      universidad: this.fb.nonNullable.control('', [Validators.required]),
+      carrera: this.fb.nonNullable.control(''),
+      universidad: this.fb.nonNullable.control(''),
     }) as PerfilEditForm;
   }
 
@@ -63,6 +74,14 @@ export class Perfil implements OnInit {
       return;
     }
 
+    // El endpoint de perfil espera username; evitar usar emails guardados como identificador.
+    if (username.includes('@')) {
+      this.authSessionService.clearSession();
+      this.loading = false;
+      this.errorKey = 'perfil.error.noSession';
+      return;
+    }
+
     this.perfilService.getPerfilByUsername(username).subscribe({
       next: (perfilResponse) => {
         this.loading = false;
@@ -70,28 +89,56 @@ export class Perfil implements OnInit {
         this.cargarFormulario(perfilResponse);
         this.authSessionService.setCurrentUsername(perfilResponse.username);
       },
-      error: () => {
+      error: (error: { status?: number }) => {
         this.loading = false;
+
+        // Si el perfil no existe para ese username, la sesión local quedó desfasada.
+        if (error.status === 404) {
+          this.authSessionService.clearSession();
+          this.errorKey = 'perfil.error.noSession';
+          return;
+        }
+
         this.errorKey = 'perfil.error.loadFailed';
       },
     });
   }
 
   protected activarEdicion(): void {
-    if (!this.perfil) {
+    if (!this.perfil || this.editMode) {
       return;
     }
 
     this.editMode = true;
     this.errorKey = '';
-    this.successKey = '';
     this.cargarFormulario(this.perfil);
+  }
+
+  protected activarEdicionDesdeCampo(fieldName: string): void {
+    if (this.esCampoSoloLectura(fieldName)) {
+      return;
+    }
+
+    this.activarEdicion();
+  }
+
+  protected esCampoSoloLectura(fieldName: string): boolean {
+    return fieldName === 'carrera' || fieldName === 'universidad';
+  }
+
+  protected cerrarModalExito(): void {
+    this.showSuccessModal = false;
+  }
+
+  protected cerrarModalExitoBackdrop(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.cerrarModalExito();
+    }
   }
 
   protected cancelarEdicion(): void {
     this.editMode = false;
     this.errorKey = '';
-    this.successKey = '';
 
     if (this.perfil) {
       this.cargarFormulario(this.perfil);
@@ -99,7 +146,6 @@ export class Perfil implements OnInit {
   }
 
   protected guardarEdicion(): void {
-    this.successKey = '';
     this.errorKey = '';
 
     if (!this.perfil || this.editForm.invalid) {
@@ -129,7 +175,7 @@ export class Perfil implements OnInit {
         this.saving = false;
         this.editMode = false;
         this.perfil = updatedPerfil;
-        this.successKey = 'perfil.success.updated';
+        this.showSuccessModal = true;
         this.authSessionService.setCurrentUsername(this.perfil.username);
         this.cargarFormulario(this.perfil);
       },
@@ -167,9 +213,34 @@ export class Perfil implements OnInit {
     }).format(fechaNacimiento);
   }
 
-  protected getValorSeguro(value: string | null): string {
+  protected getValorSeguro(value: string | null, fieldName?: string): string {
     const valueNormalized = (value ?? '').trim();
-    return valueNormalized || '-';
+    
+    if (valueNormalized) {
+      return valueNormalized;
+    }
+
+    // Si no hay valor y se especifica el nombre del campo, retornar placeholder informativo
+    if (fieldName) {
+      const placeholderKey = `perfil.placeholders.${fieldName}`;
+      const placeholder = this.translateService.instant(placeholderKey);
+      // Verificar si la traducción existe (si no existe, instant retorna la clave)
+      return placeholder !== placeholderKey ? placeholder : '-';
+    }
+
+    return '-';
+  }
+
+  protected esCampoEditablePendiente(value: string | null, fieldName: string): boolean {
+    return !this.esCampoSoloLectura(fieldName) && !this.tieneContenido(value);
+  }
+
+  protected esCampoAutoPendiente(value: string | null, fieldName: string): boolean {
+    return this.esCampoSoloLectura(fieldName) && !this.tieneContenido(value);
+  }
+
+  private tieneContenido(value: string | null): boolean {
+    return (value ?? '').trim().length > 0;
   }
 
   private cargarFormulario(perfil: PerfilResponse): void {

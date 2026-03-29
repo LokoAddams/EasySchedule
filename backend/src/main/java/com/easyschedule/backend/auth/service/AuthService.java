@@ -82,6 +82,7 @@ public class AuthService {
         return ResponseEntity.ok().body(
                 java.util.Map.of(
                         "token", token,
+                        "username", user.getUsername(),
                         "message", "Login exitoso"
                 )
         );

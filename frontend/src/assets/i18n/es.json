@@ -119,6 +119,15 @@
       "carrera": "Carrera",
       "universidad": "Universidad"
     },
+    "placeholders": {
+      "nombre": "Haz clic en este campo para completar tu nombre",
+      "apellido": "Haz clic en este campo para completar tus apellidos",
+      "email": "Haz clic en este campo para completar tu correo",
+      "carnetIdentidad": "Haz clic en este campo para completar tu carnet",
+      "fechaNacimiento": "Haz clic en este campo para completar tu fecha de nacimiento",
+      "carrera": "Se asigna automáticamente según tu malla",
+      "universidad": "Se asigna automáticamente según tu malla"
+    },
     "actions": {
       "edit": "Editar",
       "save": "Guardar",
@@ -131,6 +140,10 @@
     },
     "success": {
       "updated": "Perfil actualizado correctamente."
+    },
+    "modal": {
+      "updatedTitle": "Perfil actualizado",
+      "accept": "Aceptar"
     },
     "error": {
       "noSession": "No hay un usuario autenticado en esta sesion. Inicia sesion para ver tu perfil.",

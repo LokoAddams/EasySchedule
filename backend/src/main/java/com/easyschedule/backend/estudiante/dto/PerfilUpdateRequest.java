@@ -34,11 +34,9 @@ public record PerfilUpdateRequest(
     @Past(message = "La fecha de nacimiento debe estar en el pasado")
     LocalDate fechaNacimiento,
 
-    @NotBlank(message = "La carrera es obligatoria")
     @Size(max = 120, message = "La carrera no puede exceder 120 caracteres")
     String carrera,
 
-    @NotBlank(message = "La universidad es obligatoria")
     @Size(max = 150, message = "La universidad no puede exceder 150 caracteres")
     String universidad
 ) {

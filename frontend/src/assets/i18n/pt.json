@@ -120,6 +120,15 @@
       "carrera": "Curso",
       "universidad": "Universidade"
     },
+    "placeholders": {
+      "nombre": "Clique neste campo para completar seu nome",
+      "apellido": "Clique neste campo para completar seu sobrenome",
+      "email": "Clique neste campo para completar seu email",
+      "carnetIdentidad": "Clique neste campo para completar seu documento de identidade",
+      "fechaNacimiento": "Clique neste campo para completar sua data de nascimento",
+      "carrera": "Atribuído automaticamente de acordo com sua grade curricular",
+      "universidad": "Atribuído automaticamente de acordo com sua grade curricular"
+    },
     "actions": {
       "edit": "Editar",
       "save": "Salvar",
@@ -132,6 +141,10 @@
     },
     "success": {
       "updated": "Perfil atualizado com sucesso."
+    },
+    "modal": {
+      "updatedTitle": "Perfil atualizado",
+      "accept": "Aceitar"
     },
     "error": {
       "noSession": "Nenhum usuario autenticado encontrado nesta sessao. Faca login para ver seu perfil.",

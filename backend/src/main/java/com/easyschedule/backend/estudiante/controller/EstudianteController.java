@@ -41,21 +41,8 @@ public class EstudianteController {
         return estudianteService.findById(id);
     }
 
-    @GetMapping("/perfil/{username}")
-    public EstudianteResponse findProfileByUsername(@PathVariable String username) {
-        return estudianteService.findByUsername(username);
-    }
-
-    @PutMapping("/perfil/{username}")
-    public EstudianteResponse updateProfile(
-        @PathVariable String username,
-        @Valid @RequestBody PerfilUpdateRequest request
-    ) {
-        return estudianteService.updateProfile(username, request);
-    }
-
     @PutMapping("/{id}")
-    public EstudianteResponse update(@PathVariable Long id, @Valid @RequestBody EstudianteUpdateRequest request) {
+    public EstudianteResponse update(@PathVariable Long id, @RequestBody EstudianteUpdateRequest request) {
         return estudianteService.update(id, request);
     }
 
@@ -69,5 +56,18 @@ public class EstudianteController {
     public ResponseEntity<EstudianteResponse> register(@Valid @RequestBody RegistroRequest request) {
         EstudianteResponse response = estudianteService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/perfil/{username}")
+    public EstudianteResponse findProfileByUsername(@PathVariable String username) {
+        return estudianteService.findByUsername(username);
+    }
+
+    @PutMapping("/perfil/{username}")
+    public EstudianteResponse updateProfile(
+        @PathVariable String username,
+        @Valid @RequestBody PerfilUpdateRequest request
+    ) {
+        return estudianteService.updateProfile(username, request);
     }
 }

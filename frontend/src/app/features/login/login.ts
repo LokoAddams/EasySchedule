@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common'; 
 import { RouterModule } from '@angular/router'; 
 import { FeatureToggleService } from '../../services/feature-toggle.service';
+import { AuthSessionService } from '../../core/services/auth-session.service';
 
 @Component({
   selector: 'app-login',
@@ -26,6 +27,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private router: Router,
     private featureToggleService: FeatureToggleService,
+    private authSessionService: AuthSessionService,
   ) {
 
     this.form = this.fb.group({
@@ -45,6 +47,7 @@ export class LoginComponent {
 
     this.loading = true;
     this.errorMessageKey = null;
+    this.authSessionService.clearSession();
 
     try {
       const res = await fetch('http://localhost:8080/api/login', {
@@ -62,15 +65,26 @@ export class LoginComponent {
       }
 
       const data = await res.json();
+      const rawIdentifier = this.form.get('identifier')?.value;
+      const identifier = typeof rawIdentifier === 'string' ? rawIdentifier.trim() : '';
 
       // Guardar token
       localStorage.setItem('token', data.token);
+
+      // Guardar username real para que Perfil pueda resolver /perfil/{username}.
+      const backendUsername = typeof data.username === 'string' ? data.username.trim() : '';
+      const fallbackUsername = identifier && !identifier.includes('@') ? identifier : '';
+      const usernameToStore = backendUsername || fallbackUsername;
+
+      if (usernameToStore) {
+        this.authSessionService.setCurrentUsername(usernameToStore);
+      }
 
       // Refrescar toggles para reflejar el estado en el navbar inmediatamente.
       await this.featureToggleService.loadFlags();
 
       // Redirección
-      this.router.navigate(['/home']);
+      this.router.navigate(['/perfil']);
 
     } catch {
       this.errorMessageKey = 'login.error.generic';

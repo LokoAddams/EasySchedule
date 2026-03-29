@@ -1,16 +1,15 @@
 <section class="perfil-page">
 	<header class="perfil-page__header">
-		<p class="perfil-page__eyebrow">{{ (editMode ? 'perfil.edit' : 'perfil.title') | translate }}</p>
+		<p class="perfil-page__eyebrow">{{ 'perfil.title' | translate }}</p>
 		<h1 class="perfil-page__name" *ngIf="!loading && perfil">{{ getNombreCompleto() }}</h1>
 	</header>
 
 	<p class="perfil-page__status" *ngIf="loading">{{ 'perfil.loading' | translate }}</p>
 	<p class="perfil-page__status perfil-page__status--error" *ngIf="!loading && errorKey">{{ errorKey | translate }}</p>
-	<p class="perfil-page__status perfil-page__status--success" *ngIf="!loading && successKey">{{ successKey | translate }}</p>
 
 	<div class="perfil-layout" *ngIf="!loading && perfil">
 		<article class="perfil-avatar-card">
-			<div class="perfil-avatar-card__media" role="img" [attr.aria-label]="'perfil.avatarAlt' | translate">
+			<div class="perfil-avatar-card__media" [attr.aria-label]="'perfil.avatarAlt' | translate" [title]="'perfil.avatarAlt' | translate">
 				<div class="perfil-avatar-card__avatar">
 					<svg viewBox="0 0 24 24" aria-hidden="true">
 						<path
@@ -25,47 +24,46 @@
 			<div class="perfil-grid">
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.username' | translate }}</span>
-					<input [value]="getValorSeguro(perfil.username)" readonly />
+					<input [value]="getValorSeguro(perfil.username)" readonly (click)="activarEdicionDesdeCampo('username')" [class.perfil-input--pending]="esCampoEditablePendiente(perfil.username, 'username')" />
 				</label>
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.email' | translate }}</span>
-					<input [value]="getValorSeguro(perfil.email)" readonly />
+					<input [value]="getValorSeguro(perfil.email, 'email')" readonly (click)="activarEdicionDesdeCampo('email')" [class.perfil-input--pending]="esCampoEditablePendiente(perfil.email, 'email')" />
 				</label>
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.nombre' | translate }}</span>
-					<input [value]="getValorSeguro(perfil.nombre)" readonly />
+					<input [value]="getValorSeguro(perfil.nombre, 'nombre')" readonly (click)="activarEdicionDesdeCampo('nombre')" [class.perfil-input--pending]="esCampoEditablePendiente(perfil.nombre, 'nombre')" />
 				</label>
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.universidad' | translate }}</span>
-					<input [value]="getValorSeguro(perfil.universidad)" readonly />
+					<input [value]="getValorSeguro(perfil.universidad, 'universidad')" readonly [class.perfil-input--auto]="esCampoAutoPendiente(perfil.universidad, 'universidad')" />
 				</label>
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.apellido' | translate }}</span>
-					<input [value]="getValorSeguro(perfil.apellido)" readonly />
+					<input [value]="getValorSeguro(perfil.apellido, 'apellido')" readonly (click)="activarEdicionDesdeCampo('apellido')" [class.perfil-input--pending]="esCampoEditablePendiente(perfil.apellido, 'apellido')" />
 				</label>
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.carrera' | translate }}</span>
-					<input [value]="getValorSeguro(perfil.carrera)" readonly />
+					<input [value]="getValorSeguro(perfil.carrera, 'carrera')" readonly [class.perfil-input--auto]="esCampoAutoPendiente(perfil.carrera, 'carrera')" />
 				</label>
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.carnet' | translate }}</span>
-					<input [value]="getValorSeguro(perfil.carnetIdentidad)" readonly />
+					<input [value]="getValorSeguro(perfil.carnetIdentidad, 'carnetIdentidad')" readonly (click)="activarEdicionDesdeCampo('carnetIdentidad')" [class.perfil-input--pending]="esCampoEditablePendiente(perfil.carnetIdentidad, 'carnetIdentidad')" />
 				</label>
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.fechaNacimiento' | translate }}</span>
-					<input [value]="getFechaNacimientoFormateada()" readonly />
+					<input [value]="getFechaNacimientoFormateada()" readonly (click)="activarEdicionDesdeCampo('fechaNacimiento')" />
 				</label>
 			</div>
 
 			<div class="perfil-actions">
-				<button class="perfil-edit-btn" type="button" (click)="activarEdicion()">{{ 'perfil.actions.edit' | translate }}</button>
 				<button class="perfil-password-btn" type="button">{{ 'perfil.actions.changePassword' | translate }}</button>
 			</div>
 		</article>
@@ -119,6 +117,9 @@
 							ngbDatepicker
 							datepickerClass="perfil-datepicker-theme"
 							#fechaNacimientoPicker="ngbDatepicker"
+							[minDate]="fechaNacimientoMinDate"
+							[maxDate]="fechaNacimientoMaxDate"
+							navigation="select"
 							[autoClose]="'outside'"
 							placement="auto"
 							[container]="'body'"
@@ -143,5 +144,14 @@
 				<button class="perfil-password-btn" type="button">{{ 'perfil.actions.changePassword' | translate }}</button>
 			</div>
 		</form>
+	</div>
+
+	<div class="perfil-modal-backdrop" *ngIf="showSuccessModal" (click)="cerrarModalExitoBackdrop($event)">
+		<section class="perfil-modal" role="dialog" aria-modal="true" [attr.aria-label]="'perfil.modal.updatedTitle' | translate">
+			<div class="perfil-modal__icon" aria-hidden="true">✓</div>
+			<h2 class="perfil-modal__title">{{ 'perfil.modal.updatedTitle' | translate }}</h2>
+			<p class="perfil-modal__text">{{ 'perfil.success.updated' | translate }}</p>
+			<button type="button" class="perfil-modal__btn" (click)="cerrarModalExito()">{{ 'perfil.modal.accept' | translate }}</button>
+		</section>
 	</div>
 </section>

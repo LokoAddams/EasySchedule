@@ -120,6 +120,15 @@
       "carrera": "Career",
       "universidad": "University"
     },
+    "placeholders": {
+      "nombre": "Click this field to complete your first name",
+      "apellido": "Click this field to complete your last name",
+      "email": "Click this field to complete your email",
+      "carnetIdentidad": "Click this field to complete your ID card",
+      "fechaNacimiento": "Click this field to complete your birth date",
+      "carrera": "Automatically assigned according to your curriculum",
+      "universidad": "Automatically assigned according to your curriculum"
+    },
     "actions": {
       "edit": "Edit",
       "save": "Save",
@@ -132,6 +141,10 @@
     },
     "success": {
       "updated": "Profile updated successfully."
+    },
+    "modal": {
+      "updatedTitle": "Profile updated",
+      "accept": "Accept"
     },
     "error": {
       "noSession": "No authenticated user found in this session. Sign in to view your profile.",
