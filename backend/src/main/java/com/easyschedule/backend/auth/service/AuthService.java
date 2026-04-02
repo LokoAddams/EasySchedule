@@ -38,21 +38,26 @@ public class AuthService {
     public void registerUser(SignupRequest signUpRequest) {
         String normalizedUsername = signUpRequest.getUsername().trim();
         String normalizedEmail = signUpRequest.getEmail().trim().toLowerCase();
+        log.info("[AUTH_REGISTRO] Intento de registro de nuevo usuario: {} / {}", normalizedUsername, normalizedEmail);
 
         if (Boolean.TRUE.equals(userRepository.existsByUsernameIgnoreCase(normalizedUsername))) {
-           throw new UserAlreadyExistsException("Error: El nombre de usuario ya está en uso");        }
+            log.warn("[AUTH_REGISTRO] el username {} ya existe", normalizedUsername);
+            throw new UserAlreadyExistsException("Error: El nombre de usuario ya está en uso");
+        }
 
         if (Boolean.TRUE.equals(userRepository.existsByEmailIgnoreCase(normalizedEmail))) {
-            throw new UserAlreadyExistsException("Error: El correo electrónico ya está registrado");        }
+            log.warn("[AUTH_REGISTRO] el email {} ya está en uso", normalizedEmail);
+            throw new UserAlreadyExistsException("Error: El correo electrónico ya está registrado");
+        }
 
         User user = new User(
             normalizedUsername,
             normalizedEmail,
             encoder.encode(signUpRequest.getPassword())
         );
-    
         
         userRepository.save(user);
+        log.info("[AUTH_REGISTRO] Usuario creado exitosamente: {}", normalizedUsername);
     }
     public ResponseEntity<?> login(LoginRequest request) {
         String identifier = request.getIdentifier().trim();

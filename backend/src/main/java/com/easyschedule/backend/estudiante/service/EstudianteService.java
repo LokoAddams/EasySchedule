@@ -14,6 +14,8 @@ import com.easyschedule.backend.malla.model.Malla;
 import com.easyschedule.backend.malla.repository.MallaRepository;
 import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,8 @@ import java.util.Optional;
 
 @Service
 public class EstudianteService {
+
+    private static final Logger log = LoggerFactory.getLogger(EstudianteService.class);
 
     private final EstudianteRepository estudianteRepository;
     private final MallaRepository mallaRepository;
@@ -102,7 +106,9 @@ public class EstudianteService {
         estudiante.setProfileCompleted(false);
         estudiante.setUser(user);
 
-        return toResponse(estudianteRepository.save(estudiante));
+        Estudiante estudianteSaved = estudianteRepository.save(estudiante);
+        log.info("[ESTUDIANTE_REGISTRO] Perfil de estudiante creado para el usuario: {} con ID: {}", user.getUsername(), estudianteSaved.getId());
+        return toResponse(estudianteSaved);
     }
 
     private Estudiante getEstudianteOrThrow(Long id) {

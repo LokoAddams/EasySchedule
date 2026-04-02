@@ -34,8 +34,16 @@ public class AuthController {
 
     @PostMapping("/registro")
     public ResponseEntity<Void> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        authService.registerUser(signUpRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        String identifier = signUpRequest.getUsername() == null ? "" : signUpRequest.getUsername().trim();
+        String email = signUpRequest.getEmail() == null ? "" : signUpRequest.getEmail().trim().toLowerCase();
+        log.info("[AUTH_REGISTRO] Intento de registro de nuevo usuario: {} / {}", identifier, email);
+        try {
+            authService.registerUser(signUpRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception ex) {
+            log.error("[AUTH_REGISTRO] Error inesperado durante el registro de usuario: {}", identifier, ex);
+            throw ex;
+        }
     }
 
     @PostMapping("/login")

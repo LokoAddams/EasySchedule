@@ -5,6 +5,8 @@ import com.easyschedule.backend.estudiante.dto.EstudianteResponse;
 import com.easyschedule.backend.estudiante.dto.EstudianteUpdateRequest;
 import com.easyschedule.backend.estudiante.dto.PerfilUpdateRequest;
 import com.easyschedule.backend.estudiante.service.EstudianteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +28,8 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/estudiantes")
 public class EstudianteController {
+
+    private static final Logger log = LoggerFactory.getLogger(EstudianteController.class);
 
     private final EstudianteService estudianteService;
 
@@ -56,8 +60,16 @@ public class EstudianteController {
 
     @PostMapping("/registro")
     public ResponseEntity<EstudianteResponse> register(@Valid @RequestBody RegistroRequest request) {
-        EstudianteResponse response = estudianteService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        String normalizedUsername = request.username() == null ? "" : request.username().trim();
+        String normalizedEmail = request.email() == null ? "" : request.email().trim().toLowerCase();
+        log.info("[ESTUDIANTE_REGISTRO] Intento de registro de nuevo estudiante: {} / {}", normalizedUsername, normalizedEmail);
+        try {
+            EstudianteResponse response = estudianteService.register(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception ex) {
+            log.error("[ESTUDIANTE_REGISTRO] Error inesperado durante el registro de estudiante: {}", normalizedUsername, ex);
+            throw ex;
+        }
     }
 
     @GetMapping("/perfil/{username}")
