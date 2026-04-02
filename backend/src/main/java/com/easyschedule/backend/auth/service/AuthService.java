@@ -104,23 +104,32 @@ public class AuthService {
     public ResponseEntity<?> changePassword(Long userId, ChangePasswordRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+    
 
         if (!encoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            log.warn("[AUTH_CHANGE_PASSWORD] fallo | userId={} | reason=CURRENT_PASSWORD_INCORRECT", userId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contrasenia actual es incorrecta");
         }
+    
 
         if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            log.warn("[AUTH_CHANGE_PASSWORD] fallo | userId={} | reason=PASSWORD_CONFIRMATION_MISMATCH", userId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La nueva contrasenia y su confirmacion no coinciden");
         }
+    
 
         if (encoder.matches(request.getNewPassword(), user.getPasswordHash())) {
+            log.warn("[AUTH_CHANGE_PASSWORD] fallo | userId={} | reason=NEW_PASSWORD_EQUALS_OLD", userId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La nueva contrasenia debe ser diferente a la actual");
         }
+    
 
         user.setPasswordHash(encoder.encode(request.getNewPassword()));
         user.setUpdatedAt(OffsetDateTime.now());
         userRepository.save(user);
-
+    
+        log.info("[AUTH_CHANGE_PASSWORD] exito | userId={}", userId);
+    
         return ResponseEntity.ok().body(Map.of("message", "Contrasenia actualizada correctamente"));
     }
 
