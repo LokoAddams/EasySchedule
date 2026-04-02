@@ -16,10 +16,14 @@ import java.time.OffsetDateTime;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.easyschedule.backend.auth.dto.request.LoginRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
@@ -52,11 +56,13 @@ public class AuthService {
     }
     public ResponseEntity<?> login(LoginRequest request) {
         String identifier = request.getIdentifier().trim();
+        log.info("[AUTH_LOGIN] intento autenticacion | identifier={}", identifier);
 
         Optional<User> userOpt = userRepository.findByUsernameIgnoreCase(identifier)
             .or(() -> userRepository.findByEmailIgnoreCase(identifier));
 
         if (userOpt.isEmpty()) {
+            log.warn("[AUTH_LOGIN] fallo autenticacion | identifier={} motivo=usuario_no_encontrado", identifier);
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body("Credenciales incorrectas");
@@ -66,12 +72,14 @@ public class AuthService {
     
 
         if (!encoder.matches(request.getPassword(), user.getPasswordHash())) {
+            log.warn("[AUTH_LOGIN] fallo autenticacion | userId={} motivo=password_incorrecta", user.getId());
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body("Credenciales incorrectas");
         }
 
         String token = sessionTokenService.issueToken(user.getId());
+        log.info("[AUTH_LOGIN] autenticacion exitosa | userId={} username={}", user.getId(), user.getUsername());
 
         return ResponseEntity.ok().body(
             Map.of(
