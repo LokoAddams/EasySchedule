@@ -65,7 +65,7 @@ public class AuthController {
         } catch (NumberFormatException ex) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sesion invalida");
         }
-
+        log.info("[AUTH_CHANGE_PASSWORD] intento | userId={}", userId);
         return authService.changePassword(userId, request);
     }
 
