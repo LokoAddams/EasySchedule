@@ -16,11 +16,15 @@ import com.easyschedule.backend.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.security.Principal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api")
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthService authService;
 
@@ -36,6 +40,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        String identifier = request.getIdentifier() == null ? "" : request.getIdentifier().trim();
+        log.info("[AUTH_LOGIN] request recibido | identifier={}", identifier);
         return authService.login(request);
     }
 
