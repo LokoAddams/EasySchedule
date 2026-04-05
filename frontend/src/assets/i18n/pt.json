@@ -106,9 +106,23 @@
   }
 },
   "malla": {
-    "placeholder": "Currículo funcionando!",
-    "update": "Atualizar currículo",
-    "updatePlaceholder": "Atualização do currículo funcionando!"
+    "title": "Configuração acadêmica",
+    "description": "Selecione sua universidade para iniciar a configuração da grade curricular.",
+    "loadingUniversidades": "Carregando universidades...",
+    "retry": "Tentar novamente",
+    "actions": {
+      "saveUniversidad": "Salvar universidade"
+    },
+    "error": {
+      "loadUniversidades": "Não foi possível carregar as universidades disponíveis."
+    },
+    "universidad": {
+      "label": "Universidade",
+      "placeholder": "Selecione uma universidade"
+    },
+    "validation": {
+      "universidadRequired": "Você deve selecionar uma universidade."
+    }
   },
   "tomaMaterias": {
     "placeholder": "Seleção de disciplinas funcionando!",

@@ -1,7 +1,7 @@
 package com.easyschedule.backend.estudiante.model;
 
 import com.easyschedule.backend.auth.models.User;
-import com.easyschedule.backend.malla.model.Malla;
+import com.easyschedule.backend.academico.malla.model.Malla;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

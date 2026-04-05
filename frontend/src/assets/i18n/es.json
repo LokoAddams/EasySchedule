@@ -105,9 +105,23 @@
   }
 },
   "malla": {
-    "placeholder": "Malla Works!",
-    "update": "Actualizar Malla",
-    "updatePlaceholder": "Actualizar Malla works!"
+    "title": "Configuracion academica",
+    "description": "Selecciona tu universidad para iniciar la configuracion de tu malla curricular.",
+    "loadingUniversidades": "Cargando universidades...",
+    "retry": "Reintentar",
+    "actions": {
+      "saveUniversidad": "Guardar universidad"
+    },
+    "error": {
+      "loadUniversidades": "No se pudieron cargar las universidades disponibles."
+    },
+    "universidad": {
+      "label": "Universidad",
+      "placeholder": "Selecciona una universidad"
+    },
+    "validation": {
+      "universidadRequired": "Debes seleccionar una universidad."
+    }
   },
   "tomaMaterias": {
     "placeholder": "Toma de Materias Works!",

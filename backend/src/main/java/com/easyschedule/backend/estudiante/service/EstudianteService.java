@@ -10,8 +10,8 @@ import com.easyschedule.backend.estudiante.dto.EstudianteUpdateRequest;
 import com.easyschedule.backend.estudiante.dto.PerfilUpdateRequest;
 import com.easyschedule.backend.estudiante.model.Estudiante;
 import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
-import com.easyschedule.backend.malla.model.Malla;
-import com.easyschedule.backend.malla.repository.MallaRepository;
+import com.easyschedule.backend.academico.malla.model.Malla;
+import com.easyschedule.backend.academico.malla.repository.MallaRepository;
 import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
 
 import org.slf4j.Logger;

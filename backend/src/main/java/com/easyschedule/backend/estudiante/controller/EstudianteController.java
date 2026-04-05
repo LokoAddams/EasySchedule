@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -64,33 +63,33 @@ public class EstudianteController {
     public ResponseEntity<EstudianteResponse> register(@Valid @RequestBody RegistroRequest request) {
         String normalizedUsername = request.username() == null ? "" : request.username().trim();
         String normalizedEmail = request.email() == null ? "" : request.email().trim().toLowerCase();
-        log.info("[ESTUDIANTE_REGISTRO] Intento de registro de nuevo estudiante: {} / {}", normalizedUsername, normalizedEmail);
+        log.info("[ESTUDIANTE_REGISTRO] Intento de registro de nuevo estudiante: {} / {}", normalizedUsername,
+                normalizedEmail);
         try {
             EstudianteResponse response = estudianteService.register(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception ex) {
-            log.error("[ESTUDIANTE_REGISTRO] Error inesperado durante el registro de estudiante: {}", normalizedUsername, ex);
+            log.error("[ESTUDIANTE_REGISTRO] Error inesperado durante el registro de estudiante: {}",
+                    normalizedUsername, ex);
             throw ex;
         }
     }
 
     @GetMapping("/perfil/{username}")
     public EstudianteResponse findProfileByUsername(
-        @PathVariable("username") String username,
-        Principal principal
-    ) {
+            @PathVariable("username") String username,
+            Principal principal) {
         Long userId = getAuthenticatedUserId(principal);
         validateProfileOwnership(username, userId);
         log.info("[PERFIL] Carga de perfil solicitada para el estudiante con ID: {}", userId);
         return estudianteService.findByUsername(username);
     }
 
-    @RequestMapping(value = "/perfil/{username}", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    @RequestMapping(value = "/perfil/{username}", method = { RequestMethod.PUT, RequestMethod.PATCH })
     public EstudianteResponse updateProfile(
-        @PathVariable("username") String username,
-        @Valid @RequestBody PerfilUpdateRequest request,
-        Principal principal
-    ) {
+            @PathVariable("username") String username,
+            @Valid @RequestBody PerfilUpdateRequest request,
+            Principal principal) {
         Long userId = getAuthenticatedUserId(principal);
         validateProfileOwnership(username, userId);
         log.info("[PERFIL-EDICION] Intento de actualización de perfil para el estudiante con ID: {}", userId);
