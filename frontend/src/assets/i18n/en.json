@@ -106,9 +106,23 @@
 
   },
   "malla": {
-    "placeholder": "Curriculum Works!",
-    "update": "Update Curriculum",
-    "updatePlaceholder": "Update Curriculum works!"
+    "title": "Academic setup",
+    "description": "Select your university to start your curriculum setup.",
+    "loadingUniversidades": "Loading universities...",
+    "retry": "Retry",
+    "actions": {
+      "saveUniversidad": "Save university"
+    },
+    "error": {
+      "loadUniversidades": "Could not load available universities."
+    },
+    "universidad": {
+      "label": "University",
+      "placeholder": "Select a university"
+    },
+    "validation": {
+      "universidadRequired": "You must select a university."
+    }
   },
   "tomaMaterias": {
     "placeholder": "Course Selection Works!",

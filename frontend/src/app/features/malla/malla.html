@@ -1,4 +1,48 @@
 <ng-container *ngIf="mallaEnabled">
-	<p class="placeholder-page">{{ 'malla.placeholder' | translate }}</p>
-	<a routerLink="/malla/actualizar">{{ 'malla.update' | translate }}</a>
+  <section class="malla-page">
+    <header class="malla-page__header">
+      <h1>{{ 'malla.title' | translate }}</h1>
+      <p>{{ 'malla.description' | translate }}</p>
+    </header>
+
+    <div class="malla-card" *ngIf="loadingUniversidades">
+      <p>{{ 'malla.loadingUniversidades' | translate }}</p>
+    </div>
+
+    <div class="malla-card malla-card--error" *ngIf="!loadingUniversidades && loadUniversidadesError">
+      <p>{{ 'malla.error.loadUniversidades' | translate }}</p>
+      <button type="button" class="malla-button" (click)="retryLoadUniversidades()">
+        {{ 'malla.retry' | translate }}
+      </button>
+    </div>
+
+    <div class="malla-card" *ngIf="!loadingUniversidades && !loadUniversidadesError">
+      <label class="malla-label" for="universidad-select">{{ 'malla.universidad.label' | translate }}</label>
+      <select
+        id="universidad-select"
+        class="malla-select"
+        [(ngModel)]="selectedUniversidadId"
+        (ngModelChange)="onUniversidadChange($event)"
+        required
+      >
+        <option [ngValue]="null" disabled>{{ 'malla.universidad.placeholder' | translate }}</option>
+        <option *ngFor="let universidad of universidades" [ngValue]="universidad.id">
+          {{ universidad.nombre }}
+        </option>
+      </select>
+
+      <p *ngIf="universidadRequiredError" class="malla-field-error">
+        {{ 'malla.validation.universidadRequired' | translate }}
+      </p>
+
+      <button
+        type="button"
+        class="malla-button malla-button--save"
+        [disabled]="selectedUniversidadId === null"
+        (click)="onGuardarUniversidadClick()"
+      >
+        {{ 'malla.actions.saveUniversidad' | translate }}
+      </button>
+    </div>
+  </section>
 </ng-container>
