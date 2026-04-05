@@ -47,6 +47,28 @@ Variables disponibles (opcionales):
 
 Referencia: `backend/.env.example`
 
+### Ejecutar schema + seeds
+
+Al iniciar el backend, los seeds se ejecutan automaticamente solo si la base esta vacia (o si el esquema no existe).
+Si ya hay datos, se omiten.
+
+Tambien puedes ejecutarlos manualmente bajo demanda:
+
+```bash
+cd backend
+chmod +x run-seeds.sh
+./run-seeds.sh
+```
+
+Variables opcionales para el script:
+
+- `DB_HOST` (default: `localhost`)
+- `DB_PORT` (default: `5432`)
+- `DB_NAME` (default: `EasySchedule`)
+- `DB_USER` (default: `postgres`)
+- `DB_PASSWORD` (default: `postgres`)
+- `WITH_SCHEMA` (default: `true`)
+
 ## 3) Levantar backend
 
 ```bash

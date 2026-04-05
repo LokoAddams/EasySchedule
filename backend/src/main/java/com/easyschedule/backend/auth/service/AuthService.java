@@ -96,6 +96,7 @@ public class AuthService {
             Map.of(
                 "token", token,
                 "username", user.getUsername(),
+                "expiresInSeconds", sessionTokenService.getTokenTtlSeconds(),
                 "message", "Login exitoso"
             )
         );

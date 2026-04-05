@@ -16,7 +16,7 @@ public class SessionTokenService {
 
     private static final Logger log = LoggerFactory.getLogger(SessionTokenService.class);
 
-    private static final Duration TOKEN_TTL = Duration.ofHours(8);
+    private static final Duration TOKEN_TTL = Duration.ofHours(1);
 
     private final ConcurrentMap<String, SessionTokenRecord> tokenStore = new ConcurrentHashMap<>();
     private final SecureRandom secureRandom = new SecureRandom();
@@ -40,6 +40,10 @@ public class SessionTokenService {
         );
         log.debug("[SESSION_TOKEN] token almacenado en memoria | userId={} tokenRef={}", userId, tokenRef(token));
         return token;
+    }
+
+    public long getTokenTtlSeconds() {
+        return TOKEN_TTL.getSeconds();
     }
 
     public Optional<Long> validateAndGetUserId(String token) {
