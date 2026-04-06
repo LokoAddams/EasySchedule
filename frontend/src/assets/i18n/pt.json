@@ -46,82 +46,107 @@
       "connectionError": "Erro de conexão: {{message}}"
     },
     "subtitle": "Planeje seu caminho acadêmico sem complicações",
-    "description":"Nossa plataforma analisa seus requisitos e objetivos em tempo real para oferecer a combinação perfeita de matérias para o seu próximo semestre. Nós não apenas criamos um horário, mostramos exatamente como cada escolha de hoje acelera sua graduação de amanhã. Assuma o controle do seu caminho acadêmico e pare de adivinhar!",
-      "button":{
+    "description": "Nossa plataforma analisa seus requisitos e objetivos em tempo real para oferecer a combinação perfeita de matérias para o seu próximo semestre. Nós não apenas criamos um horário, mostramos exatamente como cada escolha de hoje acelera sua graduação de amanhã. Assuma o controle do seu caminho acadêmico e pare de adivinhar!",
+    "button": {
       "start": "Começar"
-      },
-      "aboutUs":{
-        "title": "Sobre Nós",
+    },
+    "aboutUs": {
+      "title": "Sobre Nós",
       "pharagraph1": "Na Easy Schedule, entendemos que a vida universitária já é complexa o suficiente sem que o planejamento de cursos se torne um obstáculo adicional. Nascemos da visão de Lucas Alcoba e Adrian Claros, com o objetivo de capacitar estudantes de graduação e pós-graduação por meio da tecnologia inteligente.",
       "pharagraph2": "Ao contrário das ferramentas tradicionais de consulta de currículos, oferecemos uma solução abrangente: uma plataforma web interativa que processa seus requisitos específicos e gera sugestões personalizadas. Acreditamos que todo estudante merece um caminho acadêmico claro, eficiente e livre de erros administrativos.",
       "pharagraph3": "Nossa plataforma é projetada especificamente para se integrar com as realidades acadêmicas de instituições líderes, como a Universidad Católica Boliviana campus Cochabamba, a Universidad Mayor de San Simón e a Universidad Mayor de San Andrés."
     },
-  "questions":{
-    "title": "Perguntas Frequentes",
-    "question1": "Como funciona o EasySchedule?",
-    "answer1": "O EasySchedule utiliza um algoritmo inteligente para analisar seus requisitos acadêmicos e objetivos. Ele processa essas informações em tempo real para gerar sugestões personalizadas de cursos para seu próximo semestre, ajudando você a desenhar um caminho acadêmico eficiente.",
-    "question2": "O EasySchedule é gratuito?",
-    "answer2": "Sim, o EasySchedule é completamente gratuito para os estudantes. Acreditamos que todo estudante deve ter acesso a ferramentas que os ajudem a ter sucesso acadêmico sem nenhum custo."
+    "questions": {
+      "title": "Perguntas Frequentes",
+      "question1": "Como funciona o EasySchedule?",
+      "answer1": "O EasySchedule utiliza um algoritmo inteligente para analisar seus requisitos acadêmicos e objetivos. Ele processa essas informações em tempo real para gerar sugestões personalizadas de cursos para seu próximo semestre, ajudando você a desenhar um caminho acadêmico eficiente.",
+      "question2": "O EasySchedule é gratuito?",
+      "answer2": "Sim, o EasySchedule é completamente gratuito para os estudantes. Acreditamos que todo estudante deve ter acesso a ferramentas que os ajudem a ter sucesso acadêmico sem nenhum custo."
+    },
+    "footer": {
+      "subtitle1": "Termos e Políticas de Privacidade",
+      "subtitle2": "Contate-nos",
+      "subtitle3": "Localização",
+      "terms": "Termos e Condições",
+      "privacy": "Política de Privacidade",
+      "contact": "Para qualquer dúvida ou suporte, entre em contato em ",
+      "email": "support@easyschedule.com",
+      "phone": "+591 64363462",
+      "address": "Av. America Nª9832",
+      "copyright": "Direitos autorais @ 2026 EasyScheduleCompany. Todos os direitos reservados"
+    }
   },
-  "footer":{
-    "subtitle1": "Termos e Políticas de Privacidade",
-    "subtitle2": "Contate-nos",
-    "subtitle3": "Localização",
-    "terms": "Termos e Condições",
-    "privacy": "Política de Privacidade",
-    "contact": "Para qualquer dúvida ou suporte, entre em contato em ",
-    "email": "support@easyschedule.com",
-    "phone": "+591 64363462",
-    "address": "Av. America Nª9832",
-    "copyright": "Direitos autorais @ 2026 EasyScheduleCompany. Todos os direitos reservados"
-  }
-
+  "login": {
+    "title": "Entrar",
+    "label": {
+      "identifier": "Email ou usuário",
+      "password": "Senha"
+    },
+    "placeholder": {
+      "identifier": "Digite seu email ou usuário",
+      "password": "Digite sua senha"
+    },
+    "button": {
+      "submit": "Entrar",
+      "gotoRegister": "Criar conta",
+      "backHome": "Voltar ao início"
+    },
+    "validation": {
+      "required": "Este campo é obrigatório"
+    },
+    "loading": "Entrando...",
+    "success": {
+      "loggedIn": "Login realizado com sucesso.",
+      "completeProfile": "Login realizado. Complete seu perfil para continuar."
+    },
+    "error": {
+      "invalidCredentials": "Credenciais inválidas",
+      "generic": "Erro inesperado"
+    }
   },
-"login": {
-  "title": "Entrar",
-  "label": {
-    "identifier": "Email ou usuário",
-    "password": "Senha"
-  },
-  "placeholder": {
-    "identifier": "Digite seu email ou usuário",
-    "password": "Digite sua senha"
-  },
-  "button": {
-    "submit": "Entrar",
-    "gotoRegister": "Criar conta",
-    "backHome": "Voltar ao início"
-  },
-  "validation": {
-    "required": "Este campo é obrigatório"
-  },
-  "loading": "Entrando...",
-  "success": {
-    "loggedIn": "Login realizado com sucesso.",
-    "completeProfile": "Login realizado. Complete seu perfil para continuar."
-  },
-  "error": {
-    "invalidCredentials": "Credenciais inválidas",
-    "generic": "Erro inesperado"
-  }
-},
   "malla": {
     "title": "Configuração acadêmica",
     "description": "Selecione sua universidade para iniciar a configuração da grade curricular.",
     "loadingUniversidades": "Carregando universidades...",
     "retry": "Tentar novamente",
     "actions": {
-      "saveUniversidad": "Salvar universidade"
+      "saveUniversidad": "Salvar universidade",
+      "saveCarrera": "Salvar carreira",
+      "saveMalla": "Salvar grade curricular",
+      "saving": "Salvando..."
     },
     "error": {
-      "loadUniversidades": "Não foi possível carregar as universidades disponíveis."
+      "loadUniversidades": "Não foi possível carregar as universidades disponíveis.",
+      "loadCarreras": "Não foi possível carregar as carreiras desta universidade.",
+      "loadMallas": "Não foi possível carregar as grades desta carreira.",
+      "saveSeleccion": "Não foi possível salvar a seleção acadêmica. Tente novamente."
     },
     "universidad": {
       "label": "Universidade",
       "placeholder": "Selecione uma universidade"
     },
     "validation": {
-      "universidadRequired": "Você deve selecionar uma universidade."
+      "universidadRequired": "Você deve selecionar uma universidade.",
+      "carreraRequired": "Você deve selecionar uma carreira.",
+      "mallaRequired": "Você deve selecionar uma grade curricular."
+    },
+    "loadingCarreras": "Carregando carreiras...",
+    "loadingMallas": "Carregando grades curriculares...",
+    "steps": {
+      "universidad": "Universidade",
+      "carrera": "Carreira",
+      "malla": "Grade curricular"
+    },
+    "carrera": {
+      "label": "Carreira",
+      "placeholder": "Selecione uma carreira"
+    },
+    "malla": {
+      "label": "Grade curricular",
+      "placeholder": "Selecione uma grade curricular"
+    },
+    "summary": {
+      "curriculum": "Grade curricular {{malla}}"
     }
   },
   "tomaMaterias": {
@@ -134,11 +159,11 @@
   "perfil": {
     "placeholder": "Perfil funcionando!",
     "edit": "Editar perfil",
-      "editPlaceholder": "Edição de perfil funcionando!",
+    "editPlaceholder": "Edição de perfil funcionando!",
     "title": "Perfil",
     "readOnly": "Atualiza-se conforme a grade curricular.",
     "loading": "Carregando dados do perfil...",
-      "avatarAlt": "Avatar do usuário",
+    "avatarAlt": "Avatar do usuário",
     "fields": {
       "username": "Nome de usuário",
       "nombre": "Nome",

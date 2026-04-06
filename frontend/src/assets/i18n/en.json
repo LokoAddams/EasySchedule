@@ -46,64 +46,63 @@
       "connectionError": "Connection error: {{message}}"
     },
     "subtitle": "Design your academic path without complications",
-    "description":"Our platform analyzes your requirements and goals in real time to offer you the perfect combination of subjects for your next term. We don't just create a schedule, we show you exactly how each choice today accelerates your graduation tomorrow. Take control of your academic path and stop guessing!",
-    "button":{
-    "start": "Get Started"
+    "description": "Our platform analyzes your requirements and goals in real time to offer you the perfect combination of subjects for your next term. We don't just create a schedule, we show you exactly how each choice today accelerates your graduation tomorrow. Take control of your academic path and stop guessing!",
+    "button": {
+      "start": "Get Started"
     },
-    "aboutUs":{
+    "aboutUs": {
       "title": "About Us",
-    "pharagraph1": "At Easy Schedule, we understand that university life is complex enough without course planning becoming an additional obstacle. We were born from the vision of Lucas Alcoba and Adrian Claros, with the goal of empowering undergraduate and graduate students through intelligent technology.",
-    "pharagraph2": "Unlike traditional curriculum consultation tools, we offer a comprehensive solution: an interactive web platform that processes your specific requirements and generates personalized suggestions. We believe every student deserves a clear, efficient academic path free of administrative errors.",
-    "pharagraph3": "Our platform is specifically designed to integrate with the academic realities of leading institutions, such as the Universidad Católica Boliviana Cochabamba campus, the Universidad Mayor de San Simón, and the Universidad Mayor de San Andrés."
+      "pharagraph1": "At Easy Schedule, we understand that university life is complex enough without course planning becoming an additional obstacle. We were born from the vision of Lucas Alcoba and Adrian Claros, with the goal of empowering undergraduate and graduate students through intelligent technology.",
+      "pharagraph2": "Unlike traditional curriculum consultation tools, we offer a comprehensive solution: an interactive web platform that processes your specific requirements and generates personalized suggestions. We believe every student deserves a clear, efficient academic path free of administrative errors.",
+      "pharagraph3": "Our platform is specifically designed to integrate with the academic realities of leading institutions, such as the Universidad Católica Boliviana Cochabamba campus, the Universidad Mayor de San Simón, and the Universidad Mayor de San Andrés."
+    },
+    "questions": {
+      "title": "Frequently Asked Questions",
+      "question1": "How does EasySchedule work?",
+      "answer1": "EasySchedule uses an intelligent algorithm to analyze your academic requirements and goals. It processes this information in real time to generate personalized course suggestions for your next semester, helping you design an efficient academic path.",
+      "question2": "Is EasySchedule free?",
+      "answer2": "Yes, EasySchedule is completely free for students. We believe every student should have access to tools that help them succeed academically without any cost."
+    },
+    "footer": {
+      "subtitle1": "Terms and Privacy Policies",
+      "subtitle2": "Contact Us",
+      "subtitle3": "Location",
+      "terms": "Terms and Conditions",
+      "privacy": "Privacy Policy",
+      "contact": "For any questions or support, please contact us at ",
+      "email": "support@easyschedule.com",
+      "phone": "+591 64363462",
+      "address": "America Ave. Nª9832",
+      "copyright": "Copyright @ 2026 EasyScheduleCompany. All rights reserved"
+    }
   },
-  "questions": {
-    "title": "Frequently Asked Questions",
-    "question1": "How does EasySchedule work?",
-    "answer1": "EasySchedule uses an intelligent algorithm to analyze your academic requirements and goals. It processes this information in real time to generate personalized course suggestions for your next semester, helping you design an efficient academic path.",
-    "question2": "Is EasySchedule free?",
-    "answer2": "Yes, EasySchedule is completely free for students. We believe every student should have access to tools that help them succeed academically without any cost."
-  },
-  "footer":{
-    "subtitle1": "Terms and Privacy Policies",
-    "subtitle2": "Contact Us",
-    "subtitle3": "Location",
-    "terms": "Terms and Conditions",
-    "privacy": "Privacy Policy",
-    "contact": "For any questions or support, please contact us at ",
-    "email": "support@easyschedule.com",
-    "phone": "+591 64363462",
-    "address": "America Ave. Nª9832",
-    "copyright": "Copyright @ 2026 EasyScheduleCompany. All rights reserved"
-  }
-  },
-"login": {
-  "title": "Sign In",
-  "label": {
-    "identifier": "Email or Username",
-    "password": "Password"
-  },
-  "placeholder": {
-    "identifier": "Enter your email or username",
-    "password": "Enter your password"
-  },
-  "button": {
-    "submit": "Sign In",
-    "gotoRegister": "Create account",
-    "backHome": "Back to home"
-  },
-  "validation": {
-    "required": "This field is required"
-  },
-  "loading": "Signing in...",
-  "success": {
-    "loggedIn": "Signed in successfully.",
-    "completeProfile": "Signed in. Complete your profile to continue."
-  },
-  "error": {
-    "invalidCredentials": "Invalid credentials",
-    "generic": "Unexpected error"
-  }
-
+  "login": {
+    "title": "Sign In",
+    "label": {
+      "identifier": "Email or Username",
+      "password": "Password"
+    },
+    "placeholder": {
+      "identifier": "Enter your email or username",
+      "password": "Enter your password"
+    },
+    "button": {
+      "submit": "Sign In",
+      "gotoRegister": "Create account",
+      "backHome": "Back to home"
+    },
+    "validation": {
+      "required": "This field is required"
+    },
+    "loading": "Signing in...",
+    "success": {
+      "loggedIn": "Signed in successfully.",
+      "completeProfile": "Signed in. Complete your profile to continue."
+    },
+    "error": {
+      "invalidCredentials": "Invalid credentials",
+      "generic": "Unexpected error"
+    }
   },
   "malla": {
     "title": "Academic setup",
@@ -111,17 +110,43 @@
     "loadingUniversidades": "Loading universities...",
     "retry": "Retry",
     "actions": {
-      "saveUniversidad": "Save university"
+      "saveUniversidad": "Save university",
+      "saveCarrera": "Save career",
+      "saveMalla": "Save curriculum",
+      "saving": "Saving..."
     },
     "error": {
-      "loadUniversidades": "Could not load available universities."
+      "loadUniversidades": "Could not load available universities.",
+      "loadCarreras": "Could not load careers for this university.",
+      "loadMallas": "Could not load curricula for this career.",
+      "saveSeleccion": "Could not save the academic selection. Please try again."
     },
     "universidad": {
       "label": "University",
       "placeholder": "Select a university"
     },
     "validation": {
-      "universidadRequired": "You must select a university."
+      "universidadRequired": "You must select a university.",
+      "carreraRequired": "You must select a career.",
+      "mallaRequired": "You must select a curriculum."
+    },
+    "loadingCarreras": "Loading careers...",
+    "loadingMallas": "Loading curricula...",
+    "steps": {
+      "universidad": "University",
+      "carrera": "Career",
+      "malla": "Curriculum"
+    },
+    "carrera": {
+      "label": "Career",
+      "placeholder": "Select a career"
+    },
+    "malla": {
+      "label": "Curriculum",
+      "placeholder": "Select a curriculum"
+    },
+    "summary": {
+      "curriculum": "Curriculum {{malla}}"
     }
   },
   "tomaMaterias": {

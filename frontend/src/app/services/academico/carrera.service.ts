@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+import { ApiService } from '../api.service';
 
 export interface CarreraCatalogoItem {
   id: number;
@@ -10,4 +13,10 @@ export interface CarreraCatalogoItem {
 @Injectable({
   providedIn: 'root',
 })
-export class CarreraService {}
+export class CarreraService {
+  constructor(private readonly apiService: ApiService) {}
+
+  getCarrerasActivasPorUniversidad(universidadId: number): Observable<CarreraCatalogoItem[]> {
+    return this.apiService.get<CarreraCatalogoItem[]>(`/api/academico/carreras?universidadId=${universidadId}`);
+  }
+}

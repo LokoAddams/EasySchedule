@@ -108,19 +108,45 @@
     "title": "Configuracion academica",
     "description": "Selecciona tu universidad para iniciar la configuracion de tu malla curricular.",
     "loadingUniversidades": "Cargando universidades...",
+    "loadingCarreras": "Cargando carreras...",
+    "loadingMallas": "Cargando mallas...",
     "retry": "Reintentar",
+    "steps": {
+      "universidad": "Universidad",
+      "carrera": "Carrera",
+      "malla": "Malla curricular"
+    },
     "actions": {
-      "saveUniversidad": "Guardar universidad"
+      "saveUniversidad": "Guardar universidad",
+      "saveCarrera": "Guardar carrera",
+      "saveMalla": "Guardar malla",
+      "saving": "Guardando..."
     },
     "error": {
-      "loadUniversidades": "No se pudieron cargar las universidades disponibles."
+      "loadUniversidades": "No se pudieron cargar las universidades disponibles.",
+      "loadCarreras": "No se pudieron cargar las carreras para esta universidad.",
+      "loadMallas": "No se pudieron cargar las mallas para esta carrera.",
+      "saveSeleccion": "No se pudo guardar la seleccion academica. Intenta nuevamente."
     },
     "universidad": {
       "label": "Universidad",
       "placeholder": "Selecciona una universidad"
     },
+    "carrera": {
+      "label": "Carrera",
+      "placeholder": "Selecciona una carrera"
+    },
+    "malla": {
+      "label": "Malla curricular",
+      "placeholder": "Selecciona una malla"
+    },
+    "summary": {
+      "curriculum": "Malla curricular {{malla}}"
+    },
     "validation": {
-      "universidadRequired": "Debes seleccionar una universidad."
+      "universidadRequired": "Debes seleccionar una universidad.",
+      "carreraRequired": "Debes seleccionar una carrera.",
+      "mallaRequired": "Debes seleccionar una malla."
     }
   },
   "tomaMaterias": {

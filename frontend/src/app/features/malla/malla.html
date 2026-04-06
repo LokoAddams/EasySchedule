@@ -1,8 +1,14 @@
 <ng-container *ngIf="mallaEnabled">
   <section class="malla-page">
-    <header class="malla-page__header">
+    <header class="malla-page__header" *ngIf="step !== 'resumen'">
       <h1>{{ 'malla.title' | translate }}</h1>
       <p>{{ 'malla.description' | translate }}</p>
+
+      <div class="malla-stepper">
+        <span class="malla-step" [class.malla-step--active]="step === 'universidad'">1. {{ 'malla.steps.universidad' | translate }}</span>
+        <span class="malla-step" [class.malla-step--active]="step === 'carrera'">2. {{ 'malla.steps.carrera' | translate }}</span>
+        <span class="malla-step" [class.malla-step--active]="step === 'malla'">3. {{ 'malla.steps.malla' | translate }}</span>
+      </div>
     </header>
 
     <div class="malla-card" *ngIf="loadingUniversidades">
@@ -16,7 +22,7 @@
       </button>
     </div>
 
-    <div class="malla-card" *ngIf="!loadingUniversidades && !loadUniversidadesError">
+    <div class="malla-card" *ngIf="!loadingUniversidades && !loadUniversidadesError && step !== 'resumen'">
       <label class="malla-label" for="universidad-select">{{ 'malla.universidad.label' | translate }}</label>
       <select
         id="universidad-select"
@@ -35,14 +41,71 @@
         {{ 'malla.validation.universidadRequired' | translate }}
       </p>
 
-      <button
-        type="button"
-        class="malla-button malla-button--save"
-        [disabled]="selectedUniversidadId === null"
-        (click)="onGuardarUniversidadClick()"
-      >
+      <button type="button" class="malla-button malla-button--save" (click)="onGuardarUniversidadClick()">
         {{ 'malla.actions.saveUniversidad' | translate }}
       </button>
+
+      <div *ngIf="step === 'carrera' || step === 'malla'" class="malla-section">
+        <label class="malla-label" for="carrera-select">{{ 'malla.carrera.label' | translate }}</label>
+        <select
+          id="carrera-select"
+          class="malla-select"
+          [(ngModel)]="selectedCarreraId"
+          (ngModelChange)="onCarreraChange($event)"
+          [disabled]="loadingCarreras || carreras.length === 0"
+          required
+        >
+          <option [ngValue]="null" disabled>{{ 'malla.carrera.placeholder' | translate }}</option>
+          <option *ngFor="let carrera of carreras" [ngValue]="carrera.id">
+            {{ carrera.nombre }}
+          </option>
+        </select>
+
+        <p *ngIf="loadingCarreras" class="malla-field-help">{{ 'malla.loadingCarreras' | translate }}</p>
+        <p *ngIf="loadCarrerasError" class="malla-field-error">{{ 'malla.error.loadCarreras' | translate }}</p>
+        <p *ngIf="carreraRequiredError" class="malla-field-error">{{ 'malla.validation.carreraRequired' | translate }}</p>
+
+        <button type="button" class="malla-button malla-button--save" (click)="onGuardarCarreraClick()">
+          {{ 'malla.actions.saveCarrera' | translate }}
+        </button>
+      </div>
+
+      <div *ngIf="step === 'malla'" class="malla-section">
+        <label class="malla-label" for="malla-select">{{ 'malla.malla.label' | translate }}</label>
+        <select
+          id="malla-select"
+          class="malla-select"
+          [(ngModel)]="selectedMallaId"
+          (ngModelChange)="onMallaChange($event)"
+          [disabled]="loadingMallas || mallas.length === 0"
+          required
+        >
+          <option [ngValue]="null" disabled>{{ 'malla.malla.placeholder' | translate }}</option>
+          <option *ngFor="let malla of mallas" [ngValue]="malla.id">
+            {{ malla.nombre }}
+          </option>
+        </select>
+
+        <p *ngIf="loadingMallas" class="malla-field-help">{{ 'malla.loadingMallas' | translate }}</p>
+        <p *ngIf="loadMallasError" class="malla-field-error">{{ 'malla.error.loadMallas' | translate }}</p>
+        <p *ngIf="mallaRequiredError" class="malla-field-error">{{ 'malla.validation.mallaRequired' | translate }}</p>
+        <p *ngIf="saveSeleccionError" class="malla-field-error">{{ 'malla.error.saveSeleccion' | translate }}</p>
+
+        <button
+          type="button"
+          class="malla-button malla-button--save"
+          [disabled]="savingSeleccion"
+          (click)="onGuardarMallaClick()"
+        >
+          {{ savingSeleccion ? ('malla.actions.saving' | translate) : ('malla.actions.saveMalla' | translate) }}
+        </button>
+      </div>
+    </div>
+
+    <div class="malla-resumen" *ngIf="!loadingUniversidades && !loadUniversidadesError && step === 'resumen'">
+      <p class="malla-resumen__universidad">{{ getResumenUniversidad() }}</p>
+      <h2>{{ getResumenCarrera() }}</h2>
+      <p>{{ 'malla.summary.curriculum' | translate: { malla: getResumenMalla() } }}</p>
     </div>
   </section>
 </ng-container>

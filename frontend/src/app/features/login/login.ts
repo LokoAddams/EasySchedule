@@ -15,6 +15,7 @@ import { ToastService } from '../../core/services/toast.service';
 interface LoginResponse {
   token?: string;
   username?: string;
+  expiresInSeconds?: number;
 }
 
 @Component({
@@ -69,7 +70,10 @@ export class LoginComponent {
       const rawIdentifier = this.form.get('identifier')?.value;
       const identifier = typeof rawIdentifier === 'string' ? rawIdentifier.trim() : '';
 
-      this.authSessionService.setAuthToken(String(data.token ?? ''));
+      this.authSessionService.setAuthToken(
+        String(data.token ?? ''),
+        Number(data.expiresInSeconds ?? 3600),
+      );
 
       const backendUsername = typeof data.username === 'string' ? data.username.trim() : '';
       const identifierToUse = backendUsername || identifier;
