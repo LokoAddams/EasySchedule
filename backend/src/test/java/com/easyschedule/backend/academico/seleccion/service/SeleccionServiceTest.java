@@ -96,6 +96,43 @@ class SeleccionServiceTest {
     }
 
     @Test
+    void saveSeleccionByUserIdResetsSemestreWhenMallaChanges() {
+        SeleccionRequest request = new SeleccionRequest(1L, null, 101L);
+
+        Universidad universidad = mock(Universidad.class);
+        when(universidad.getId()).thenReturn(1L);
+        when(universidad.getNombre()).thenReturn("Universidad Catolica Boliviana");
+
+        Carrera carrera = mock(Carrera.class);
+        when(carrera.getId()).thenReturn(11L);
+        when(carrera.getNombre()).thenReturn("Ingenieria de Sistemas");
+        when(carrera.getUniversidadId()).thenReturn(1L);
+
+        Malla malla = mock(Malla.class);
+        when(malla.getId()).thenReturn(101L);
+        when(malla.getNombre()).thenReturn("Malla 2017");
+        when(malla.getCarreraId()).thenReturn(11L);
+
+        Malla mallaAnterior = mock(Malla.class);
+        when(mallaAnterior.getId()).thenReturn(88L);
+
+        estudiante.setMalla(mallaAnterior);
+        estudiante.setSemestreActual((short) 5);
+
+        when(universidadRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(universidad));
+        when(carreraRepository.findByIdAndActiveTrue(11L)).thenReturn(Optional.of(carrera));
+        when(mallaRepository.findByIdAndActiveTrue(101L)).thenReturn(Optional.of(malla));
+        when(estudianteRepository.findById(10L)).thenReturn(Optional.of(estudiante));
+
+        seleccionService.saveSeleccionByUserId(10L, request);
+
+        assertEquals(Short.valueOf((short) 1), estudiante.getSemestreActual());
+        assertEquals(11L, estudiante.getCarreraId());
+        assertEquals(1L, estudiante.getUniversidadId());
+        verify(estudianteRepository).save(estudiante);
+    }
+
+    @Test
     void saveSeleccionByUserIdThrowsWhenCarreraDoesNotBelongToUniversidad() {
         SeleccionRequest request = new SeleccionRequest(1L, 11L, 101L);
 
@@ -105,9 +142,37 @@ class SeleccionServiceTest {
         Carrera carrera = mock(Carrera.class);
         when(carrera.getUniversidadId()).thenReturn(2L);
 
+        Malla malla = mock(Malla.class);
+        when(malla.getCarreraId()).thenReturn(11L);
+
         when(universidadRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(universidad));
         when(carreraRepository.findByIdAndActiveTrue(11L)).thenReturn(Optional.of(carrera));
-        when(mallaRepository.findByIdAndActiveTrue(101L)).thenReturn(Optional.of(mock(Malla.class)));
+        when(mallaRepository.findByIdAndActiveTrue(101L)).thenReturn(Optional.of(malla));
+
+        ResponseStatusException ex = assertThrows(
+            ResponseStatusException.class,
+            () -> seleccionService.saveSeleccionByUserId(10L, request)
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
+    @Test
+    void saveSeleccionByUserIdThrowsWhenMallaDoesNotBelongToUniversidad() {
+        SeleccionRequest request = new SeleccionRequest(1L, null, 101L);
+
+        Universidad universidad = mock(Universidad.class);
+        when(universidad.getId()).thenReturn(1L);
+
+        Carrera carreraDeMalla = mock(Carrera.class);
+        when(carreraDeMalla.getUniversidadId()).thenReturn(2L);
+
+        Malla malla = mock(Malla.class);
+        when(malla.getCarreraId()).thenReturn(11L);
+
+        when(universidadRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(universidad));
+        when(mallaRepository.findByIdAndActiveTrue(101L)).thenReturn(Optional.of(malla));
+        when(carreraRepository.findByIdAndActiveTrue(11L)).thenReturn(Optional.of(carreraDeMalla));
 
         ResponseStatusException ex = assertThrows(
             ResponseStatusException.class,

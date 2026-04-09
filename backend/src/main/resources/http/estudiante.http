@@ -6,8 +6,14 @@
 @password = DemoPass123
 @newUsername = security_demo_user_v2
 @newEmail = security_demo_user_v2@example.com
-@token = REPLACE_WITH_LOGIN_TOKEN
+@token = Ol5Q7UoW02MLrmbXSbQdi7hxgFjRtI7Q6NE58TVVbL1S224RXV-0Ay2D4yIyysRo
 @newPassword = DemoPass1234
+
+###### DATOS PARA SELECCIÓN ACADÉMICA ######
+@universidadId = 1
+@mallaId1 = 1
+@mallaId2 = 7
+@mallaIdOtraUni = 9
 
 ### 1) Registro (201)
 POST {{host}}/api/estudiantes/registro
@@ -82,3 +88,47 @@ Authorization: Bearer {{token}}
   "newPassword": "{{newPassword}}",
   "confirmNewPassword": "{{newPassword}}"
 }
+
+### 9) Obtener selección académica actual (200) - Será null si no se ha hecho selección
+GET {{host}}/api/academico/seleccion
+Authorization: Bearer {{token}}
+
+### 10) Guardar selección académica inicial (200)
+### Universidad Privada Boliviana + Ingenieria Financiera Malla 2024
+PUT {{host}}/api/academico/seleccion
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "universidadId": {{universidadId}},
+  "carreraId": null,
+  "mallaId": {{mallaId1}}
+}
+
+### 11) Cambiar a otra malla de la misma universidad (200)
+### Esperado: semestre_actual se reinicia a 1
+### De Malla 2024 a Malla 2025 (Ingenieria de Sistemas)
+PUT {{host}}/api/academico/seleccion
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "universidadId": {{universidadId}},
+  "carreraId": null,
+  "mallaId": {{mallaId2}}
+}
+
+### 12) Intentar guardar malla de OTRA universidad (400)
+### Error esperado: "La malla no pertenece a la universidad seleccionada"
+### Malla 9 es de Universidad Catolica Boliviana (id=2)
+PUT {{host}}/api/academico/seleccion
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "universidadId": {{universidadId}},
+  "carreraId": null,
+  "mallaId": {{mallaIdOtraUni}}
+}
+
+
