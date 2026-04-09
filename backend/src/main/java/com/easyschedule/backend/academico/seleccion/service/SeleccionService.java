@@ -13,7 +13,10 @@ import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
 import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Objects;
 
 @Service
 public class SeleccionService {
@@ -58,33 +61,46 @@ public class SeleccionService {
         );
     }
 
+    @Transactional
     public SeleccionResponse saveSeleccionByUserId(Long userId, SeleccionRequest request) {
         Universidad universidad = universidadRepository.findByIdAndActiveTrue(request.universidadId())
             .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada"));
-        Carrera carrera = carreraRepository.findByIdAndActiveTrue(request.carreraId())
-            .orElseThrow(() -> new ResourceNotFoundException("Carrera no encontrada"));
         Malla malla = mallaRepository.findByIdAndActiveTrue(request.mallaId())
             .orElseThrow(() -> new ResourceNotFoundException("Malla no encontrada"));
+        Carrera carreraDeMalla = carreraRepository.findByIdAndActiveTrue(malla.getCarreraId())
+            .orElseThrow(() -> new ResourceNotFoundException("Carrera no encontrada"));
+        Carrera carreraSolicitada = request.carreraId() == null ? null : carreraRepository.findByIdAndActiveTrue(request.carreraId())
+            .orElseThrow(() -> new ResourceNotFoundException("Carrera no encontrada"));
 
-        if (!carrera.getUniversidadId().equals(universidad.getId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La carrera no pertenece a la universidad seleccionada");
+        if (!carreraDeMalla.getUniversidadId().equals(universidad.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La malla no pertenece a la universidad seleccionada");
         }
 
-        if (!malla.getCarreraId().equals(carrera.getId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La malla no pertenece a la carrera seleccionada");
+        if (carreraSolicitada != null) {
+            if (!carreraSolicitada.getUniversidadId().equals(universidad.getId())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La carrera no pertenece a la universidad seleccionada");
+            }
+
+            if (!Objects.equals(carreraSolicitada.getId(), carreraDeMalla.getId())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La malla no pertenece a la carrera seleccionada");
+            }
         }
 
         Estudiante estudiante = getEstudianteOrThrow(userId);
+        boolean cambioMalla = estudiante.getMalla() == null || !Objects.equals(estudiante.getMalla().getId(), malla.getId());
         estudiante.setUniversidadId(universidad.getId());
-        estudiante.setCarreraId(carrera.getId());
+        estudiante.setCarreraId(carreraDeMalla.getId());
         estudiante.setMalla(malla);
+        if (cambioMalla) {
+            estudiante.setSemestreActual((short) 1);
+        }
         estudianteRepository.save(estudiante);
 
         return new SeleccionResponse(
             universidad.getId(),
             universidad.getNombre(),
-            carrera.getId(),
-            carrera.getNombre(),
+            carreraDeMalla.getId(),
+            carreraDeMalla.getNombre(),
             malla.getId(),
             buildMallaLabel(malla)
         );
