@@ -11,6 +11,15 @@ export interface MallaCatalogoItem {
   active: boolean;
 }
 
+export interface MallaMateria {
+  id: number;
+  materiaId: number;
+  codigoMateria: string;
+  nombreMateria: string;
+  semestreSugerido: number;
+  estado?: 'APROBADA' | 'CURSANDO' | 'PENDIENTE'; // Mocked state for UI
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,5 +28,9 @@ export class MallaCatalogoService {
 
   getMallasActivasPorCarrera(carreraId: number): Observable<MallaCatalogoItem[]> {
     return this.apiService.get<MallaCatalogoItem[]>(`/api/academico/mallas?carreraId=${carreraId}`);
+  }
+
+  getMateriasPorMalla(mallaId: number): Observable<MallaMateria[]> {
+    return this.apiService.get<MallaMateria[]>(`/api/academico/mallas/${mallaId}/materias`);
   }
 }
