@@ -178,3 +178,121 @@
   margin-top: 0.55rem;
   color: rgba(18, 23, 34, 0.72);
 }
+
+.malla-grid {
+  margin-top: 2rem;
+}
+
+.malla-grid__loading {
+  font-family: 'Poppins', sans-serif;
+  color: var(--color-blue-dark);
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.malla-board-wrapper {
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.malla-board {
+  display: flex;
+  gap: 1rem;
+  min-width: max-content;
+}
+
+.malla-board__column {
+  width: 260px;
+  background: rgba(247, 247, 249, 0.6);
+  border: 1px solid rgba(47, 79, 115, 0.15);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.malla-board__column--actual {
+  background: rgba(111, 137, 173, 0.1);
+  border-color: rgba(111, 137, 173, 0.4);
+  box-shadow: 0 4px 12px rgba(111, 137, 173, 0.1);
+
+  .malla-board__semester-title {
+    color: var(--color-blue-dark);
+    font-weight: 700;
+  }
+}
+
+.malla-board__semester-title {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.05rem;
+  color: #5d7594;
+  text-align: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(47, 79, 115, 0.1);
+}
+
+.malla-subject {
+  background: #fff;
+  border: 1px solid rgba(47, 79, 115, 0.2);
+  border-radius: 8px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.malla-subject--aprobada {
+  border-left: 4px solid #4caf50;
+  background: rgba(76, 175, 80, 0.05);
+
+  .malla-subject__code {
+    color: #2e7d32;
+  }
+}
+
+.malla-subject--cursando {
+  border-left: 4px solid #2196f3;
+  background: rgba(33, 150, 243, 0.05);
+
+  .malla-subject__code {
+    color: #1565c0;
+  }
+}
+
+.malla-subject--pendiente {
+  border-left: 4px solid #9e9e9e;
+  
+  .malla-subject__code {
+    color: #616161;
+  }
+}
+
+.malla-subject__code {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #5d7594;
+}
+
+.malla-subject__name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.3;
+}
+
+.malla-board__empty {
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  font-family: 'Poppins', sans-serif;
+}
+

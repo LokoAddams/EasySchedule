@@ -1,4 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, NgClass } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -6,7 +6,7 @@ import { firstValueFrom, Subscription } from 'rxjs';
 
 import { CarreraCatalogoItem, CarreraService } from '../../services/academico/carrera.service';
 import { FeatureToggleService } from '../../services/feature-toggle.service';
-import { MallaCatalogoItem, MallaCatalogoService } from '../../services/academico/malla-catalogo.service';
+import { MallaCatalogoItem, MallaCatalogoService, MallaMateria } from '../../services/academico/malla-catalogo.service';
 import {
   SeleccionAcademica,
   SeleccionAcademicaService,
@@ -24,7 +24,7 @@ interface SeleccionSnapshot {
 
 @Component({
   selector: 'app-malla',
-  imports: [FormsModule, NgFor, NgIf, TranslatePipe],
+  imports: [FormsModule, NgFor, NgIf, NgClass, TranslatePipe],
   templateUrl: './malla.html',
   styleUrl: './malla.scss',
 })
@@ -42,6 +42,12 @@ export class Malla implements OnInit, OnDestroy {
   protected selectedMallaId: number | null = null;
 
   protected selectedResumen: SeleccionAcademica | null = null;
+  protected materias: MallaMateria[] = [];
+  protected materiasPorSemestre: Map<number, MallaMateria[]> = new Map();
+  protected semestres: number[] = [];
+  protected semestreActual: number = 3; // Mocked active semester
+  protected loadingMaterias = false;
+  protected loadMateriasError = false;
 
   protected loadingUniversidades = true;
   protected loadingCarreras = false;
@@ -233,6 +239,7 @@ export class Malla implements OnInit, OnDestroy {
       this.editMode = null;
       this.mallaChangeWarningVisible = false;
       this.previousSelectionSnapshot = null;
+      void this.loadMaterias(this.selectedMallaId);
     } catch {
       // Si no existe selección previa o falla la carga, se mantiene el flujo normal.
     }
@@ -325,6 +332,7 @@ export class Malla implements OnInit, OnDestroy {
       );
       await this.loadSeleccionActual();
       this.step = 'resumen';
+      void this.loadMaterias(this.selectedMallaId!);
     } catch {
       this.saveSeleccionError = true;
       if (this.editMode === 'malla') {
@@ -363,5 +371,45 @@ export class Malla implements OnInit, OnDestroy {
     this.selectedUniversidadId = this.previousSelectionSnapshot.universidadId;
     this.selectedCarreraId = this.previousSelectionSnapshot.carreraId;
     this.selectedMallaId = this.previousSelectionSnapshot.mallaId;
+  }
+
+  private async loadMaterias(mallaId: number): Promise<void> {
+    this.loadingMaterias = true;
+    this.loadMateriasError = false;
+    this.materias = [];
+    this.materiasPorSemestre.clear();
+    this.semestres = [];
+
+    try {
+      this.materias = await firstValueFrom(this.mallaCatalogoService.getMateriasPorMalla(mallaId));
+      
+      // Mocking status for features demonstration
+      // Using deterministic logic based on ID and semestreSugerido to remain consistent
+      this.materias.forEach(m => {
+        if (m.semestreSugerido < this.semestreActual) {
+          m.estado = 'APROBADA';
+        } else if (m.semestreSugerido === this.semestreActual) {
+          // Half of current semester is approved, rest cursando
+          m.estado = m.id % 2 === 0 ? 'APROBADA' : 'CURSANDO';
+        } else {
+          m.estado = 'PENDIENTE';
+        }
+      });
+
+      this.materias.forEach(materia => {
+        const sem = materia.semestreSugerido;
+        if (!this.materiasPorSemestre.has(sem)) {
+          this.materiasPorSemestre.set(sem, []);
+          this.semestres.push(sem);
+        }
+        this.materiasPorSemestre.get(sem)!.push(materia);
+      });
+      this.semestres.sort((a, b) => a - b);
+      
+    } catch {
+      this.loadMateriasError = true;
+    } finally {
+      this.loadingMaterias = false;
+    }
   }
 }
