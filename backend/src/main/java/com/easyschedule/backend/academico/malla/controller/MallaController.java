@@ -2,8 +2,10 @@ package com.easyschedule.backend.academico.malla.controller;
 
 import com.easyschedule.backend.academico.malla.dto.MallaResponse;
 import com.easyschedule.backend.academico.malla.service.MallaService;
+import com.easyschedule.backend.academico.malla.dto.MallaMateriaResponse;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,5 +23,10 @@ public class MallaController {
 	@GetMapping
 	public List<MallaResponse> findByCarrera(@RequestParam("carreraId") Long carreraId) {
 		return mallaService.findActiveByCarrera(carreraId);
+	}
+
+	@GetMapping("/{mallaId}/materias")
+	public List<MallaMateriaResponse> findMateriasByMalla(@PathVariable("mallaId") Long mallaId) {
+		return mallaService.findMateriasByMalla(mallaId);
 	}
 }
