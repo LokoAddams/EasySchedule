@@ -284,5 +284,11 @@
       "backendConnection": "Could not connect to backend",
       "server": "Server error. Please try again"
     }
+  },
+  "Toma de materias":{
+    "Materias disponibles": "Available courses",
+    "Materias Agregadas": "Added courses",
+    "Materias en curso": "Courses in progress"
+
   }
 }

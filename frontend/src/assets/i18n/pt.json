@@ -277,5 +277,10 @@
       "backendConnection": "Não foi possível conectar ao backend",
       "server": "Erro no servidor. Tente novamente"
     }
+  },
+  "Toma de materias":{
+    "Materias disponibles": "Materias disponíveis",
+    "Materias Agregadas": "Materias Adicionados",
+    "Materias en curso": "Materias em andamento"
   }
 }
