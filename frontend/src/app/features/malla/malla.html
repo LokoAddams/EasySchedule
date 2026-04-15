@@ -140,11 +140,23 @@
         <p>Error al cargar las materias de la malla.</p>
       </div>
 
+      <div class="malla-semesters-shell" *ngIf="!loadingMaterias && !loadMateriasError && materias.length > 0">
+        <div class="malla-semesters">
+          <button
+            type="button"
+            class="malla-semesters__button"
+            *ngFor="let sem of semestres"
+            [class.malla-semesters__button--active]="sem === semestreActual"
+            (click)="setSemestreActual(sem)"
+          >
+            {{ sem }}{{ sem === 1 ? 'er' : 'to' }} Semestre
+          </button>
+        </div>
+      </div>
+
       <div class="malla-board-wrapper" *ngIf="!loadingMaterias && !loadMateriasError && materias.length > 0">
         <div class="malla-board">
           <div class="malla-board__column" *ngFor="let sem of semestres" [ngClass]="{'malla-board__column--actual': sem === semestreActual}">
-            <h3 class="malla-board__semester-title">Semestre {{ sem }}</h3>
-            
             <div class="malla-subject" *ngFor="let materia of materiasPorSemestre.get(sem)" [ngClass]="{
                 'malla-subject--aprobada': materia.estado === 'APROBADA',
                 'malla-subject--cursando': materia.estado === 'CURSANDO',

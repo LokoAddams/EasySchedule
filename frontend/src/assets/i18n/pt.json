@@ -113,7 +113,10 @@
       "saveUniversidad": "Salvar universidade",
       "saveCarrera": "Salvar carreira",
       "saveMalla": "Salvar grade curricular",
-      "saving": "Salvando..."
+      "saving": "Salvando...",
+      "changeMalla": "Alterar grade curricular",
+      "changeUniversidad": "Alterar universidade",
+      "cancelChange": "Cancelar"
     },
     "error": {
       "loadUniversidades": "Não foi possível carregar as universidades disponíveis.",
@@ -147,6 +150,10 @@
     },
     "summary": {
       "curriculum": "Grade curricular {{malla}}"
+    },
+    "warning": {
+      "title": "Aviso",
+      "progressReset": "O progresso da grade anterior não será transferido após confirmar esta alteração."
     }
   },
   "tomaMaterias": {

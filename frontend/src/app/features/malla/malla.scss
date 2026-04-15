@@ -1,10 +1,18 @@
 .malla-page {
-  max-width: 860px;
+  max-width: min(1500px, 96vw);
   margin: 2rem auto;
-  padding: 0 1rem 2rem;
+  padding: 0 1.2rem 2rem;
+}
+
+.malla-page__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 1rem;
+  align-items: start;
 }
 
 .malla-page__header h1 {
+  grid-column: 1;
   margin: 0;
   color: var(--color-blue-dark);
   font-family: 'Poppins', sans-serif;
@@ -12,18 +20,24 @@
 }
 
 .malla-page__header p {
+  grid-column: 1;
   margin-top: 0.45rem;
   color: rgba(17, 17, 17, 0.76);
 }
 
 .malla-page__actions {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-self: end;
+  align-self: start;
   display: flex;
-  gap: 0.65rem;
-  margin-top: 0.9rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0;
 }
 
 .malla-stepper {
+  grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
@@ -94,9 +108,12 @@
 }
 
 .malla-button--outline {
-  border: 1px solid rgba(47, 79, 115, 0.35);
-  background: #edf1f6;
-  color: var(--color-blue-dark);
+  min-width: 144px;
+  border: 1px solid rgba(32, 44, 64, 0.45);
+  background: #dfdccb;
+  color: #2b3442;
+  margin-top: 0;
+  line-height: 1.05;
 }
 
 .malla-button--save {
@@ -190,21 +207,54 @@
   opacity: 0.7;
 }
 
+.malla-semesters-shell {
+  margin-top: 1rem;
+  display: block;
+}
+
+.malla-semesters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  gap: 0.35rem;
+  border-radius: 999px;
+  background: #3f6383;
+  padding: 0.35rem;
+}
+
+.malla-semesters__button {
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.82rem, 0.74rem + 0.2vw, 0.95rem);
+  padding: 0.48rem 0.55rem;
+  white-space: nowrap;
+}
+
+.malla-semesters__button--active {
+  background: #e8e3cf;
+  color: #1f2d3c;
+}
+
 .malla-board-wrapper {
-  overflow-x: auto;
+  overflow: hidden;
   padding-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 .malla-board {
   display: flex;
-  gap: 1rem;
-  min-width: max-content;
+  gap: 0.8rem;
+  min-width: 0;
 }
 
 .malla-board__column {
-  width: 260px;
-  background: rgba(247, 247, 249, 0.6);
-  border: 1px solid rgba(47, 79, 115, 0.15);
+  flex: 1 1 0;
+  min-width: 0;
+  background: #fbfbfd;
+  border: 1px solid rgba(47, 79, 115, 0.12);
   border-radius: 12px;
   padding: 1rem;
   display: flex;
@@ -213,24 +263,9 @@
 }
 
 .malla-board__column--actual {
-  background: rgba(111, 137, 173, 0.1);
+  background: rgba(111, 137, 173, 0.08);
   border-color: rgba(111, 137, 173, 0.4);
   box-shadow: 0 4px 12px rgba(111, 137, 173, 0.1);
-
-  .malla-board__semester-title {
-    color: var(--color-blue-dark);
-    font-weight: 700;
-  }
-}
-
-.malla-board__semester-title {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.05rem;
-  color: #5d7594;
-  text-align: center;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(47, 79, 115, 0.1);
 }
 
 .malla-subject {
@@ -268,7 +303,7 @@
 
 .malla-subject--pendiente {
   border-left: 4px solid #9e9e9e;
-  
+
   .malla-subject__code {
     color: #616161;
   }
@@ -283,9 +318,12 @@
 
 .malla-subject__name {
   font-family: 'Poppins', sans-serif;
-  font-size: 0.9rem;
+  font-size: clamp(0.94rem, 0.82rem + 0.2vw, 1.1rem);
   color: #333;
   line-height: 1.3;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .malla-board__empty {
@@ -294,5 +332,29 @@
   color: #666;
   font-style: italic;
   font-family: 'Poppins', sans-serif;
+}
+
+@media (max-width: 760px) {
+  .malla-semesters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-radius: 16px;
+  }
+
+  .malla-board {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 760px) {
+  .malla-page__header {
+    grid-template-columns: 1fr;
+  }
+
+  .malla-page__actions {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+    margin-top: 0.75rem;
+  }
 }
 

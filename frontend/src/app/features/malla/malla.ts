@@ -206,6 +206,10 @@ export class Malla implements OnInit, OnDestroy {
     return (nombre ?? '').trim();
   }
 
+  protected setSemestreActual(semestre: number): void {
+    this.semestreActual = semestre;
+  }
+
   private async loadUniversidades(): Promise<void> {
     this.loadingUniversidades = true;
     this.loadUniversidadesError = false;
@@ -246,7 +250,7 @@ export class Malla implements OnInit, OnDestroy {
   }
 
   private async prepareMallaEditMode(): Promise<void> {
-    if (this.selectedUniversidadId === null || this.selectedMallaId === null) {
+    if (this.selectedUniversidadId === null || this.selectedCarreraId === null || this.selectedMallaId === null) {
       return;
     }
 
@@ -260,14 +264,8 @@ export class Malla implements OnInit, OnDestroy {
     this.loadMallasError = false;
 
     try {
-      const carreras = await firstValueFrom(this.carreraService.getCarrerasActivasPorUniversidad(this.selectedUniversidadId));
-      this.carreras = carreras;
-      const mallasPorCarrera = await Promise.all(
-        carreras.map((carrera) => firstValueFrom(this.mallaCatalogoService.getMallasActivasPorCarrera(carrera.id))),
-      );
-
-      const mallasPlanas = mallasPorCarrera.flat();
-      this.mallas = mallasPlanas.filter((malla, index, source) => source.findIndex((candidate) => candidate.id === malla.id) === index);
+      this.carreras = await firstValueFrom(this.carreraService.getCarrerasActivasPorUniversidad(this.selectedUniversidadId));
+      this.mallas = await firstValueFrom(this.mallaCatalogoService.getMallasActivasPorCarrera(this.selectedCarreraId));
 
       if (!this.mallas.some((malla) => malla.id === this.selectedMallaId)) {
         this.selectedMallaId = null;
@@ -382,7 +380,7 @@ export class Malla implements OnInit, OnDestroy {
 
     try {
       this.materias = await firstValueFrom(this.mallaCatalogoService.getMateriasPorMalla(mallaId));
-      
+
       // Mocking status for features demonstration
       // Using deterministic logic based on ID and semestreSugerido to remain consistent
       this.materias.forEach(m => {
@@ -405,7 +403,11 @@ export class Malla implements OnInit, OnDestroy {
         this.materiasPorSemestre.get(sem)!.push(materia);
       });
       this.semestres.sort((a, b) => a - b);
-      
+
+      if (this.semestres.length > 0 && !this.semestres.includes(this.semestreActual)) {
+        this.semestreActual = this.semestres[Math.min(4, this.semestres.length - 1)];
+      }
+
     } catch {
       this.loadMateriasError = true;
     } finally {
