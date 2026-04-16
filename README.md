@@ -1,20 +1,20 @@
-# easyschedule
+# EasySchedule
 
-monorepo con:
+Monorepo con:
 
-- `backend/`: spring boot + gradle
-- `frontend/`: angular
+- `backend/`: Spring Boot + Gradle
+- `frontend/`: Angular
 
-## versiones recomendadas
+## Versiones recomendadas
 
-- java: `17`
-- node: `20.19.0`
+- Java: `17`
+- Node: `20.19.0`
 - npm: `10.8.2`
-- angular cli: `20.3.19`
+- Angular CLI: `20.3.19`
 
-## 1) requisitos previos
+## 1) Requisitos previos
 
-verifica versiones:
+Verifica versiones:
 
 ```bash
 java -version
@@ -22,37 +22,37 @@ node -v
 npm -v
 ```
 
-## 2) base de datos postgresql
+## 2) Base de datos PostgreSQL
 
-la app espera, por defecto:
+La app espera, por defecto:
 
-- db: `easyschedule`
-- usuario: `postgres`
-- password: `postgres`
-- puerto: `5432`
+- DB: `EasySchedule`
+- Usuario: `postgres`
+- Password: `postgres`
+- Puerto: `5432`
 
-crea la base manualmente:
+Crea la base manualmente:
 
 ```sql
-create database "easyschedule";
+CREATE DATABASE "EasySchedule";
 ```
 
-variables disponibles (opcionales):
+Variables disponibles (opcionales):
 
-- `db_url`
-- `db_username`
-- `db_password`
-- `jpa_ddl_auto`
-- `cors_allowed_origins`
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `JPA_DDL_AUTO`
+- `CORS_ALLOWED_ORIGINS`
 
-referencia: `backend/.env.example`
+Referencia: `backend/.env.example`
 
-### ejecutar schema + seeds
+### Ejecutar schema + seeds
 
-al iniciar el backend, los seeds se ejecutan automaticamente solo si la base esta vacia (o si el esquema no existe).
-si ya hay datos, se omiten.
+Al iniciar el backend, los seeds se ejecutan automaticamente solo si la base esta vacia (o si el esquema no existe).
+Si ya hay datos, se omiten.
 
-tambien puedes ejecutarlos manualmente bajo demanda:
+Tambien puedes ejecutarlos manualmente bajo demanda:
 
 ```bash
 cd backend
@@ -60,38 +60,38 @@ chmod +x run-seeds.sh
 ./run-seeds.sh
 ```
 
-variables opcionales para el script:
+Variables opcionales para el script:
 
-- `db_host` (default: `localhost`)
-- `db_port` (default: `5432`)
-- `db_name` (default: `easyschedule`)
-- `db_user` (default: `postgres`)
-- `db_password` (default: `postgres`)
-- `with_schema` (default: `true`)
+- `DB_HOST` (default: `localhost`)
+- `DB_PORT` (default: `5432`)
+- `DB_NAME` (default: `EasySchedule`)
+- `DB_USER` (default: `postgres`)
+- `DB_PASSWORD` (default: `postgres`)
+- `WITH_SCHEMA` (default: `true`)
 
-## 3) levantar backend
+## 3) Levantar backend
 
 ```bash
 cd backend
-./gradlew bootrun
+./gradlew bootRun
 ```
 
-en windows powershell, si `./gradlew` no funciona:
+En Windows PowerShell, si `./gradlew` no funciona:
 
 ```powershell
-.\gradlew.bat bootrun
+.\gradlew.bat bootRun
 ```
 
-backend: `http://localhost:8080`
+Backend: `http://localhost:8080`
 
-aclaracion: al iniciar el servicio, es normal que la consola de logs se detenga alrededor del 80%. Este comportamiento es propio de Spring Boot durante el arranque; no indica un error y el servicio ya se encuentra en ejecución.
+Aclaración: al iniciar el servicio, es normal que la consola de logs se detenga alrededor del 80%. Este comportamiento es propio de Spring Boot durante el arranque; no indica un error y el servicio ya se encuentra en ejecución.
 
-pruebas manuales de endpoints (http files):
+Pruebas manuales de endpoints (HTTP files):
 
 - `backend/src/main/resources/http/test.http`
 - `backend/src/main/resources/http/estudiante.http`
 
-## 4) levantar frontend
+## 4) Levantar frontend
 
 ```bash
 cd frontend
@@ -99,36 +99,36 @@ npm ci
 npm start
 ```
 
-frontend: `http://localhost:4200`
+Frontend: `http://localhost:4200`
 
-## 5) verificaciones rapidas
+## 5) Verificaciones rapidas
 
 ```bash
 cd backend
 ./gradlew test
 
 cd ../frontend
-npm test -- --watch=false --browsers=chromeheadless
+npm test -- --watch=false --browsers=ChromeHeadless
 npm run build
 ```
 
-## 6) coverage
+## 6) Coverage
 
-backend (jacoco):
+Backend (JaCoCo):
 
 ```bash
 cd backend
-./gradlew test jacocotestreport
+./gradlew test jacocoTestReport
 ```
 
-frontend (karma/istanbul):
+Frontend (Karma/Istanbul):
 
 ```bash
 cd frontend
-npm test -- --watch=false --browsers=chromeheadless --code-coverage
+npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 ```
 
-reportes:
+Reportes:
 
-- backend: `backend/build/reports/jacoco/test/html/index.html`
-- frontend: `frontend/coverage/frontend/index.html`
+- Backend: `backend/build/reports/jacoco/test/html/index.html`
+- Frontend: `frontend/coverage/frontend/index.html`
