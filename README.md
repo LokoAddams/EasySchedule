@@ -84,6 +84,8 @@ En Windows PowerShell, si `./gradlew` no funciona:
 
 Backend: `http://localhost:8080`
 
+Aclaración: al iniciar el servicio, es normal que la consola de logs se detenga alrededor del 80%. Este comportamiento es propio de Spring Boot durante el arranque; no indica un error y el servicio ya se encuentra en ejecución.
+
 Pruebas manuales de endpoints (HTTP files):
 
 - `backend/src/main/resources/http/test.http`
