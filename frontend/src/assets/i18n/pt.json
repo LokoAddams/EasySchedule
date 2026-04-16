@@ -113,7 +113,8 @@
       "saveUniversidad": "Salvar universidade",
       "saveCarrera": "Salvar carreira",
       "saveMalla": "Salvar grade curricular",
-      "saving": "Salvando..."
+      "saving": "Salvando...",
+      "changeStatus": "Mudar estado de matérias"
     },
     "error": {
       "loadUniversidades": "Não foi possível carregar as universidades disponíveis.",

@@ -123,7 +123,8 @@
       "saving": "Guardando...",
       "changeMalla": "Cambiar Malla",
       "changeUniversidad": "Cambiar Universidad",
-      "cancelChange": "Cancelar"
+      "cancelChange": "Cancelar",
+      "changeStatus": "Actualizar estado de materias"
     },
     "error": {
       "loadUniversidades": "No se pudieron cargar las universidades disponibles.",

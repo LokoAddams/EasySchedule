@@ -116,7 +116,8 @@
       "saving": "Saving...",
       "changeMalla": "Change Curriculum",
       "changeUniversidad": "Change University",
-      "cancelChange": "Cancel"
+      "cancelChange": "Cancel",
+      "changeStatus": "Update course status"
     },
     "error": {
       "loadUniversidades": "Could not load available universities.",
