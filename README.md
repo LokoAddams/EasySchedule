@@ -1,20 +1,20 @@
-# EasySchedule
+# easyschedule
 
-Monorepo con:
+monorepo con:
 
-- `backend/`: Spring Boot + Gradle
-- `frontend/`: Angular
+- `backend/`: spring boot + gradle
+- `frontend/`: angular
 
-## Versiones recomendadas
+## versiones recomendadas
 
-- Java: `17`
-- Node: `20.19.0`
+- java: `17`
+- node: `20.19.0`
 - npm: `10.8.2`
-- Angular CLI: `20.3.19`
+- angular cli: `20.3.19`
 
-## 1) Requisitos previos
+## 1) requisitos previos
 
-Verifica versiones:
+verifica versiones:
 
 ```bash
 java -version
@@ -22,37 +22,37 @@ node -v
 npm -v
 ```
 
-## 2) Base de datos PostgreSQL
+## 2) base de datos postgresql
 
-La app espera, por defecto:
+la app espera, por defecto:
 
-- DB: `EasySchedule`
-- Usuario: `postgres`
-- Password: `postgres`
-- Puerto: `5432`
+- db: `easyschedule`
+- usuario: `postgres`
+- password: `postgres`
+- puerto: `5432`
 
-Crea la base manualmente:
+crea la base manualmente:
 
 ```sql
-CREATE DATABASE "EasySchedule";
+create database "easyschedule";
 ```
 
-Variables disponibles (opcionales):
+variables disponibles (opcionales):
 
-- `DB_URL`
-- `DB_USERNAME`
-- `DB_PASSWORD`
-- `JPA_DDL_AUTO`
-- `CORS_ALLOWED_ORIGINS`
+- `db_url`
+- `db_username`
+- `db_password`
+- `jpa_ddl_auto`
+- `cors_allowed_origins`
 
-Referencia: `backend/.env.example`
+referencia: `backend/.env.example`
 
-### Ejecutar schema + seeds
+### ejecutar schema + seeds
 
-Al iniciar el backend, los seeds se ejecutan automaticamente solo si la base esta vacia (o si el esquema no existe).
-Si ya hay datos, se omiten.
+al iniciar el backend, los seeds se ejecutan automaticamente solo si la base esta vacia (o si el esquema no existe).
+si ya hay datos, se omiten.
 
-Tambien puedes ejecutarlos manualmente bajo demanda:
+tambien puedes ejecutarlos manualmente bajo demanda:
 
 ```bash
 cd backend
@@ -60,36 +60,38 @@ chmod +x run-seeds.sh
 ./run-seeds.sh
 ```
 
-Variables opcionales para el script:
+variables opcionales para el script:
 
-- `DB_HOST` (default: `localhost`)
-- `DB_PORT` (default: `5432`)
-- `DB_NAME` (default: `EasySchedule`)
-- `DB_USER` (default: `postgres`)
-- `DB_PASSWORD` (default: `postgres`)
-- `WITH_SCHEMA` (default: `true`)
+- `db_host` (default: `localhost`)
+- `db_port` (default: `5432`)
+- `db_name` (default: `easyschedule`)
+- `db_user` (default: `postgres`)
+- `db_password` (default: `postgres`)
+- `with_schema` (default: `true`)
 
-## 3) Levantar backend
+## 3) levantar backend
 
 ```bash
 cd backend
-./gradlew bootRun
+./gradlew bootrun
 ```
 
-En Windows PowerShell, si `./gradlew` no funciona:
+en windows powershell, si `./gradlew` no funciona:
 
 ```powershell
-.\gradlew.bat bootRun
+.\gradlew.bat bootrun
 ```
 
-Backend: `http://localhost:8080`
+backend: `http://localhost:8080`
 
-Pruebas manuales de endpoints (HTTP files):
+aclaracion: al iniciar el servicio, es normal que la consola de logs se detenga alrededor del 80%. Este comportamiento es propio de Spring Boot durante el arranque; no indica un error y el servicio ya se encuentra en ejecución.
+
+pruebas manuales de endpoints (http files):
 
 - `backend/src/main/resources/http/test.http`
 - `backend/src/main/resources/http/estudiante.http`
 
-## 4) Levantar frontend
+## 4) levantar frontend
 
 ```bash
 cd frontend
@@ -97,36 +99,36 @@ npm ci
 npm start
 ```
 
-Frontend: `http://localhost:4200`
+frontend: `http://localhost:4200`
 
-## 5) Verificaciones rapidas
+## 5) verificaciones rapidas
 
 ```bash
 cd backend
 ./gradlew test
 
 cd ../frontend
-npm test -- --watch=false --browsers=ChromeHeadless
+npm test -- --watch=false --browsers=chromeheadless
 npm run build
 ```
 
-## 6) Coverage
+## 6) coverage
 
-Backend (JaCoCo):
+backend (jacoco):
 
 ```bash
 cd backend
-./gradlew test jacocoTestReport
+./gradlew test jacocotestreport
 ```
 
-Frontend (Karma/Istanbul):
+frontend (karma/istanbul):
 
 ```bash
 cd frontend
-npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+npm test -- --watch=false --browsers=chromeheadless --code-coverage
 ```
 
-Reportes:
+reportes:
 
-- Backend: `backend/build/reports/jacoco/test/html/index.html`
-- Frontend: `frontend/coverage/frontend/index.html`
+- backend: `backend/build/reports/jacoco/test/html/index.html`
+- frontend: `frontend/coverage/frontend/index.html`
