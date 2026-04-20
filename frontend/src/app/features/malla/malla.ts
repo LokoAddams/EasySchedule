@@ -1,11 +1,12 @@
 import { NgFor, NgIf, NgClass } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { firstValueFrom, Subscription } from 'rxjs';
+import { filter, firstValueFrom, Subscription } from 'rxjs';
 
 import { CarreraCatalogoItem, CarreraService } from '../../services/academico/carrera.service';
+import { EstadoMateriaService, EstadoMateriaItem } from '../../services/academico/estado-materia.service';
 import { FeatureToggleService } from '../../services/feature-toggle.service';
 import { MallaCatalogoItem, MallaCatalogoService, MallaMateria } from '../../services/academico/malla-catalogo.service';
 import {
@@ -46,7 +47,7 @@ export class Malla implements OnInit, OnDestroy {
   protected materias: MallaMateria[] = [];
   protected materiasPorSemestre: Map<number, MallaMateria[]> = new Map();
   protected semestres: number[] = [];
-  protected semestreActual: number = 3; // Mocked active semester
+  protected semestreActual: number = 1;
   protected loadingMaterias = false;
   protected loadMateriasError = false;
 
@@ -66,13 +67,16 @@ export class Malla implements OnInit, OnDestroy {
   protected mallaChangeWarningVisible = false;
 
   private flagsSubscription?: Subscription;
+  private routerEventsSubscription?: Subscription;
   private previousSelectionSnapshot: SeleccionSnapshot | null = null;
+  private materiasLoadedForMallaId: number | null = null;
 
   constructor(
     private readonly featureService: FeatureToggleService,
     private readonly universidadService: UniversidadService,
     private readonly carreraService: CarreraService,
     private readonly mallaCatalogoService: MallaCatalogoService,
+    private readonly estadoMateriaService: EstadoMateriaService,
     private readonly seleccionAcademicaService: SeleccionAcademicaService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
@@ -83,12 +87,24 @@ export class Malla implements OnInit, OnDestroy {
       this.mallaEnabled = flags.malla;
     });
 
+    this.routerEventsSubscription = this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        if (event.urlAfterRedirects.includes('/malla') && !event.urlAfterRedirects.includes('/actualizar')) {
+          this.materiasLoadedForMallaId = null;
+          if (this.selectedMallaId !== null && this.step === 'resumen') {
+            void this.loadMaterias(this.selectedMallaId);
+          }
+        }
+      });
+
     void this.featureService.loadFlags();
     void this.loadUniversidades();
   }
 
   ngOnDestroy(): void {
     this.flagsSubscription?.unsubscribe();
+    this.routerEventsSubscription?.unsubscribe();
   }
 
   protected retryLoadUniversidades(): void {
@@ -140,6 +156,7 @@ export class Malla implements OnInit, OnDestroy {
     this.mallaRequiredError = false;
     this.loadCarrerasError = false;
     this.loadMallasError = false;
+    this.materiasLoadedForMallaId = null;
   }
 
   protected onCarreraChange(selectedCarreraId: number | null): void {
@@ -150,9 +167,13 @@ export class Malla implements OnInit, OnDestroy {
     this.mallas = [];
     this.mallaRequiredError = false;
     this.loadMallasError = false;
+    this.materiasLoadedForMallaId = null;
   }
 
   protected onMallaChange(selectedMallaId: number | null): void {
+    if (this.selectedMallaId !== selectedMallaId) {
+      this.materiasLoadedForMallaId = null;
+    }
     this.selectedMallaId = selectedMallaId;
     this.mallaRequiredError = false;
     this.saveSeleccionError = false;
@@ -214,6 +235,10 @@ export class Malla implements OnInit, OnDestroy {
   protected getResumenMalla(): string {
     const nombre = this.selectedResumen?.malla;
     return (nombre ?? '').trim();
+  }
+
+  protected setSemestreActual(semestre: number): void {
+    this.semestreActual = semestre;
   }
 
   private async loadUniversidades(): Promise<void> {
@@ -341,7 +366,6 @@ export class Malla implements OnInit, OnDestroy {
       );
       await this.loadSeleccionActual();
       this.step = 'resumen';
-      void this.loadMaterias(this.selectedMallaId!);
     } catch {
       this.saveSeleccionError = true;
       if (this.editMode === 'malla') {
@@ -383,6 +407,10 @@ export class Malla implements OnInit, OnDestroy {
   }
 
   private async loadMaterias(mallaId: number): Promise<void> {
+    if (this.materiasLoadedForMallaId === mallaId && this.materias.length > 0) {
+      return;
+    }
+
     this.loadingMaterias = true;
     this.loadMateriasError = false;
     this.materias = [];
@@ -390,17 +418,17 @@ export class Malla implements OnInit, OnDestroy {
     this.semestres = [];
 
     try {
-      this.materias = await firstValueFrom(this.mallaCatalogoService.getMateriasPorMalla(mallaId));
+      const [materiasBD, estados]: [MallaMateria[], EstadoMateriaItem[]] = await Promise.all([
+        firstValueFrom(this.mallaCatalogoService.getMateriasPorMalla(mallaId)),
+        firstValueFrom(this.estadoMateriaService.getEstadosPorMalla(mallaId)),
+      ]);
 
-      this.materias.forEach(m => {
-        if (m.semestreSugerido < this.semestreActual) {
-          m.estado = 'APROBADA';
-        } else if (m.semestreSugerido === this.semestreActual) {
-          m.estado = m.id % 2 === 0 ? 'APROBADA' : 'CURSANDO';
-        } else {
-          m.estado = 'PENDIENTE';
-        }
-      });
+      const estadosMap = new Map<number, string>(estados.map(e => [e.mallaMateriaId, e.estado]));
+
+      this.materias = materiasBD.map(m => ({
+        ...m,
+        estado: this.mapEstadoBDToUI(estadosMap.get(m.id)),
+      }));
 
       this.materias.forEach(materia => {
         const sem = materia.semestreSugerido;
@@ -416,6 +444,19 @@ export class Malla implements OnInit, OnDestroy {
       this.loadMateriasError = true;
     } finally {
       this.loadingMaterias = false;
+      if (!this.loadMateriasError) {
+        this.materiasLoadedForMallaId = mallaId;
+      }
     }
+  }
+
+  private mapEstadoBDToUI(estado: string | undefined): 'APROBADA' | 'CURSANDO' | 'PENDIENTE' {
+    if (!estado) return 'PENDIENTE';
+    const map: Record<string, 'APROBADA' | 'CURSANDO' | 'PENDIENTE'> = {
+      'aprobada': 'APROBADA',
+      'cursando': 'CURSANDO',
+      'pendiente': 'PENDIENTE',
+    };
+    return map[estado] ?? 'PENDIENTE';
   }
 }
