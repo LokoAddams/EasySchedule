@@ -1,1 +1,69 @@
-<p class="placeholder-page">{{ 'malla.updatePlaceholder' | translate }}</p>
+<div class="container-fluid py-4">
+  <div class="malla-page">
+    <div class="malla-page__header">
+      <h1>{{ 'malla.UpdateCourse.title' | translate }}</h1>
+      <p>{{ carreraNombre }} - {{ mallaNombre }}</p>
+    </div>
+
+    <div *ngIf="loading" class="malla-grid__loading">
+      <p>{{ 'malla.loadingMaterias' | translate }}</p>
+    </div>
+
+    <div *ngIf="noHayMallaSeleccionada && !loading" class="malla-warning">
+      <strong>{{ 'malla.UpdateCourse.noMalla' | translate }}</strong>
+      <p>{{ 'malla.UpdateCourse.selectMallaFirst' | translate }}</p>
+      <button class="malla-button" (click)="irAMalla()">{{ 'malla.UpdateCourse.goToSelectMalla' | translate }}</button>
+    </div>
+
+    <div *ngIf="loadError && !loading" class="malla-warning" style="background: #fff7f7; border-color: rgba(159, 32, 23, 0.25);">
+      <strong>{{ 'malla.UpdateCourse.errorLoading' | translate }}</strong>
+      <p>{{ 'malla.UpdateCourse.errorLoadingMsg' | translate }}</p>
+      <button class="malla-button" (click)="reintentar()">{{ 'malla.retry' | translate }}</button>
+    </div>
+
+    <div *ngIf="!loading && !loadError && !noHayMallaSeleccionada">
+      <div class="malla-card">
+        <div class="mb-4">
+          <label class="malla-label" for="materiaSelect">{{ 'malla.UpdateCourse.materia' | translate }}</label>
+          <select
+            id="materiaSelect"
+            class="malla-select"
+            [(ngModel)]="selectedMateriaId"
+            (change)="onMateriaChange()"
+          >
+            <option *ngFor="let materia of materias" [value]="materia.id">
+              {{ materia.codigoMateria }} - {{ materia.nombreMateria }}
+              ({{ getEstadoLabel(materia.estadoUI) }})
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="malla-label" for="estadoSelect">{{ 'malla.UpdateCourse.estado' | translate }}</label>
+          <select
+            id="estadoSelect"
+            class="malla-select"
+            [(ngModel)]="selectedEstado"
+          >
+            <option value="PENDIENTE">{{ 'malla.UpdateCourse.pendiente' | translate }}</option>
+            <option value="CURSANDO">{{ 'malla.UpdateCourse.cursando' | translate }}</option>
+            <option value="APROBADA">{{ 'malla.UpdateCourse.aprobada' | translate }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="malla-page__actions">
+        <button class="malla-button malla-button--ghost" (click)="volver()">
+          {{ 'malla.UpdateCourse.volver' | translate }}
+        </button>
+        <button
+          class="malla-button"
+          [disabled]="saving"
+          (click)="actualizarMateria()"
+        >
+          {{ saving ? ('malla.UpdateCourse.saving' | translate) : ('malla.UpdateCourse.save' | translate) }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
