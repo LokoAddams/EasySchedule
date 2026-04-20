@@ -41,4 +41,19 @@ describe('AuthTokenInterceptor', () => {
       },
     });
   });
+
+  it('clears session on 403 responses', () => {
+    authSessionServiceSpy.getAuthToken.and.returnValue('my-token');
+
+    const request = new HttpRequest('GET', '/api/academico/universidades');
+    const next: HttpHandler = {
+      handle: () => throwError(() => new HttpErrorResponse({ status: 403, statusText: 'Forbidden' })),
+    };
+
+    interceptor.intercept(request, next).subscribe({
+      error: () => {
+        expect(authSessionServiceSpy.clearSession).toHaveBeenCalled();
+      },
+    });
+  });
 });
