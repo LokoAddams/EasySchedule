@@ -173,5 +173,9 @@
         No hay materias registradas para esta malla.
       </div>
     </div>
+
+    <button type="button" class="malla-button malla-button--outline" *ngIf="step === 'resumen'" (click)="onActualizarMallaClick()">
+      {{ 'malla.actions.changeStatus' | translate }}
+    </button>
   </section>
 </ng-container>
