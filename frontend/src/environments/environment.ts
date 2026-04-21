@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  backendUrl: ''
+  backendUrl: 'https://easyschedule-1.onrender.com'
 };

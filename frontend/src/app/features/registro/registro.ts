@@ -32,7 +32,7 @@ export class Registro {
   errorMessageKey = '';
   loading = false;
   private readonly primaryRegisterPath = '/api/estudiantes/registro';
-  private readonly fallbackRegisterPath = '/api/estudiantes/registro';
+  private readonly fallbackRegisterPath = '/api/registro';
 
   form: FormGroup;
 
