@@ -123,7 +123,8 @@
       "saving": "Guardando...",
       "changeMalla": "Cambiar Malla",
       "changeUniversidad": "Cambiar Universidad",
-      "cancelChange": "Cancelar"
+      "cancelChange": "Cancelar",
+      "changeStatus": "Actualizar estado de materias"
     },
     "error": {
       "loadUniversidades": "No se pudieron cargar las universidades disponibles.",
@@ -154,6 +155,26 @@
       "universidadRequired": "Debes seleccionar una universidad.",
       "carreraRequired": "Debes seleccionar una carrera.",
       "mallaRequired": "Debes seleccionar una malla."
+    },
+    "UpdateCourse": {
+      "title": "Estado de materias",
+      "subtitle": "Malla curricular",
+      "noMalla": "No tienes una malla seleccionada.",
+      "selectMallaFirst": "Primero necesitas seleccionar tu universidad, carrera y malla.",
+      "goToSelectMalla": "Ir a Seleccionar Malla",
+      "errorLoading": "Error al cargar los datos.",
+      "errorLoadingMsg": "No se pudieron cargar las materias.",
+      "materia": "Materia",
+      "estado": "Estado",
+      "pendiente": "Pendiente",
+      "cursando": "En curso",
+      "aprobada": "Completada",
+      "success": "Estado de Materia Actualizado!",
+      "errorUpdate": "Error al actualizar.",
+      "errorUpdateMsg": "Intenta de nuevo.",
+      "volver": "Volver",
+      "save": "Actualizar Materia",
+      "saving": "Actualizando..."
     }
   },
   "tomaMaterias": {
@@ -284,5 +305,10 @@
       "backendConnection": "No se pudo conectar con el backend",
       "server": "Error del servidor. Intenta nuevamente"
     }
+  },
+    "Toma de materias":{
+      "Materias disponibles": "Materias disponibles",
+      "Materias Agregadas": "Materias Agregadas",
+      "Materias en curso": "Materias en curso"
   }
 }
