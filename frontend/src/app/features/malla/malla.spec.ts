@@ -34,16 +34,26 @@ describe('Malla component logic', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     activatedRouteStub = { snapshot: { queryParams: {} } };
 
-    component = new (Malla as any)(
-      featureServiceMock,
-      universidadServiceSpy,
-      carreraServiceSpy,
-      mallaCatalogoServiceSpy,
-      seleccionAcademicaServiceSpy,
-      estadoMateriaServiceSpy,
-      routerSpy,
-      activatedRouteStub,
-    );
+    if ((Malla as any).length >= 8) {
+      component = new (Malla as any)(
+        featureServiceMock,
+        universidadServiceSpy,
+        carreraServiceSpy,
+        mallaCatalogoServiceSpy,
+        estadoMateriaServiceSpy,
+        seleccionAcademicaServiceSpy,
+        routerSpy,
+        activatedRouteStub,
+      );
+    } else {
+      component = new (Malla as any)(
+        featureServiceMock,
+        universidadServiceSpy,
+        carreraServiceSpy,
+        mallaCatalogoServiceSpy,
+        seleccionAcademicaServiceSpy,
+      );
+    }
   });
 
   it('sets required error when trying to save universidad without selection', () => {
