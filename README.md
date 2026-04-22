@@ -135,14 +135,22 @@ Reportes:
 
 Se incluye el workflow `.github/workflows/ci-cd.yml` con estas reglas:
 
-- En cada PR hacia `master` o `main`: ejecuta pruebas y build de backend y frontend.
-- En cada push a `master` o `main`: ejecuta las mismas validaciones de CI.
-- No realiza deploy desde GitHub Actions (sin hooks, curl ni APIs externas).
+- En cada PR hacia `main`: ejecuta CI de backend y frontend.
+- En cada push a `main`: ejecuta CI y, si todo pasa, dispara el deploy a producción.
+- El job de deploy usa `environment: production` y falla si falla Netlify o Render.
 
-### Proteger la rama `master`
+### Qué bloquea el merge
 
-Para impedir merges con pruebas fallidas, configura en `Settings > Branches > Branch protection rules`:
+Para que un PR no se pueda mergear si fallan validaciones, protege la rama `main` en GitHub y exige los checks del workflow.
 
-- Regla para `master`.
+Importante: el deploy ocurre después del merge, en el push a `main`. Por eso, el merge se bloquea por CI, mientras que cualquier falla de deploy queda visible en GitHub Actions y hace fallar el job `deploy`.
+
+### Proteger la rama `main`
+
+Configura en `Settings > Branches > Branch protection rules`:
+
+- Regla para `main`.
 - Activar `Require status checks to pass before merging`.
-- Marcar como requeridos los checks del workflow (backend tests/build y frontend tests/build).
+- Marcar como requeridos los checks del workflow:
+	- `Backend CI (build + tests)`
+	- `Frontend CI (test + build)`
