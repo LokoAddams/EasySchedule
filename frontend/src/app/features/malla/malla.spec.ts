@@ -15,6 +15,9 @@ describe('Malla component logic', () => {
   let carreraServiceSpy: jasmine.SpyObj<CarreraService>;
   let mallaCatalogoServiceSpy: jasmine.SpyObj<MallaCatalogoService>;
   let seleccionAcademicaServiceSpy: jasmine.SpyObj<SeleccionAcademicaService>;
+  let estadoMateriaServiceSpy: jasmine.SpyObj<any>;
+  let routerSpy: jasmine.SpyObj<any>;
+  let activatedRouteStub: any;
 
   beforeEach(() => {
     flagsSubject = new BehaviorSubject<FeatureFlags>({ malla: true, tomaMaterias: false });
@@ -27,13 +30,19 @@ describe('Malla component logic', () => {
     carreraServiceSpy = jasmine.createSpyObj<CarreraService>('CarreraService', ['getCarrerasActivasPorUniversidad']);
     mallaCatalogoServiceSpy = jasmine.createSpyObj<MallaCatalogoService>('MallaCatalogoService', ['getMallasActivasPorCarrera']);
     seleccionAcademicaServiceSpy = jasmine.createSpyObj<SeleccionAcademicaService>('SeleccionAcademicaService', ['getSeleccionActual', 'guardarSeleccion']);
+    estadoMateriaServiceSpy = jasmine.createSpyObj('EstadoMateriaService', ['getEstadosMateria']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
+    activatedRouteStub = { snapshot: { queryParams: {} } };
 
-    component = new Malla(
+    component = new (Malla as any)(
       featureServiceMock,
       universidadServiceSpy,
       carreraServiceSpy,
       mallaCatalogoServiceSpy,
       seleccionAcademicaServiceSpy,
+      estadoMateriaServiceSpy,
+      routerSpy,
+      activatedRouteStub,
     );
   });
 
