@@ -158,9 +158,9 @@
         <div class="malla-board">
           <div class="malla-board__column" *ngFor="let sem of semestres" [ngClass]="{'malla-board__column--actual': sem === semestreActual}">
             <div class="malla-subject" *ngFor="let materia of materiasPorSemestre.get(sem)" [ngClass]="{
-                'malla-subject--aprobada': materia.estado === 'APROBADA',
-                'malla-subject--cursando': materia.estado === 'CURSANDO',
-                'malla-subject--pendiente': materia.estado === 'PENDIENTE'
+                'malla-subject--aprobada': materia.estado === 'aprobada',
+                'malla-subject--cursando': materia.estado === 'cursando',
+                'malla-subject--pendiente': materia.estado === 'pendiente' || materia.estado === null
               }">
               <div class="malla-subject__code">{{ materia.codigoMateria }}</div>
               <div class="malla-subject__name">{{ materia.nombreMateria }}</div>

@@ -28,7 +28,7 @@ describe('Malla component logic', () => {
 
     universidadServiceSpy = jasmine.createSpyObj<UniversidadService>('UniversidadService', ['getUniversidadesActivas']);
     carreraServiceSpy = jasmine.createSpyObj<CarreraService>('CarreraService', ['getCarrerasActivasPorUniversidad']);
-    mallaCatalogoServiceSpy = jasmine.createSpyObj<MallaCatalogoService>('MallaCatalogoService', ['getMallasActivasPorCarrera']);
+    mallaCatalogoServiceSpy = jasmine.createSpyObj<MallaCatalogoService>('MallaCatalogoService', ['getMallasActivasPorCarrera', 'getMateriasPorMalla']);
     seleccionAcademicaServiceSpy = jasmine.createSpyObj<SeleccionAcademicaService>('SeleccionAcademicaService', ['getSeleccionActual', 'guardarSeleccion']);
     estadoMateriaServiceSpy = jasmine.createSpyObj('EstadoMateriaService', ['getEstadosMateria']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
@@ -81,6 +81,7 @@ describe('Malla component logic', () => {
     universidadServiceSpy.getUniversidadesActivas.and.returnValue(of([{ id: 1, nombre: 'UCB', codigo: 'UCB' }]));
     carreraServiceSpy.getCarrerasActivasPorUniversidad.and.returnValue(of([{ id: 11, universidadId: 1, nombre: 'Sistemas', codigo: 'SIS' }]));
     mallaCatalogoServiceSpy.getMallasActivasPorCarrera.and.returnValue(of([{ id: 101, carreraId: 11, nombre: 'Malla 2017', version: '2017', active: true }]));
+    mallaCatalogoServiceSpy.getMateriasPorMalla.and.returnValue(of([]));
     seleccionAcademicaServiceSpy.getSeleccionActual.and.returnValue(of({
       universidadId: 1,
       universidad: 'UCB',
@@ -169,5 +170,43 @@ describe('Malla component logic', () => {
     (component as any).onGuardarMallaClick();
 
     expect(seleccionAcademicaServiceSpy.guardarSeleccion).not.toHaveBeenCalled();
+  });
+
+  it('loadMaterias preserves estado values returned by backend', async () => {
+    mallaCatalogoServiceSpy.getMateriasPorMalla.and.returnValue(of([
+      {
+        id: 1,
+        materiaId: 10,
+        codigoMateria: 'INF-101',
+        nombreMateria: 'Programacion I',
+        semestreSugerido: 1,
+        estado: 'aprobada',
+      },
+      {
+        id: 2,
+        materiaId: 11,
+        codigoMateria: 'INF-102',
+        nombreMateria: 'Programacion II',
+        semestreSugerido: 2,
+        estado: null,
+      },
+    ]));
+
+    await (component as any).loadMaterias(100);
+
+    expect((component as any).materias.length).toBe(2);
+    expect((component as any).materias[0].estado).toBe('aprobada');
+    expect((component as any).materias[1].estado).toBeNull();
+    expect((component as any).materiasPorSemestre.get(1).length).toBe(1);
+    expect((component as any).materiasPorSemestre.get(2).length).toBe(1);
+  });
+
+  it('sets loadMateriasError when materias request fails', async () => {
+    mallaCatalogoServiceSpy.getMateriasPorMalla.and.returnValue(throwError(() => new Error('boom')));
+
+    await (component as any).loadMaterias(100);
+
+    expect((component as any).loadMateriasError).toBeTrue();
+    expect((component as any).loadingMaterias).toBeFalse();
   });
 });

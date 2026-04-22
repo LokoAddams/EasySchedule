@@ -1,2 +1,47 @@
-<p class="placeholder-page">{{ 'tomaMaterias.placeholder' | translate }}</p>
-<a routerLink="/toma-de-materias/materia">{{ 'tomaMaterias.subject' | translate }}</a>
+<section class="horario-page">
+	<header class="horario-header" *ngIf="horario as h">
+		<div class="horario-chip" *ngIf="h.carrera || h.malla">
+			{{ h.carrera ?? 'Carrera' }} - {{ h.malla ?? 'Malla' }}
+		</div>
+		<h1>Horario Recomendado</h1>
+		<p class="horario-subtitle">
+			{{ h.universidad ?? 'Universidad no definida' }}
+			<span *ngIf="h.semestreOferta"> | {{ h.semestreOferta }}</span>
+			<span *ngIf="h.semestreActual"> | Semestre {{ h.semestreActual }}</span>
+		</p>
+	</header>
+
+	<div class="horario-state" *ngIf="loading">Cargando horario...</div>
+	<div class="horario-state horario-state--error" *ngIf="!loading && error">
+		No se pudo cargar el horario. Intenta nuevamente.
+	</div>
+
+	<div class="horario-grid-wrapper" *ngIf="!loading && !error">
+		<table class="horario-grid">
+			<thead>
+				<tr>
+					<th>Hora</th>
+					<th *ngFor="let dia of dias">{{ dia }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let timeRow of timeRows">
+					<td class="time-cell">{{ timeRow }}</td>
+					<td *ngFor="let dia of dias" class="slot-cell">
+						<div class="slot-card" *ngFor="let clase of getCellItems(timeRow, dia)">
+							<div class="slot-card__materia">{{ clase.materia }}</div>
+							<div class="slot-card__meta" *ngIf="clase.paralelo || clase.aula">
+								{{ clase.paralelo ? ('Paralelo ' + clase.paralelo) : '' }}
+								<span *ngIf="clase.paralelo && clase.aula"> | </span>
+								{{ clase.aula ?? '' }}
+							</div>
+							<div class="slot-card__meta" *ngIf="clase.docente">{{ clase.docente }}</div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<a class="horario-link" routerLink="/toma-de-materias/materia">Ver Materias</a>
+</section>

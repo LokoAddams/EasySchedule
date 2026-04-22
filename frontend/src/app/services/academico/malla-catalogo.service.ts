@@ -17,7 +17,7 @@ export interface MallaMateria {
   codigoMateria: string;
   nombreMateria: string;
   semestreSugerido: number;
-  estado?: 'APROBADA' | 'CURSANDO' | 'PENDIENTE'; // Mocked state for UI
+  estado: 'aprobada' | 'cursando' | 'pendiente' | null;
 }
 
 @Injectable({

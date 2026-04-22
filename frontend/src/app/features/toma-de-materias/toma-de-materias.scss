@@ -1,0 +1,130 @@
+.horario-page {
+	max-width: min(1450px, 96vw);
+	margin: 1.8rem auto;
+	padding: 0 1rem 2rem;
+}
+
+.horario-header {
+	margin-bottom: 1.2rem;
+
+	h1 {
+		margin: 0.6rem 0 0;
+		font-family: 'Poppins', sans-serif;
+		font-size: clamp(1.65rem, 1.25rem + 1.2vw, 2.4rem);
+		color: #121722;
+	}
+}
+
+.horario-chip {
+	display: inline-block;
+	padding-bottom: 0.15rem;
+	border-bottom: 4px solid #3f6383;
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: #141b25;
+}
+
+.horario-subtitle {
+	margin-top: 0.45rem;
+	font-size: 1.05rem;
+	color: #1b2330;
+}
+
+.horario-state {
+	margin-top: 1rem;
+	padding: 0.8rem 1rem;
+	border-radius: 10px;
+	background: #e8eef4;
+	color: #1c3047;
+	font-family: 'Poppins', sans-serif;
+}
+
+.horario-state--error {
+	background: #fff0ed;
+	color: #7f271f;
+}
+
+.horario-grid-wrapper {
+	margin-top: 1.2rem;
+	overflow-x: auto;
+	border-radius: 20px;
+	border: 1px solid rgba(34, 53, 74, 0.25);
+	background: #dce1e8;
+}
+
+.horario-grid {
+	width: 100%;
+	min-width: 1024px;
+	border-collapse: collapse;
+	table-layout: fixed;
+
+	thead th {
+		background: #3f6383;
+		color: #f5f9ff;
+		font-family: 'Poppins', sans-serif;
+		font-size: 1rem;
+		letter-spacing: 0.02em;
+		padding: 0.85rem 0.55rem;
+		border-bottom: 2px solid rgba(24, 36, 52, 0.65);
+	}
+
+	td,
+	th {
+		border: 2px solid rgba(24, 36, 52, 0.55);
+		vertical-align: top;
+	}
+}
+
+.time-cell {
+	width: 130px;
+	background: #3f6383;
+	color: #f5f9ff;
+	text-align: center;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 600;
+	padding: 0.8rem 0.45rem;
+}
+
+.slot-cell {
+	background: #b9c0c9;
+	padding: 0.35rem;
+	min-height: 90px;
+}
+
+.slot-card {
+	background: #8298b5;
+	border-radius: 8px;
+	padding: 0.45rem 0.5rem;
+	margin-bottom: 0.3rem;
+	color: #112033;
+}
+
+.slot-card__materia {
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.95rem;
+	font-weight: 700;
+	line-height: 1.25;
+}
+
+.slot-card__meta {
+	margin-top: 0.2rem;
+	font-size: 0.75rem;
+}
+
+.horario-link {
+	display: inline-block;
+	margin-top: 1rem;
+	color: #2f4f73;
+	font-weight: 600;
+}
+
+@media (max-width: 860px) {
+	.horario-page {
+		margin-top: 1rem;
+	}
+
+	.horario-grid {
+		min-width: 920px;
+	}
+}

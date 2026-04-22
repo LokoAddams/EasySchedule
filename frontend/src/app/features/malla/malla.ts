@@ -381,19 +381,6 @@ export class Malla implements OnInit, OnDestroy {
     try {
       this.materias = await firstValueFrom(this.mallaCatalogoService.getMateriasPorMalla(mallaId));
 
-      // Mocking status for features demonstration
-      // Using deterministic logic based on ID and semestreSugerido to remain consistent
-      this.materias.forEach(m => {
-        if (m.semestreSugerido < this.semestreActual) {
-          m.estado = 'APROBADA';
-        } else if (m.semestreSugerido === this.semestreActual) {
-          // Half of current semester is approved, rest cursando
-          m.estado = m.id % 2 === 0 ? 'APROBADA' : 'CURSANDO';
-        } else {
-          m.estado = 'PENDIENTE';
-        }
-      });
-
       this.materias.forEach(materia => {
         const sem = materia.semestreSugerido;
         if (!this.materiasPorSemestre.has(sem)) {
