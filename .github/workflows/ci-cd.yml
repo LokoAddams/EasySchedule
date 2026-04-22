@@ -53,6 +53,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Clean Angular cache
+        run: rm -rf .angular/cache
+
       - name: Run frontend tests
         run: npm test -- --watch=false --browsers=ChromeHeadless --no-progress
 
