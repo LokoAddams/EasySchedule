@@ -130,3 +130,19 @@ Reportes:
 
 - Backend: `backend/build/reports/jacoco/test/html/index.html`
 - Frontend: `frontend/coverage/frontend/index.html`
+
+## 7) CI/CD con GitHub Actions
+
+Se incluye el workflow `.github/workflows/ci-cd.yml` con estas reglas:
+
+- En cada PR hacia `master` o `main`: ejecuta pruebas y build de backend y frontend.
+- En cada push a `master` o `main`: ejecuta las mismas validaciones de CI.
+- No realiza deploy desde GitHub Actions (sin hooks, curl ni APIs externas).
+
+### Proteger la rama `master`
+
+Para impedir merges con pruebas fallidas, configura en `Settings > Branches > Branch protection rules`:
+
+- Regla para `master`.
+- Activar `Require status checks to pass before merging`.
+- Marcar como requeridos los checks del workflow (backend tests/build y frontend tests/build).
