@@ -9,7 +9,6 @@ import com.easyschedule.backend.academico.universidad.model.Universidad;
 import com.easyschedule.backend.academico.universidad.repository.UniversidadRepository;
 import com.easyschedule.backend.estudiante.model.Estudiante;
 import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
-import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -40,17 +39,22 @@ public class HorarioRecomendadoService {
     }
 
     public HorarioActualResponse getHorarioActualByUserId(Long userId) {
-        Estudiante estudiante = estudianteRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado para el usuario autenticado"));
+        Estudiante estudiante = estudianteRepository.findById(userId).orElse(null);
 
-        if (estudiante.getMalla() == null || estudiante.getSemestreActual() == null) {
+        if (estudiante == null || estudiante.getMalla() == null || estudiante.getSemestreActual() == null) {
             return new HorarioActualResponse(null, null, null, null, null, List.of());
         }
 
-        Universidad universidad = universidadRepository.findByIdAndActiveTrue(estudiante.getUniversidadId())
-            .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada"));
-        Carrera carrera = carreraRepository.findByIdAndActiveTrue(estudiante.getCarreraId())
-            .orElseThrow(() -> new ResourceNotFoundException("Carrera no encontrada"));
+        if (estudiante.getMalla().getId() == null) {
+            return new HorarioActualResponse(null, null, null, null, estudiante.getSemestreActual(), List.of());
+        }
+
+        Universidad universidad = estudiante.getUniversidadId() == null
+            ? null
+            : universidadRepository.findByIdAndActiveTrue(estudiante.getUniversidadId()).orElse(null);
+        Carrera carrera = estudiante.getCarreraId() == null
+            ? null
+            : carreraRepository.findByIdAndActiveTrue(estudiante.getCarreraId()).orElse(null);
 
         List<OfertaMateriaRepository.HorarioOfertaRow> rows = ofertaMateriaRepository.findHorarioActualRows(
             userId,
@@ -69,12 +73,16 @@ public class HorarioRecomendadoService {
 
         String mallaLabel = estudiante.getMalla().getNombre();
         if (mallaLabel == null || mallaLabel.isBlank()) {
-            mallaLabel = "Malla " + estudiante.getMalla().getVersion();
+            if (estudiante.getMalla().getVersion() == null) {
+                mallaLabel = null;
+            } else {
+                mallaLabel = "Malla " + estudiante.getMalla().getVersion();
+            }
         }
 
         return new HorarioActualResponse(
-            universidad.getNombre(),
-            carrera.getNombre(),
+            universidad == null ? null : universidad.getNombre(),
+            carrera == null ? null : carrera.getNombre(),
             mallaLabel,
             semestreOferta,
             estudiante.getSemestreActual(),

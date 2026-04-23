@@ -2,6 +2,8 @@ package com.easyschedule.backend.academico.horario.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -85,5 +87,28 @@ class HorarioRecomendadoServiceTest {
         assertEquals(1, response.clases().size());
         assertEquals("Lunes", response.clases().get(0).dia());
         assertEquals("07:00", response.clases().get(0).horaInicio());
+    }
+
+    @Test
+    void getHorarioActualByUserIdReturnsEmptyWhenStudentNotFound() {
+        HorarioRecomendadoService service = new HorarioRecomendadoService(
+            estudianteRepository,
+            universidadRepository,
+            carreraRepository,
+            ofertaMateriaRepository,
+            new ObjectMapper()
+        );
+
+        when(estudianteRepository.findById(99L)).thenReturn(Optional.empty());
+
+        HorarioActualResponse response = service.getHorarioActualByUserId(99L);
+
+        assertNotNull(response);
+        assertNull(response.universidad());
+        assertNull(response.carrera());
+        assertNull(response.malla());
+        assertNull(response.semestreOferta());
+        assertNull(response.semestreActual());
+        assertTrue(response.clases().isEmpty());
     }
 }
