@@ -108,6 +108,8 @@
     "title": "Academic setup",
     "description": "Select your university to start your curriculum setup.",
     "loadingUniversidades": "Loading universities...",
+    "loadingCarreras": "Loading careers...",
+    "loadingMallas": "Loading curricula...",
     "retry": "Retry",
     "actions": {
       "saveUniversidad": "Save university",
@@ -116,7 +118,8 @@
       "saving": "Saving...",
       "changeMalla": "Change Curriculum",
       "changeUniversidad": "Change University",
-      "cancelChange": "Cancel"
+      "cancelChange": "Cancel",
+      "changeStatus": "Update course status"
     },
     "error": {
       "loadUniversidades": "Could not load available universities.",
@@ -154,6 +157,26 @@
     "warning": {
       "title": "Warning",
       "progressReset": "Progress from your previous curriculum will not be transferred after confirming this change."
+    },
+    "UpdateCourse": {
+      "title": "Course status",
+      "subtitle": "Study plan",
+      "noMalla": "You don't have a curriculum selected.",
+      "selectMallaFirst": "First you need to select your university, career and curriculum.",
+      "goToSelectMalla": "Go to Select Curriculum",
+      "errorLoading": "Error loading data.",
+      "errorLoadingMsg": "Could not load subjects.",
+      "materia": "Subject",
+      "estado": "Status",
+      "pendiente": "Pending",
+      "cursando": "In progress",
+      "aprobada": "Completed",
+      "success": "Subject Status Updated!",
+      "errorUpdate": "Error updating.",
+      "errorUpdateMsg": "Try again.",
+      "volver": "Back",
+      "save": "Update Subject",
+      "saving": "Updating..."
     }
   },
   "tomaMaterias": {
@@ -284,5 +307,11 @@
       "backendConnection": "Could not connect to backend",
       "server": "Server error. Please try again"
     }
+  },
+  "Toma de materias":{
+    "Materias disponibles": "Available courses",
+    "Materias Agregadas": "Added courses",
+    "Materias en curso": "Courses in progress"
+
   }
 }
