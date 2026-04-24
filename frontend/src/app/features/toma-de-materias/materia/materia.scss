@@ -1,0 +1,183 @@
+.materia-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+
+    .header {
+        margin-bottom: 2rem;
+        text-align: center;
+        h2 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--color-blue-dark);
+            font-size: 2rem;
+        }
+        p {
+            color: #555;
+            font-size: 1.1rem;
+        }
+    }
+
+    .bloques-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .bloque-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border-left: 6px solid var(--color-blue);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .header-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            
+            h4 {
+                color: var(--color-blue-dark);
+                margin: 0;
+            }
+
+            .btn-remove {
+                background: none;
+                border: none;
+                color: var(--color-error);
+                font-size: 1.2rem;
+                cursor: pointer;
+                transition: color 0.2s;
+                &:hover {
+                    color: darken(#9f2017, 10%);
+                }
+            }
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                
+                label {
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    margin-bottom: 0.4rem;
+                    color: #444;
+                }
+
+                select, input {
+                    padding: 0.6rem;
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                    font-family: 'Nunito Sans', sans-serif;
+                    font-size: 1rem;
+                    background: #fafafa;
+                    transition: border-color 0.2s, box-shadow 0.2s;
+
+                    &:focus {
+                        outline: none;
+                        border-color: var(--color-blue);
+                        box-shadow: 0 0 0 3px rgba(111, 137, 172, 0.2);
+                    }
+                }
+            }
+        }
+    }
+
+    .actions {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        
+        button {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add {
+            background: var(--color-sand);
+            color: var(--color-blue-dark);
+            border: 1px solid #ccc;
+            &:hover {
+                background: darken(#e5e1d3, 5%);
+            }
+        }
+
+        .btn-clear {
+            background: transparent;
+            color: var(--color-error);
+            border: 1px solid var(--color-error);
+            &:hover {
+                background: rgba(159, 32, 23, 0.1);
+            }
+        }
+    }
+
+    .messages {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+        
+        .error-msg {
+            color: var(--color-error);
+            background: rgba(159, 32, 23, 0.1);
+            padding: 0.8rem;
+            border-radius: 8px;
+        }
+
+        .success-msg {
+            color: #1e7e34;
+            background: rgba(30, 126, 52, 0.1);
+            padding: 0.8rem;
+            border-radius: 8px;
+        }
+    }
+
+    .footer-actions {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+
+        .btn-save {
+            background: var(--color-blue-dark);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 2.5rem;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(47, 79, 115, 0.3);
+
+            &:hover {
+                background: #1d334a;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(47, 79, 115, 0.4);
+            }
+            
+            &:active {
+                transform: translateY(0);
+            }
+        }
+    }
+}
