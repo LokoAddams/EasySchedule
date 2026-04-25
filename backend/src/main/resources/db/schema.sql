@@ -115,8 +115,8 @@ CREATE TABLE IF NOT EXISTS ofertas (
     horario_json JSONB NOT NULL,
     docente VARCHAR(150),
     aula VARCHAR(100),
-    fecha_creacion TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    fecha_actualizacion TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    fecha_creacion TIMESTAMPTZ DEFAULT NOW(),
+    fecha_actualizacion TIMESTAMPTZ DEFAULT NOW(),
     CONSTRAINT fk_ofertas_malla_materia FOREIGN KEY (malla_materia_id) REFERENCES malla_materia(id) ON DELETE RESTRICT,
     CONSTRAINT ck_ofertas_horario_json_array CHECK (jsonb_typeof(horario_json) = 'array'),
     CONSTRAINT uq_ofertas UNIQUE (malla_materia_id, semestre, paralelo)
