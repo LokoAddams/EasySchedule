@@ -16,6 +16,7 @@ describe('TomaDeMaterias component logic', () => {
     horarioActualServiceSpy = jasmine.createSpyObj<HorarioActualService>('HorarioActualService', [
       'getHorarioActual',
       'exportHorarioActualCsv',
+      'exportHorarioActualPdf',
     ]);
     authSessionServiceSpy = jasmine.createSpyObj<AuthSessionService>('AuthSessionService', ['getCurrentUsername']);
     perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername']);
