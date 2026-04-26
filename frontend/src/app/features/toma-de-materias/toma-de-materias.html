@@ -14,7 +14,7 @@
 			<label class="horario-export__label" for="export-format">Formato</label>
 			<select id="export-format" class="horario-export__select" [(ngModel)]="exportFormat">
 				<option value="csv">CSV</option>
-				<option value="pdf" disabled>PDF (proximamente)</option>
+				<option value="pdf">PDF</option>
 				<option value="imagen" disabled>Imagen (proximamente)</option>
 			</select>
 			<button class="horario-export__button" type="button" (click)="exportHorario()" [disabled]="exportLoading">

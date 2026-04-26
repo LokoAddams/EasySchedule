@@ -11,9 +11,19 @@ import com.easyschedule.backend.estudiante.model.Estudiante;
 import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.nio.charset.StandardCharsets;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -95,6 +105,11 @@ public class HorarioRecomendadoService {
         HorarioActualResponse horario = getHorarioActualByUserId(userId);
         String csv = toCsv(horario);
         return csv.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public byte[] buildHorarioActualPdf(Long userId) {
+        HorarioActualResponse horario = getHorarioActualByUserId(userId);
+        return toPdf(horario);
     }
 
     public boolean hasHorarioActual(Long userId) {
@@ -192,5 +207,69 @@ public class HorarioRecomendadoService {
             return "\"" + escaped + "\"";
         }
         return escaped;
+    }
+
+    private byte[] toPdf(HorarioActualResponse horario) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Document document = new Document();
+        try {
+            PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14f);
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10f);
+            Font cellFont = FontFactory.getFont(FontFactory.HELVETICA, 9f);
+
+            document.add(new Paragraph("Horario academico", titleFont));
+            document.add(new Paragraph(" "));
+
+            PdfPTable table = new PdfPTable(6);
+            table.setWidthPercentage(100f);
+            table.setWidths(new float[] { 3.2f, 1.2f, 1.6f, 1.4f, 1.4f, 1.6f });
+
+            addHeaderCell(table, "Materia", headerFont);
+            addHeaderCell(table, "Paralelo", headerFont);
+            addHeaderCell(table, "Dia", headerFont);
+            addHeaderCell(table, "Inicio", headerFont);
+            addHeaderCell(table, "Fin", headerFont);
+            addHeaderCell(table, "Aula", headerFont);
+
+            if (horario != null && horario.clases() != null) {
+                for (HorarioClaseResponse clase : horario.clases()) {
+                    addBodyCell(table, safeText(clase.materia()), cellFont);
+                    addBodyCell(table, safeText(clase.paralelo()), cellFont);
+                    addBodyCell(table, safeText(clase.dia()), cellFont);
+                    addBodyCell(table, safeText(clase.horaInicio()), cellFont);
+                    addBodyCell(table, safeText(clase.horaFin()), cellFont);
+                    addBodyCell(table, safeText(clase.aula()), cellFont);
+                }
+            }
+
+            document.add(table);
+        } catch (Exception ex) {
+            return new byte[0];
+        } finally {
+            document.close();
+        }
+        return outputStream.toByteArray();
+    }
+
+    private void addHeaderCell(PdfPTable table, String text, Font font) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.addCell(cell);
+    }
+
+    private void addBodyCell(PdfPTable table, String text, Font font) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+        table.addCell(cell);
+    }
+
+    private String safeText(String value) {
+        if (value == null || value.isBlank()) {
+            return "-";
+        }
+        return value.trim();
     }
 }

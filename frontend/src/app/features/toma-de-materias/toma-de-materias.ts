@@ -77,13 +77,13 @@ export class TomaDeMaterias implements OnInit {
       return;
     }
 
-    if (this.exportFormat !== 'csv') {
+    if (!['csv', 'pdf'].includes(this.exportFormat)) {
       this.exportError = 'Formato no soportado por el momento.';
       return;
     }
 
     if (this.estudianteId) {
-      this.requestExport(this.estudianteId);
+      this.requestExport(this.estudianteId, this.exportFormat);
       return;
     }
 
@@ -97,7 +97,7 @@ export class TomaDeMaterias implements OnInit {
     this.perfilService.getPerfilByUsername(username).subscribe({
       next: (perfil) => {
         this.estudianteId = perfil.id;
-        this.requestExport(perfil.id);
+        this.requestExport(perfil.id, this.exportFormat);
       },
       error: () => {
         this.exportLoading = false;
@@ -110,9 +110,13 @@ export class TomaDeMaterias implements OnInit {
     return this.cellMap.get(this.cellKey(timeRow, dia)) ?? [];
   }
 
-  private requestExport(estudianteId: number): void {
+  private requestExport(estudianteId: number, formato: string): void {
     this.exportLoading = true;
-    this.horarioActualService.exportHorarioActualCsv(estudianteId).subscribe({
+    const exportRequest = formato === 'pdf'
+      ? this.horarioActualService.exportHorarioActualPdf(estudianteId)
+      : this.horarioActualService.exportHorarioActualCsv(estudianteId);
+
+    exportRequest.subscribe({
       next: (response) => {
         this.exportLoading = false;
         this.triggerDownload(response.body, this.resolveFilename(response.headers.get('Content-Disposition')));
@@ -130,15 +134,15 @@ export class TomaDeMaterias implements OnInit {
 
   private resolveFilename(contentDisposition: string | null): string {
     if (!contentDisposition) {
-      return 'horario.csv';
+      return this.exportFormat === 'pdf' ? 'horario.pdf' : 'horario.csv';
     }
 
     const filenameMatch = /filename="?([^";]+)"?/i.exec(contentDisposition);
     if (!filenameMatch || !filenameMatch[1]) {
-      return 'horario.csv';
+      return this.exportFormat === 'pdf' ? 'horario.pdf' : 'horario.csv';
     }
 
-    return filenameMatch[1].trim() || 'horario.csv';
+    return filenameMatch[1].trim() || (this.exportFormat === 'pdf' ? 'horario.pdf' : 'horario.csv');
   }
 
   private triggerDownload(blob: Blob | null, filename: string): void {

@@ -88,7 +88,7 @@ describe('TomaDeMaterias component logic', () => {
         },
       ],
     };
-    (component as any).exportFormat = 'pdf';
+    (component as any).exportFormat = 'imagen';
 
     (component as any).exportHorario();
 
@@ -129,6 +129,43 @@ describe('TomaDeMaterias component logic', () => {
 
     expect(horarioActualServiceSpy.exportHorarioActualCsv).toHaveBeenCalledWith(7);
     expect(downloadSpy).toHaveBeenCalledWith(payload, 'horario.csv');
+    expect((component as any).exportLoading).toBeFalse();
+  });
+
+  it('exports pdf when selected', () => {
+    const payload = new Blob(['pdf']);
+    const headers = new HttpHeaders({ 'Content-Disposition': 'attachment; filename="horario.pdf"' });
+
+    (component as any).estudianteId = 7;
+    (component as any).exportFormat = 'pdf';
+    (component as any).horario = {
+      universidad: null,
+      carrera: null,
+      malla: null,
+      semestreOferta: null,
+      semestreActual: 1,
+      clases: [
+        {
+          materia: 'Materia',
+          paralelo: 'A',
+          dia: 'Lunes',
+          horaInicio: '07:00',
+          horaFin: '08:30',
+          docente: null,
+          aula: null,
+        },
+      ],
+    };
+
+    horarioActualServiceSpy.exportHorarioActualPdf.and.returnValue(
+      of(new HttpResponse({ body: payload, headers }))
+    );
+    const downloadSpy = spyOn(component as any, 'triggerDownload');
+
+    (component as any).exportHorario();
+
+    expect(horarioActualServiceSpy.exportHorarioActualPdf).toHaveBeenCalledWith(7);
+    expect(downloadSpy).toHaveBeenCalledWith(payload, 'horario.pdf');
     expect((component as any).exportLoading).toBeFalse();
   });
 

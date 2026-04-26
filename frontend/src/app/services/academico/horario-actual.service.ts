@@ -37,4 +37,9 @@ export class HorarioActualService {
     const path = `/api/academico/horario/actual/${estudianteId}/export?formato=csv`;
     return this.apiService.getBlob(path);
   }
+
+  exportHorarioActualPdf(estudianteId: number): Observable<HttpResponse<Blob>> {
+    const path = `/api/academico/horario/actual/${estudianteId}/export?formato=pdf`;
+    return this.apiService.getBlob(path);
+  }
 }

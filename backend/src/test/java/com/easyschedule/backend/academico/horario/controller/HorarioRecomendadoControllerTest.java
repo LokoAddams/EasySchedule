@@ -85,6 +85,26 @@ class HorarioRecomendadoControllerTest {
     }
 
     @Test
+    void exportHorarioActualReturnsPdfWhenAuthorized() throws Exception {
+        byte[] payload = new byte[] { 1, 2, 3 };
+        String today = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+
+        when(horarioRecomendadoService.hasHorarioActual(7L)).thenReturn(true);
+        when(horarioRecomendadoService.buildHorarioActualPdf(7L)).thenReturn(payload);
+
+        mockMvc.perform(get("/api/academico/horario/actual/7/export")
+                .param("formato", "pdf")
+                .principal(() -> "7"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_PDF))
+            .andExpect(header().string("Content-Disposition", Matchers.containsString("attachment")))
+            .andExpect(header().string("Content-Disposition", Matchers.containsString("horario_7_" + today + ".pdf")));
+
+        verify(horarioRecomendadoService).hasHorarioActual(7L);
+        verify(horarioRecomendadoService).buildHorarioActualPdf(7L);
+    }
+
+    @Test
     void exportHorarioActualReturnsUnauthorizedWhenPrincipalMissing() throws Exception {
         mockMvc.perform(get("/api/academico/horario/actual/7/export"))
             .andExpect(status().isUnauthorized());
@@ -113,7 +133,7 @@ class HorarioRecomendadoControllerTest {
     @Test
     void exportHorarioActualReturnsBadRequestForUnsupportedFormat() throws Exception {
         mockMvc.perform(get("/api/academico/horario/actual/7/export")
-                .param("formato", "pdf")
+                .param("formato", "xlsx")
                 .principal(() -> "7"))
             .andExpect(status().isBadRequest());
     }

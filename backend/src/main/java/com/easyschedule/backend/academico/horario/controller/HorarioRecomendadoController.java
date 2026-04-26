@@ -44,7 +44,7 @@ public class HorarioRecomendadoController {
 		}
 
 		String normalizedFormat = formato == null ? "csv" : formato.trim().toLowerCase(Locale.ROOT);
-		if (!"csv".equals(normalizedFormat)) {
+		if (!"csv".equals(normalizedFormat) && !"pdf".equals(normalizedFormat)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato de exportacion no soportado");
 		}
 
@@ -52,12 +52,18 @@ public class HorarioRecomendadoController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay horario disponible para exportar");
 		}
 
-		byte[] payload = horarioRecomendadoService.buildHorarioActualCsv(userId);
+		byte[] payload = "pdf".equals(normalizedFormat)
+			? horarioRecomendadoService.buildHorarioActualPdf(userId)
+			: horarioRecomendadoService.buildHorarioActualCsv(userId);
 		String dateLabel = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
-		String filename = "horario_" + userId + "_" + dateLabel + ".csv";
+		String extension = "pdf".equals(normalizedFormat) ? "pdf" : "csv";
+		String filename = "horario_" + userId + "_" + dateLabel + "." + extension;
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType("text/csv"));
+		MediaType contentType = "pdf".equals(normalizedFormat)
+			? MediaType.APPLICATION_PDF
+			: MediaType.parseMediaType("text/csv");
+		headers.setContentType(contentType);
 		headers.setContentDispositionFormData("attachment", filename);
 		headers.setContentLength(payload.length);
 

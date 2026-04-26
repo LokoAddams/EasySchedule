@@ -8,7 +8,7 @@ describe('HorarioActualService', () => {
   let apiServiceSpy: jasmine.SpyObj<ApiService>;
 
   beforeEach(() => {
-    apiServiceSpy = jasmine.createSpyObj<ApiService>('ApiService', ['get']);
+    apiServiceSpy = jasmine.createSpyObj<ApiService>('ApiService', ['get', 'getBlob']);
     service = new HorarioActualService(apiServiceSpy);
   });
 
@@ -25,5 +25,21 @@ describe('HorarioActualService', () => {
     service.getHorarioActual().subscribe();
 
     expect(apiServiceSpy.get).toHaveBeenCalledWith('/api/academico/horario/actual');
+  });
+
+  it('calls export csv endpoint', () => {
+    apiServiceSpy.getBlob.and.returnValue(of(null as any));
+
+    service.exportHorarioActualCsv(7).subscribe();
+
+    expect(apiServiceSpy.getBlob).toHaveBeenCalledWith('/api/academico/horario/actual/7/export?formato=csv');
+  });
+
+  it('calls export pdf endpoint', () => {
+    apiServiceSpy.getBlob.and.returnValue(of(null as any));
+
+    service.exportHorarioActualPdf(7).subscribe();
+
+    expect(apiServiceSpy.getBlob).toHaveBeenCalledWith('/api/academico/horario/actual/7/export?formato=pdf');
   });
 });
