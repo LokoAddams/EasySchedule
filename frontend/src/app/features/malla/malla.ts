@@ -14,6 +14,8 @@ import {
   SeleccionAcademicaService,
 } from '../../services/academico/seleccion-academica.service';
 import { UniversidadCatalogoItem, UniversidadService } from '../../services/academico/universidad.service';
+import { TomaSeleccionService } from '../../services/academico/toma-seleccion.service';
+import { OfertaDetalleResponse, OfertaMateriaSimple } from '../../services/academico/malla-catalogo.service';
 
 type SeleccionStep = 'universidad' | 'carrera' | 'malla' | 'resumen';
 type EditMode = 'universidad' | 'malla' | null;
@@ -71,6 +73,11 @@ export class Malla implements OnInit, OnDestroy {
   private previousSelectionSnapshot: SeleccionSnapshot | null = null;
   private materiasLoadedForMallaId: number | null = null;
 
+  protected showModal = false;
+  protected materiaDetalle: OfertaDetalleResponse | null = null;
+  protected loadingDetalle = false;
+  protected selectedOfertaId: number | null = null;
+
   constructor(
     private readonly featureService: FeatureToggleService,
     private readonly universidadService: UniversidadService,
@@ -80,6 +87,7 @@ export class Malla implements OnInit, OnDestroy {
     private readonly seleccionAcademicaService: SeleccionAcademicaService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly tomaSeleccionService: TomaSeleccionService,
   ) {}
 
   ngOnInit(): void {
@@ -221,6 +229,44 @@ export class Malla implements OnInit, OnDestroy {
 
     void this.guardarSeleccion();
   }
+
+  protected onMateriaClick(materia: MallaMateria): void {
+    if (materia.estado === 'aprobada' || materia.estado === 'cursando') return;
+
+    this.showModal = true;
+    this.loadingDetalle = true;
+    this.selectedOfertaId = null;
+
+    this.mallaCatalogoService.getDetallesMateria(materia.id).subscribe({
+      next: (detalle) => {
+        this.materiaDetalle = detalle;
+        this.loadingDetalle = false;
+      },
+      error: () => {
+        alert('Error al cargar detalles');
+        this.closeModal();
+      }
+    });
+  }
+
+  protected confirmarSeleccionModal(): void {
+    if (!this.materiaDetalle || !this.selectedOfertaId) return;
+
+    this.tomaSeleccionService.agregarMateria({
+      id: this.materiaDetalle.mallaMateriaId,
+      nombre: this.materiaDetalle.nombreMateria,
+      creditos: this.materiaDetalle.creditos,
+      ofertaId: this.selectedOfertaId
+    });
+
+    this.closeModal();
+  }
+
+  protected closeModal(): void {
+    this.showModal = false;
+    this.materiaDetalle = null;
+  }
+
 
   protected getResumenUniversidad(): string {
     const nombre = this.selectedResumen?.universidad;

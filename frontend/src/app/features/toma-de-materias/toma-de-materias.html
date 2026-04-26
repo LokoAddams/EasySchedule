@@ -1,45 +1,71 @@
 <section class="horario-page">
-	<header class="horario-header" *ngIf="horario as h">
-		<div class="horario-chip" *ngIf="h.carrera || h.malla">
-			{{ h.carrera ?? 'Carrera' }} - {{ h.malla ?? 'Malla' }}
-		</div>
-		<h1>Horario Recomendado</h1>
-		<p class="horario-subtitle">
-			{{ h.universidad ?? 'Universidad no definida' }}
-			<span *ngIf="h.semestreOferta"> | {{ h.semestreOferta }}</span>
-			<span *ngIf="h.semestreActual"> | Semestre {{ h.semestreActual }}</span>
-		</p>
-	</header>
+  <header class="horario-header" *ngIf="horario as h">
+    <div class="horario-chip" *ngIf="h.carrera || h.malla">
+      {{ h.carrera ?? 'Carrera' }} - {{ h.malla ?? 'Malla' }}
+    </div>
+    <h1>Toma de Materias</h1>
+    <p class="horario-subtitle">
+      {{ h.universidad ?? 'Universidad no definida' }}
+      <span *ngIf="h.semestreOferta"> | {{ h.semestreOferta }}</span>
+    </p>
+  </header>
 
-	<div class="horario-state" *ngIf="loading">Cargando horario...</div>
-	<div class="horario-state horario-state--error" *ngIf="!loading && error">
-		No se pudo cargar el horario. Intenta nuevamente.
-	</div>
+  <div class="toma-seleccion-container" *ngIf="!loading && !error">
+    <div class="toma-seleccion-header">
+      <h2>Selección de Materias</h2>
+      <div class="toma-creditos-badge">
+        Total créditos: <strong>{{ totalCreditosSeleccionados }} / 30</strong>
+      </div>
+    </div>
 
-	<div class="horario-grid-wrapper" *ngIf="!loading && !error">
-		<table class="horario-grid">
-			<thead>
-				<tr>
-					<th>Hora</th>
-					<th *ngFor="let dia of dias">{{ dia }}</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr *ngFor="let timeRow of timeRows">
-					<td class="time-cell">{{ timeRow }}</td>
-					<td *ngFor="let dia of dias" class="slot-cell">
-						<div class="slot-card" *ngFor="let clase of getCellItems(timeRow, dia)">
-							<div class="slot-card__materia">{{ clase.materia }}</div>
-							<div class="slot-card__meta" *ngIf="clase.paralelo || clase.aula">
-								{{ clase.paralelo ? ('Paralelo ' + clase.paralelo) : '' }}
-								<span *ngIf="clase.paralelo && clase.aula"> | </span>
-								{{ clase.aula ?? '' }}
-							</div>
-							<div class="slot-card__meta" *ngIf="clase.docente">{{ clase.docente }}</div>
-						</div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+    <div class="toma-materias-lista">
+      <p class="toma-placeholder" *ngIf="materiasSeleccionadas.length === 0">
+        Haz clic en una materia de tu malla para agregarla aquí.
+      </p>
+
+      <div class="materia-tag" *ngFor="let m of materiasSeleccionadas">
+        <span>{{ m.nombre }} ({{ m.creditos }} cr)</span>
+        <button class="btn-remove" (click)="removerMateria(m.id)">×</button>
+      </div>
+    </div>
+
+    <div class="toma-acciones-finales" *ngIf="materiasSeleccionadas.length > 0">
+      <button class="malla-button malla-button--save" (click)="confirmarInscripcion()">
+        Confirmar Registro
+      </button>
+    </div>
+  </div>
+
+  <hr class="toma-divider" *ngIf="!loading && !error">
+
+  <div class="horario-section-title" *ngIf="!loading && !error">
+    <h3>Vista Previa de Horario</h3>
+  </div>
+
+  <div class="horario-state" *ngIf="loading">Cargando datos...</div>
+  <div class="horario-state horario-state--error" *ngIf="!loading && error">
+    No se pudo cargar la información. Intenta nuevamente.
+  </div>
+
+  <div class="horario-grid-wrapper" *ngIf="!loading && !error">
+    <table class="horario-grid">
+      <thead>
+        <tr>
+          <th>Hora</th>
+          <th *ngFor="let dia of dias">{{ dia }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let timeRow of timeRows">
+          <td class="time-cell">{{ timeRow }}</td>
+          <td *ngFor="let dia of dias" class="slot-cell">
+            <div class="slot-card" *ngFor="let clase of getCellItems(timeRow, dia)">
+              <div class="slot-card__materia">{{ clase.materia }}</div>
+              <div class="slot-card__meta">{{ clase.docente }}</div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>
