@@ -1,9 +1,9 @@
 package com.easyschedule.backend.academico.toma_materia.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
+import java.util.List;
 
 public record TomaMateriaRequest(
-    @NotNull Long ofertaId,
-    String estado
+    @NotEmpty List<Long> ofertaIds
 ) {
 }

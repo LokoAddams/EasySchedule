@@ -61,17 +61,19 @@ class TomaMateriaControllerTest {
 
     @Test
     void saveByCurrentUserDelegatesToService() throws Exception {
-        TomaMateriaRequest request = new TomaMateriaRequest(77L, "inscrita");
-        when(tomaMateriaService.saveByUserId(9L, request)).thenReturn(
-            new TomaMateriaResponse(1L, 9L, 77L, "inscrita", OffsetDateTime.now(), OffsetDateTime.now())
-        );
+        TomaMateriaRequest request = new TomaMateriaRequest(List.of(77L, 88L));
+        when(tomaMateriaService.saveByUserId(9L, request)).thenReturn(List.of(
+            new TomaMateriaResponse(1L, 9L, 77L, "inscrita", OffsetDateTime.now(), OffsetDateTime.now()),
+            new TomaMateriaResponse(2L, 9L, 88L, "inscrita", OffsetDateTime.now(), OffsetDateTime.now())
+        ));
 
         mockMvc.perform(post("/api/academico/toma-materias")
                 .principal(() -> "9")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.estado").value("inscrita"));
+            .andExpect(jsonPath("$[0].ofertaId").value(77))
+            .andExpect(jsonPath("$[1].ofertaId").value(88));
 
         verify(tomaMateriaService).saveByUserId(9L, request);
     }

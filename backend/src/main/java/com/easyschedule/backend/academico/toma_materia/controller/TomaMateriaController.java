@@ -32,7 +32,7 @@ public class TomaMateriaController {
     }
 
     @PostMapping
-    public TomaMateriaResponse saveByCurrentUser(@Valid @RequestBody TomaMateriaRequest request, Principal principal) {
+    public List<TomaMateriaResponse> saveByCurrentUser(@Valid @RequestBody TomaMateriaRequest request, Principal principal) {
         return tomaMateriaService.saveByUserId(getAuthenticatedUserId(principal), request);
     }
 
@@ -45,7 +45,6 @@ public class TomaMateriaController {
         if (principal == null || principal.getName() == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sesion invalida");
         }
-
         try {
             return Long.valueOf(principal.getName());
         } catch (NumberFormatException ex) {
