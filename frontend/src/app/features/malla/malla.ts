@@ -70,6 +70,7 @@ export class Malla implements OnInit, OnDestroy {
 
   private flagsSubscription?: Subscription;
   private routerEventsSubscription?: Subscription;
+  private tomaSeleccionSubscription?: Subscription;
   private previousSelectionSnapshot: SeleccionSnapshot | null = null;
   private materiasLoadedForMallaId: number | null = null;
 
@@ -77,6 +78,7 @@ export class Malla implements OnInit, OnDestroy {
   protected materiaDetalle: OfertaDetalleResponse | null = null;
   protected loadingDetalle = false;
   protected selectedOfertaId: number | null = null;
+  protected materiasSeleccionadas: Set<number> = new Set();
 
   constructor(
     private readonly featureService: FeatureToggleService,
@@ -106,6 +108,10 @@ export class Malla implements OnInit, OnDestroy {
         }
       });
 
+    this.tomaSeleccionSubscription = this.tomaSeleccionService.seleccion$.subscribe((materias) => {
+      this.materiasSeleccionadas = new Set(materias.map(m => m.id));
+    });
+
     void this.featureService.loadFlags();
     void this.loadUniversidades();
   }
@@ -113,6 +119,7 @@ export class Malla implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.flagsSubscription?.unsubscribe();
     this.routerEventsSubscription?.unsubscribe();
+    this.tomaSeleccionSubscription?.unsubscribe();
   }
 
   protected retryLoadUniversidades(): void {

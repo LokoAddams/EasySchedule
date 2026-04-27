@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
@@ -22,6 +22,13 @@ export class ApiService {
 
   put<TResponse, TBody>(path: string, body: TBody): Observable<TResponse> {
     return this.http.put<TResponse>(this.buildUrl(path), body);
+  }
+
+  getBlob(path: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(this.buildUrl(path), {
+      observe: 'response',
+      responseType: 'blob',
+    });
   }
 
   private buildUrl(path: string): string {

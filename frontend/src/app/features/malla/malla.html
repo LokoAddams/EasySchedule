@@ -162,7 +162,8 @@
                 'malla-subject--aprobada': materia.estado === 'aprobada',
                 'malla-subject--cursando': materia.estado === 'cursando',
                 'malla-subject--pendiente': materia.estado === 'pendiente' || materia.estado === null,
-                'malla-subject--selectable': materia.estado !== 'aprobada' && materia.estado !== 'cursando'
+                'malla-subject--selectable': materia.estado !== 'aprobada' && materia.estado !== 'cursando',
+                'malla-subject--seleccionada': materiasSeleccionadas.has(materia.id)
               }">
               <div class="malla-subject__code">{{ materia.codigoMateria }}</div>
               <div class="malla-subject__name">{{ materia.nombreMateria }}</div>
@@ -184,13 +185,20 @@
   <div class="malla-modal-overlay" *ngIf="showModal">
     <div class="malla-modal">
       <header class="malla-modal__header">
-        <h3>Detalle de Materia</h3>
-        <button (click)="closeModal()">×</button>
+        <div>
+          <p class="malla-modal__eyebrow">Seleccion de Materias</p>
+          <h3>Detalle de Materia</h3>
+        </div>
+        <button type="button" class="malla-modal__close" (click)="closeModal()" aria-label="Cerrar detalle de materia">×</button>
       </header>
+
+      <div class="malla-modal__loading" *ngIf="loadingDetalle">
+        Cargando informacion de la materia...
+      </div>
 
       <div class="malla-modal__body" *ngIf="!loadingDetalle && materiaDetalle">
         <h4>{{ materiaDetalle.nombreMateria }}</h4>
-        <p><strong>Créditos:</strong> {{ materiaDetalle.creditos }}</p>
+        <p class="malla-modal__credits"><strong>Creditos:</strong> {{ materiaDetalle.creditos }}</p>
 
         <div class="malla-modal__section" *ngIf="materiaDetalle.prerequisitos.length > 0">
           <strong>Prerrequisitos necesarios:</strong>
@@ -200,20 +208,23 @@
         </div>
 
         <div class="malla-modal__section">
-          <strong>Seleccionar Grupo:</strong>
-          <select [(ngModel)]="selectedOfertaId" class="malla-select">
+          <label class="malla-label malla-label--modal" for="grupo-select"><strong>Seleccionar Grupo:</strong></label>
+          <select id="grupo-select" [(ngModel)]="selectedOfertaId" class="malla-select malla-select--modal">
             <option [ngValue]="null" disabled>Selecciona un paralelo</option>
             <option *ngFor="let o of materiaDetalle.gruposDisponibles" [ngValue]="o.id">
               Paralelo {{ o.paralelo }} - {{ o.docente }} ({{ o.aula }})
             </option>
           </select>
+          <p class="malla-field-help" *ngIf="materiaDetalle.gruposDisponibles.length === 0">
+            Esta materia no tiene grupos disponibles actualmente.
+          </p>
         </div>
       </div>
 
       <footer class="malla-modal__footer" *ngIf="!loadingDetalle">
         <button class="malla-button malla-button--ghost" (click)="closeModal()">Cancelar</button>
         <button class="malla-button malla-button--save"
-                [disabled]="!selectedOfertaId"
+                [disabled]="!selectedOfertaId || !materiaDetalle || materiaDetalle.gruposDisponibles.length === 0"
                 (click)="confirmarSeleccionModal()">
           Agregar a Selección
         </button>

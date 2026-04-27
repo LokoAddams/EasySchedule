@@ -1,17 +1,31 @@
-import { of } from 'rxjs';
+import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { of, throwError } from 'rxjs';
 import { TomaDeMaterias } from './toma-de-materias';
 import { HorarioActualService, HorarioActualResponse } from '../../services/academico/horario-actual.service';
 import { ApiService } from '../../services/api.service';
 import { TomaSeleccionService } from '../../services/academico/toma-seleccion.service';
+import { AuthSessionService } from '../../core/services/auth-session.service';
+import { PerfilService } from '../perfil/perfil.service';
 
 describe('TomaDeMaterias', () => {
   let component: TomaDeMaterias;
   let horarioActualServiceSpy: jasmine.SpyObj<HorarioActualService>;
   let apiServiceSpy: jasmine.SpyObj<ApiService>;
   let tomaSeleccionServiceSpy: jasmine.SpyObj<TomaSeleccionService>;
+  let authSessionServiceSpy: jasmine.SpyObj<AuthSessionService>;
+  let perfilServiceSpy: jasmine.SpyObj<PerfilService>;
 
   beforeEach(() => {
-    horarioActualServiceSpy = jasmine.createSpyObj('HorarioActualService', ['getHorarioActual']);
+    horarioActualServiceSpy = jasmine.createSpyObj<HorarioActualService>('HorarioActualService', [
+      'getHorarioActual',
+      'exportHorarioActualCsv',
+      'exportHorarioActualPdf',
+      'exportHorarioActualImage',
+    ]);
+    apiServiceSpy = jasmine.createSpyObj('ApiService', ['post', 'get', 'put', 'delete']);
+    tomaSeleccionServiceSpy = jasmine.createSpyObj('TomaSeleccionService', ['removerMateria', 'limpiar', 'agregarMateria']);
+    authSessionServiceSpy = jasmine.createSpyObj<AuthSessionService>('AuthSessionService', ['getCurrentUsername']);
+    perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername']);
 
     const mockResponse: HorarioActualResponse = {
       universidad: 'Test',
@@ -22,20 +36,256 @@ describe('TomaDeMaterias', () => {
       clases: []
     };
     horarioActualServiceSpy.getHorarioActual.and.returnValue(of(mockResponse));
+    authSessionServiceSpy.getCurrentUsername.and.returnValue(null);
 
-    apiServiceSpy = jasmine.createSpyObj('ApiService', ['post', 'get', 'put', 'delete']);
-
-    tomaSeleccionServiceSpy = jasmine.createSpyObj('TomaSeleccionService', ['removerMateria', 'limpiar', 'agregarMateria']);
     Object.defineProperty(tomaSeleccionServiceSpy, 'seleccion$', { value: of([]) });
 
     component = new TomaDeMaterias(
       horarioActualServiceSpy,
       apiServiceSpy,
-      tomaSeleccionServiceSpy
+      tomaSeleccionServiceSpy,
+      authSessionServiceSpy,
+      perfilServiceSpy
     );
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('shows info message when exporting without classes', () => {
+    (component as any).horario = {
+      universidad: null,
+      carrera: null,
+      malla: null,
+      semestreOferta: null,
+      semestreActual: null,
+      clases: [],
+    };
+
+    (component as any).exportHorario();
+
+    expect((component as any).exportInfo).toBe('No hay horario disponible para exportar.');
+    expect((component as any).exportLoading).toBeFalse();
+    expect(horarioActualServiceSpy.exportHorarioActualCsv).not.toHaveBeenCalled();
+  });
+
+  it('blocks unsupported format exports', () => {
+    (component as any).horario = {
+      universidad: null,
+      carrera: null,
+      malla: null,
+      semestreOferta: null,
+      semestreActual: 1,
+      clases: [
+        {
+          materia: 'Materia',
+          paralelo: 'A',
+          dia: 'Lunes',
+          horaInicio: '07:00',
+          horaFin: '08:30',
+          docente: null,
+          aula: null,
+        },
+      ],
+    };
+    (component as any).exportFormat = 'xlsx';
+
+    (component as any).exportHorario();
+
+    expect((component as any).exportError).toBe('Formato no soportado por el momento.');
+    expect(horarioActualServiceSpy.exportHorarioActualCsv).not.toHaveBeenCalled();
+  });
+
+  it('exports csv when student id is available', () => {
+    const payload = new Blob(['csv']);
+    const headers = new HttpHeaders({ 'Content-Disposition': 'attachment; filename="horario.csv"' });
+
+    (component as any).estudianteId = 7;
+    (component as any).horario = {
+      universidad: null,
+      carrera: null,
+      malla: null,
+      semestreOferta: null,
+      semestreActual: 1,
+      clases: [
+        {
+          materia: 'Materia',
+          paralelo: 'A',
+          dia: 'Lunes',
+          horaInicio: '07:00',
+          horaFin: '08:30',
+          docente: null,
+          aula: null,
+        },
+      ],
+    };
+
+    horarioActualServiceSpy.exportHorarioActualCsv.and.returnValue(
+      of(new HttpResponse({ body: payload, headers }))
+    );
+    const downloadSpy = spyOn(component as any, 'triggerDownload');
+
+    (component as any).exportHorario();
+
+    expect(horarioActualServiceSpy.exportHorarioActualCsv).toHaveBeenCalledWith(7);
+    expect(downloadSpy).toHaveBeenCalledWith(payload, 'horario.csv');
+    expect((component as any).exportLoading).toBeFalse();
+  });
+
+  it('exports pdf when selected', () => {
+    const payload = new Blob(['pdf']);
+    const headers = new HttpHeaders({ 'Content-Disposition': 'attachment; filename="horario.pdf"' });
+
+    (component as any).estudianteId = 7;
+    (component as any).exportFormat = 'pdf';
+    (component as any).horario = {
+      universidad: null,
+      carrera: null,
+      malla: null,
+      semestreOferta: null,
+      semestreActual: 1,
+      clases: [
+        {
+          materia: 'Materia',
+          paralelo: 'A',
+          dia: 'Lunes',
+          horaInicio: '07:00',
+          horaFin: '08:30',
+          docente: null,
+          aula: null,
+        },
+      ],
+    };
+
+    horarioActualServiceSpy.exportHorarioActualPdf.and.returnValue(
+      of(new HttpResponse({ body: payload, headers }))
+    );
+    const downloadSpy = spyOn(component as any, 'triggerDownload');
+
+    (component as any).exportHorario();
+
+    expect(horarioActualServiceSpy.exportHorarioActualPdf).toHaveBeenCalledWith(7);
+    expect(downloadSpy).toHaveBeenCalledWith(payload, 'horario.pdf');
+    expect((component as any).exportLoading).toBeFalse();
+  });
+
+  it('exports image when selected', () => {
+    const payload = new Blob(['png']);
+    const headers = new HttpHeaders({ 'Content-Disposition': 'attachment; filename="horario.png"' });
+
+    (component as any).estudianteId = 7;
+    (component as any).exportFormat = 'imagen';
+    (component as any).horario = {
+      universidad: null,
+      carrera: null,
+      malla: null,
+      semestreOferta: null,
+      semestreActual: 1,
+      clases: [
+        {
+          materia: 'Materia',
+          paralelo: 'A',
+          dia: 'Lunes',
+          horaInicio: '07:00',
+          horaFin: '08:30',
+          docente: null,
+          aula: null,
+        },
+      ],
+    };
+
+    horarioActualServiceSpy.exportHorarioActualImage.and.returnValue(
+      of(new HttpResponse({ body: payload, headers }))
+    );
+    const downloadSpy = spyOn(component as any, 'triggerDownload');
+
+    (component as any).exportHorario();
+
+    expect(horarioActualServiceSpy.exportHorarioActualImage).toHaveBeenCalledWith(7);
+    expect(downloadSpy).toHaveBeenCalledWith(payload, 'horario.png');
+    expect((component as any).exportLoading).toBeFalse();
+  });
+
+  it('resolves student id from profile when missing', () => {
+    const payload = new Blob(['csv']);
+
+    (component as any).horario = {
+      universidad: null,
+      carrera: null,
+      malla: null,
+      semestreOferta: null,
+      semestreActual: 1,
+      clases: [
+        {
+          materia: 'Materia',
+          paralelo: 'A',
+          dia: 'Lunes',
+          horaInicio: '07:00',
+          horaFin: '08:30',
+          docente: null,
+          aula: null,
+        },
+      ],
+    };
+
+    authSessionServiceSpy.getCurrentUsername.and.returnValue('estudiante');
+    perfilServiceSpy.getPerfilByUsername.and.returnValue(
+      of({
+        id: 9,
+        username: 'estudiante',
+        nombre: null,
+        apellido: null,
+        email: 'estudiante@demo.com',
+        carnetIdentidad: null,
+        fechaNacimiento: null,
+        fechaRegistro: null,
+        semestreActual: 1,
+        carrera: null,
+        mallaId: null,
+        universidad: null,
+      })
+    );
+    horarioActualServiceSpy.exportHorarioActualCsv.and.returnValue(
+      of(new HttpResponse({ body: payload }))
+    );
+    const downloadSpy = spyOn(component as any, 'triggerDownload');
+
+    (component as any).exportHorario();
+
+    expect(perfilServiceSpy.getPerfilByUsername).toHaveBeenCalledWith('estudiante');
+    expect(horarioActualServiceSpy.exportHorarioActualCsv).toHaveBeenCalledWith(9);
+    expect(downloadSpy).toHaveBeenCalled();
+  });
+
+  it('shows info message when backend reports no schedule', () => {
+    (component as any).estudianteId = 7;
+    (component as any).horario = {
+      universidad: null,
+      carrera: null,
+      malla: null,
+      semestreOferta: null,
+      semestreActual: 1,
+      clases: [
+        {
+          materia: 'Materia',
+          paralelo: 'A',
+          dia: 'Lunes',
+          horaInicio: '07:00',
+          horaFin: '08:30',
+          docente: null,
+          aula: null,
+        },
+      ],
+    };
+
+    horarioActualServiceSpy.exportHorarioActualCsv.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 404 }))
+    );
+
+    (component as any).exportHorario();
+
+    expect((component as any).exportInfo).toBe('No hay horario disponible para exportar.');
+    expect((component as any).exportLoading).toBeFalse();
   });
 });

@@ -1,6 +1,12 @@
 # EasySchedule
 
-Monorepo con:
+**EasySchedule** es una plataforma integral de gestión académica diseñada para optimizar y automatizar el proceso de inscripción y planificación curricular en instituciones universitarias. Construido sobre una arquitectura robusta que integra un backend en Spring Boot y un cliente web en Angular, el sistema garantiza la integridad del historial del estudiante mediante la validación estricta de reglas de negocio en tiempo real. Esto incluye la verificación automática de prerrequisitos aprobados, el control de los límites máximos de créditos por semestre y la prevención de conflictos o duplicidad en la toma de materias.
+
+Más allá del registro tradicional, la plataforma destaca por su enfoque en la experiencia del usuario y su capacidad para procesar estructuras académicas complejas, incluyendo un motor de asistencia para la estructuración de horarios eficientes. Al centralizar la administración de mallas curriculares, la oferta de materias y el seguimiento del avance estudiantil en una interfaz fluida e intuitiva, EasySchedule reduce significativamente la carga administrativa y empodera a los universitarios para gestionar su trayectoria educativa sin contratiempos.
+
+---
+
+# Estructura del Monorepo
 
 - `backend/`: Spring Boot + Gradle
 - `frontend/`: Angular

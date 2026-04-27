@@ -57,6 +57,7 @@ INSERT INTO student_profiles (
     correo,
     nombre,
     apellido,
+    fecha_registro,
     semestre_actual,
     universidad_id,
     carrera_id,
@@ -69,6 +70,7 @@ SELECT
     ru.email,
     'Estudiante',
     'Sistemas UCB',
+    NOW(),
     1,
     st.universidad_id,
     st.carrera_id,
@@ -113,11 +115,17 @@ semestre_uno AS (
     JOIN selected_target st ON st.malla_id = mm.malla_id
     WHERE mm.semestre_sugerido = 1
 )
-INSERT INTO estado_materia_estudiante (user_id, malla_materia_id, estado)
+INSERT INTO estado_materia_estudiante (
+    user_id,
+    malla_materia_id,
+    estado,
+    fecha_actualizacion
+)
 SELECT
     ru.user_id,
     s1.malla_materia_id,
-    'cursando'
+    'cursando',
+    NOW()
 FROM resolved_user ru
 JOIN semestre_uno s1 ON TRUE
 ON CONFLICT (user_id, malla_materia_id) DO UPDATE
