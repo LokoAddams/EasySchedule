@@ -8,8 +8,17 @@ import {
   HorarioActualService,
   HorarioClase,
 } from '../../services/academico/horario-actual.service';
+import { ApiService } from '../../services/api.service';
+import { TomaSeleccionService } from '../../services/academico/toma-seleccion.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
+
+export interface MateriaSeleccionada {
+  id: number;
+  nombre: string;
+  creditos: number;
+  ofertaId: number;
+}
 
 @Component({
   selector: 'app-toma-de-materias',
@@ -40,15 +49,109 @@ export class TomaDeMaterias implements OnInit {
   protected timeRows: string[] = [...this.timeRowsDefault];
   protected cellMap = new Map<string, HorarioClase[]>();
 
+  protected materiasSeleccionadas: MateriaSeleccionada[] = [];
+  protected totalCreditosSeleccionados = 0;
+  protected creditosConfirmados = 0;
+  protected submitLoading = false;
+  protected submitError = '';
+  protected submitSuccess = '';
+
   private estudianteId: number | null = null;
 
   constructor(
     private readonly horarioActualService: HorarioActualService,
+    private readonly apiService: ApiService,
+    private readonly tomaSeleccionService: TomaSeleccionService,
     private readonly authSessionService: AuthSessionService,
     private readonly perfilService: PerfilService,
   ) {}
 
   ngOnInit(): void {
+    this.cargarHorarioYSelecciones();
+
+    this.tomaSeleccionService.seleccion$.subscribe(materias => {
+      this.materiasSeleccionadas = materias;
+      this.calcularTotalCreditos();
+    });
+  }
+
+  private calcularTotalCreditos(): void {
+    const creditosEnCesta = this.materiasSeleccionadas.reduce((sum, m) => sum + (Number(m.creditos) || 0), 0);
+    this.totalCreditosSeleccionados = this.creditosConfirmados + creditosEnCesta;
+  }
+
+  protected removerMateria(id: number): void {
+    const confirmacion = window.confirm('¿Estás seguro de deseleccionar esta materia?');
+    if (confirmacion) {
+      this.tomaSeleccionService.removerMateria(id);
+    }
+  }
+
+  protected confirmarInscripcion(): void {
+    if (this.submitLoading) {
+      return;
+    }
+
+    this.submitError = '';
+    this.submitSuccess = '';
+
+    const ofertaIds = this.buildOfertaIds();
+    if (ofertaIds.length === 0) {
+      this.submitError = 'No hay grupos validos seleccionados para registrar.';
+      return;
+    }
+
+    const body = { ofertaIds };
+    this.submitLoading = true;
+
+    this.apiService.post('/api/academico/toma-materias', body).subscribe({
+      next: () => {
+        this.submitLoading = false;
+        this.submitSuccess = 'Registro exitoso.';
+        const creditosNuevos = this.materiasSeleccionadas.reduce((sum, m) => sum + (Number(m.creditos) || 0), 0);
+        this.creditosConfirmados += creditosNuevos;
+
+        this.tomaSeleccionService.limpiar();
+        this.cargarHorarioYSelecciones();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.submitLoading = false;
+        this.submitError = this.extractApiErrorMessage(err);
+      }
+    });
+  }
+
+  private buildOfertaIds(): number[] {
+    const ids = this.materiasSeleccionadas
+      .map(m => Number(m.ofertaId))
+      .filter(id => Number.isFinite(id) && id > 0);
+
+    return Array.from(new Set(ids));
+  }
+
+  private extractApiErrorMessage(error: HttpErrorResponse): string {
+    if (!error) {
+      return 'Ocurrio un error inesperado al registrar las materias.';
+    }
+
+    const payload = error.error;
+    if (typeof payload === 'string' && payload.trim().length > 0) {
+      return payload;
+    }
+
+    if (payload && typeof payload === 'object') {
+      const message = (payload as { message?: string }).message;
+      if (message && message.trim().length > 0) {
+        return message;
+      }
+    }
+
+    return 'Ocurrio un error inesperado al registrar las materias.';
+  }
+
+  private cargarHorarioYSelecciones(): void {
+    this.loading = true;
+    this.error = false;
     this.horarioActualService.getHorarioActual().subscribe({
       next: (horario) => {
         this.horario = horario;

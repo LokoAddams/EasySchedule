@@ -172,9 +172,152 @@
 	font-weight: 600;
 }
 
+.toma-seleccion-container {
+	margin-top: 1.25rem;
+	padding: 1.05rem;
+	border-radius: 14px;
+	border: 1px solid rgba(34, 53, 74, 0.2);
+	background: #ece8d8;
+}
+
+.toma-seleccion-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.65rem;
+
+	h2 {
+		margin: 0;
+		font-family: 'Poppins', sans-serif;
+		font-size: clamp(1.55rem, 1.2rem + 1.1vw, 2.05rem);
+		color: #141b25;
+	}
+}
+
+.toma-creditos-badge {
+	padding: 0.45rem 0.7rem;
+	border-radius: 10px;
+	background: #dde3ea;
+	color: #1b2330;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.95rem;
+}
+
+.toma-materias-lista {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.55rem;
+	margin-top: 0.8rem;
+	min-height: 2.3rem;
+}
+
+.toma-placeholder {
+	margin: 0;
+	color: #3b4655;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.95rem;
+}
+
+.materia-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+	padding: 0.45rem 0.55rem;
+	border-radius: 10px;
+	background: #f5f7fb;
+	border: 1px solid rgba(47, 79, 115, 0.26);
+	color: #1a2433;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.95rem;
+}
+
+.btn-remove {
+	border: 1px solid rgba(32, 44, 64, 0.4);
+	background: #fff;
+	color: #202c40;
+	width: 1.55rem;
+	height: 1.55rem;
+	line-height: 1;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 700;
+	padding: 0;
+}
+
+.toma-acciones-finales {
+	margin-top: 0.95rem;
+}
+
+.malla-button {
+	border: 0;
+	border-radius: 8px;
+	background: #2f4f73;
+	color: #fff;
+	padding: 0.5rem 0.9rem;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	cursor: pointer;
+
+	&:disabled {
+		opacity: 0.55;
+		cursor: not-allowed;
+	}
+}
+
+.malla-button--save {
+	display: inline-block;
+}
+
+.toma-feedback {
+	margin-top: 0.75rem;
+	padding: 0.6rem 0.8rem;
+	border-radius: 10px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.92rem;
+}
+
+.toma-feedback--success {
+	background: #e9f7ef;
+	border: 1px solid rgba(31, 104, 63, 0.32);
+	color: #1f683f;
+}
+
+.toma-feedback--error {
+	background: #fff0ed;
+	border: 1px solid rgba(127, 39, 31, 0.3);
+	color: #7f271f;
+}
+
+.toma-divider {
+	margin: 1.3rem 0 0;
+	border: 0;
+	border-top: 1px solid rgba(34, 53, 74, 0.2);
+}
+
+.horario-section-title h3 {
+	margin: 1rem 0 0;
+	font-family: 'Poppins', sans-serif;
+	font-size: clamp(1.45rem, 1.12rem + 0.9vw, 1.95rem);
+	color: #141b25;
+}
+
 @media (max-width: 860px) {
 	.horario-page {
 		margin-top: 1rem;
+	}
+
+	.toma-seleccion-container {
+		padding: 0.85rem;
+	}
+
+	.toma-seleccion-header {
+		align-items: flex-start;
+	}
+
+	.toma-creditos-badge {
+		width: 100%;
 	}
 
 	.horario-grid {
