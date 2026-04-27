@@ -17,6 +17,7 @@ describe('TomaDeMaterias component logic', () => {
       'getHorarioActual',
       'exportHorarioActualCsv',
       'exportHorarioActualPdf',
+      'exportHorarioActualImage',
     ]);
     authSessionServiceSpy = jasmine.createSpyObj<AuthSessionService>('AuthSessionService', ['getCurrentUsername']);
     perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername']);
@@ -89,7 +90,7 @@ describe('TomaDeMaterias component logic', () => {
         },
       ],
     };
-    (component as any).exportFormat = 'imagen';
+    (component as any).exportFormat = 'xlsx';
 
     (component as any).exportHorario();
 
@@ -167,6 +168,43 @@ describe('TomaDeMaterias component logic', () => {
 
     expect(horarioActualServiceSpy.exportHorarioActualPdf).toHaveBeenCalledWith(7);
     expect(downloadSpy).toHaveBeenCalledWith(payload, 'horario.pdf');
+    expect((component as any).exportLoading).toBeFalse();
+  });
+
+  it('exports image when selected', () => {
+    const payload = new Blob(['png']);
+    const headers = new HttpHeaders({ 'Content-Disposition': 'attachment; filename="horario.png"' });
+
+    (component as any).estudianteId = 7;
+    (component as any).exportFormat = 'imagen';
+    (component as any).horario = {
+      universidad: null,
+      carrera: null,
+      malla: null,
+      semestreOferta: null,
+      semestreActual: 1,
+      clases: [
+        {
+          materia: 'Materia',
+          paralelo: 'A',
+          dia: 'Lunes',
+          horaInicio: '07:00',
+          horaFin: '08:30',
+          docente: null,
+          aula: null,
+        },
+      ],
+    };
+
+    horarioActualServiceSpy.exportHorarioActualImage.and.returnValue(
+      of(new HttpResponse({ body: payload, headers }))
+    );
+    const downloadSpy = spyOn(component as any, 'triggerDownload');
+
+    (component as any).exportHorario();
+
+    expect(horarioActualServiceSpy.exportHorarioActualImage).toHaveBeenCalledWith(7);
+    expect(downloadSpy).toHaveBeenCalledWith(payload, 'horario.png');
     expect((component as any).exportLoading).toBeFalse();
   });
 

@@ -77,7 +77,7 @@ export class TomaDeMaterias implements OnInit {
       return;
     }
 
-    if (!['csv', 'pdf'].includes(this.exportFormat)) {
+    if (!['csv', 'pdf', 'imagen'].includes(this.exportFormat)) {
       this.exportError = 'Formato no soportado por el momento.';
       return;
     }
@@ -114,7 +114,9 @@ export class TomaDeMaterias implements OnInit {
     this.exportLoading = true;
     const exportRequest = formato === 'pdf'
       ? this.horarioActualService.exportHorarioActualPdf(estudianteId)
-      : this.horarioActualService.exportHorarioActualCsv(estudianteId);
+      : (formato === 'imagen'
+        ? this.horarioActualService.exportHorarioActualImage(estudianteId)
+        : this.horarioActualService.exportHorarioActualCsv(estudianteId));
 
     exportRequest.subscribe({
       next: (response) => {
@@ -134,15 +136,25 @@ export class TomaDeMaterias implements OnInit {
 
   private resolveFilename(contentDisposition: string | null): string {
     if (!contentDisposition) {
-      return this.exportFormat === 'pdf' ? 'horario.pdf' : 'horario.csv';
+      return this.defaultFilenameByFormat();
     }
 
     const filenameMatch = /filename="?([^";]+)"?/i.exec(contentDisposition);
     if (!filenameMatch || !filenameMatch[1]) {
-      return this.exportFormat === 'pdf' ? 'horario.pdf' : 'horario.csv';
+      return this.defaultFilenameByFormat();
     }
 
-    return filenameMatch[1].trim() || (this.exportFormat === 'pdf' ? 'horario.pdf' : 'horario.csv');
+    return filenameMatch[1].trim() || this.defaultFilenameByFormat();
+  }
+
+  private defaultFilenameByFormat(): string {
+    if (this.exportFormat === 'pdf') {
+      return 'horario.pdf';
+    }
+    if (this.exportFormat === 'imagen') {
+      return 'horario.png';
+    }
+    return 'horario.csv';
   }
 
   private triggerDownload(blob: Blob | null, filename: string): void {

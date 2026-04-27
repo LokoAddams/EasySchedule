@@ -44,7 +44,7 @@ public class HorarioRecomendadoController {
 		}
 
 		String normalizedFormat = formato == null ? "csv" : formato.trim().toLowerCase(Locale.ROOT);
-		if (!"csv".equals(normalizedFormat) && !"pdf".equals(normalizedFormat)) {
+		if (!"csv".equals(normalizedFormat) && !"pdf".equals(normalizedFormat) && !"imagen".equals(normalizedFormat)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato de exportacion no soportado");
 		}
 
@@ -52,17 +52,34 @@ public class HorarioRecomendadoController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay horario disponible para exportar");
 		}
 
-		byte[] payload = "pdf".equals(normalizedFormat)
-			? horarioRecomendadoService.buildHorarioActualPdf(userId)
-			: horarioRecomendadoService.buildHorarioActualCsv(userId);
+		byte[] payload;
+		if ("pdf".equals(normalizedFormat)) {
+			payload = horarioRecomendadoService.buildHorarioActualPdf(userId);
+		} else if ("imagen".equals(normalizedFormat)) {
+			payload = horarioRecomendadoService.buildHorarioActualImage(userId);
+		} else {
+			payload = horarioRecomendadoService.buildHorarioActualCsv(userId);
+		}
 		String dateLabel = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
-		String extension = "pdf".equals(normalizedFormat) ? "pdf" : "csv";
+		String extension;
+		if ("pdf".equals(normalizedFormat)) {
+			extension = "pdf";
+		} else if ("imagen".equals(normalizedFormat)) {
+			extension = "png";
+		} else {
+			extension = "csv";
+		}
 		String filename = "horario_" + userId + "_" + dateLabel + "." + extension;
 
 		HttpHeaders headers = new HttpHeaders();
-		MediaType contentType = "pdf".equals(normalizedFormat)
-			? MediaType.APPLICATION_PDF
-			: MediaType.parseMediaType("text/csv");
+		MediaType contentType;
+		if ("pdf".equals(normalizedFormat)) {
+			contentType = MediaType.APPLICATION_PDF;
+		} else if ("imagen".equals(normalizedFormat)) {
+			contentType = MediaType.IMAGE_PNG;
+		} else {
+			contentType = MediaType.parseMediaType("text/csv");
+		}
 		headers.setContentType(contentType);
 		headers.setContentDispositionFormData("attachment", filename);
 		headers.setContentLength(payload.length);

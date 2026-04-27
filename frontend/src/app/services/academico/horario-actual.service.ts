@@ -42,4 +42,9 @@ export class HorarioActualService {
     const path = `/api/academico/horario/actual/${estudianteId}/export?formato=pdf`;
     return this.apiService.getBlob(path);
   }
+
+  exportHorarioActualImage(estudianteId: number): Observable<HttpResponse<Blob>> {
+    const path = `/api/academico/horario/actual/${estudianteId}/export?formato=imagen`;
+    return this.apiService.getBlob(path);
+  }
 }
