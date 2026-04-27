@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -90,6 +91,17 @@ public class HorarioRecomendadoService {
         );
     }
 
+    public byte[] buildHorarioActualCsv(Long userId) {
+        HorarioActualResponse horario = getHorarioActualByUserId(userId);
+        String csv = toCsv(horario);
+        return csv.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public boolean hasHorarioActual(Long userId) {
+        HorarioActualResponse horario = getHorarioActualByUserId(userId);
+        return horario != null && horario.clases() != null && !horario.clases().isEmpty();
+    }
+
     private List<HorarioClaseResponse> parseHorario(OfertaMateriaRepository.HorarioOfertaRow row) {
         List<HorarioClaseResponse> clases = new ArrayList<>();
         try {
@@ -136,5 +148,49 @@ public class HorarioRecomendadoService {
         }
         String text = value.asText();
         return text == null || text.isBlank() ? null : text;
+    }
+
+    private String toCsv(HorarioActualResponse horario) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Materia,Paralelo,Dia,HoraInicio,HoraFin,Aula,Docente\n");
+
+        if (horario == null || horario.clases() == null || horario.clases().isEmpty()) {
+            return builder.toString();
+        }
+
+        for (HorarioClaseResponse clase : horario.clases()) {
+            builder
+                .append(csv(clase.materia()))
+                .append(',')
+                .append(csv(clase.paralelo()))
+                .append(',')
+                .append(csv(clase.dia()))
+                .append(',')
+                .append(csv(clase.horaInicio()))
+                .append(',')
+                .append(csv(clase.horaFin()))
+                .append(',')
+                .append(csv(clase.aula()))
+                .append(',')
+                .append(csv(clase.docente()))
+                .append('\n');
+        }
+
+        return builder.toString();
+    }
+
+    private String csv(String value) {
+        if (value == null) {
+            return "";
+        }
+        String sanitized = value.trim();
+        if (sanitized.isEmpty()) {
+            return "";
+        }
+        String escaped = sanitized.replace("\"", "\"\"");
+        if (escaped.contains(",") || escaped.contains("\"") || escaped.contains("\n")) {
+            return "\"" + escaped + "\"";
+        }
+        return escaped;
     }
 }

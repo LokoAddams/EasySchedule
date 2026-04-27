@@ -49,6 +49,9 @@ public class ConditionalDatabaseSeeder implements ApplicationRunner {
         populator.addScript(new ClassPathResource("db/seed/seed_materias.sql"));
         populator.addScript(new ClassPathResource("db/seed/seed_malla_materia.sql"));
         populator.addScript(new ClassPathResource("db/seed/seed_prerequisitos.sql"));
+        populator.addScript(new ClassPathResource("db/seed/seed_default_usuario.sql"));
+        populator.addScript(new ClassPathResource("db/seed/seed_ofertas.sql"));
+
         populator.execute(dataSource);
 
         logger.info("Schema y seeders ejecutados correctamente.");

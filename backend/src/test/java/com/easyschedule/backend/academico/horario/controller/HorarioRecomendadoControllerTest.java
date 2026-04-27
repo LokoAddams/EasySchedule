@@ -3,18 +3,24 @@ package com.easyschedule.backend.academico.horario.controller;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.easyschedule.backend.academico.horario.dto.HorarioActualResponse;
 import com.easyschedule.backend.academico.horario.dto.HorarioClaseResponse;
 import com.easyschedule.backend.academico.horario.service.HorarioRecomendadoService;
 import com.easyschedule.backend.shared.config.BearerTokenAuthenticationFilter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -56,5 +62,59 @@ class HorarioRecomendadoControllerTest {
     void getHorarioActualReturnsUnauthorizedWhenPrincipalMissing() throws Exception {
         mockMvc.perform(get("/api/academico/horario/actual"))
             .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void exportHorarioActualReturnsCsvWhenAuthorized() throws Exception {
+        byte[] payload = "Materia,Paralelo".getBytes();
+        String today = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+
+        when(horarioRecomendadoService.hasHorarioActual(7L)).thenReturn(true);
+        when(horarioRecomendadoService.buildHorarioActualCsv(7L)).thenReturn(payload);
+
+        mockMvc.perform(get("/api/academico/horario/actual/7/export")
+                .param("formato", "csv")
+                .principal(() -> "7"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.parseMediaType("text/csv")))
+            .andExpect(header().string("Content-Disposition", Matchers.containsString("attachment")))
+            .andExpect(header().string("Content-Disposition", Matchers.containsString("horario_7_" + today + ".csv")));
+
+        verify(horarioRecomendadoService).hasHorarioActual(7L);
+        verify(horarioRecomendadoService).buildHorarioActualCsv(7L);
+    }
+
+    @Test
+    void exportHorarioActualReturnsUnauthorizedWhenPrincipalMissing() throws Exception {
+        mockMvc.perform(get("/api/academico/horario/actual/7/export"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void exportHorarioActualReturnsForbiddenWhenDifferentUser() throws Exception {
+        mockMvc.perform(get("/api/academico/horario/actual/8/export")
+                .param("formato", "csv")
+                .principal(() -> "7"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void exportHorarioActualReturnsNotFoundWhenNoHorario() throws Exception {
+        when(horarioRecomendadoService.hasHorarioActual(7L)).thenReturn(false);
+
+        mockMvc.perform(get("/api/academico/horario/actual/7/export")
+                .param("formato", "csv")
+                .principal(() -> "7"))
+            .andExpect(status().isNotFound());
+
+        verify(horarioRecomendadoService).hasHorarioActual(7L);
+    }
+
+    @Test
+    void exportHorarioActualReturnsBadRequestForUnsupportedFormat() throws Exception {
+        mockMvc.perform(get("/api/academico/horario/actual/7/export")
+                .param("formato", "pdf")
+                .principal(() -> "7"))
+            .andExpect(status().isBadRequest());
     }
 }
