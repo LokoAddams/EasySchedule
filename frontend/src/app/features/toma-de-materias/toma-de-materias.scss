@@ -296,6 +296,53 @@
 	border-top: 1px solid rgba(34, 53, 74, 0.2);
 }
 
+.toma-horario-creditos-section {
+	margin-top: 1.5rem;
+	padding: 0;
+}
+
+.toma-creditos-info {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 1rem;
+	margin-top: 0.5rem;
+}
+
+.toma-creditos-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.8rem 1.2rem;
+	border-radius: 12px;
+	background: #f5f7fb;
+	border: 1px solid rgba(47, 79, 115, 0.15);
+	font-family: 'Poppins', sans-serif;
+}
+
+.toma-creditos-item--total {
+	background: #eef2f8;
+	border: 1px solid rgba(47, 79, 115, 0.25);
+	grid-column: 1 / -1;
+}
+
+.toma-creditos-label {
+	color: #3b4655;
+	font-weight: 500;
+	font-size: 0.95rem;
+}
+
+.toma-creditos-value {
+	color: #274a69;
+	font-weight: 700;
+	font-size: 1.1rem;
+	margin-left: 0.5rem;
+}
+
+.toma-creditos-item--total .toma-creditos-value {
+	color: #1a3a52;
+	font-size: 1.25rem;
+}
+
 .horario-section-title h3 {
 	margin: 1rem 0 0;
 	font-family: 'Poppins', sans-serif;

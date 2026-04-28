@@ -57,6 +57,10 @@ public class TomaMateriaService {
         int totalCreditos = 0;
 
         for (OfertaMateria oferta : ofertas) {
+            if (tomaMateriaEstudianteRepository.existsByUserIdAndOfertaId(userId, oferta.getId())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya registraste esta materia/paralelo.");
+            }
+
             MallaMateria mm = mallaMateriaRepository.findById(oferta.getMallaMateriaId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Malla no encontrada"));
             

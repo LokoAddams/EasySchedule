@@ -2,6 +2,7 @@ package com.easyschedule.backend.academico.toma_materia.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,6 +62,7 @@ class TomaMateriaServiceTest {
     @Test
     void saveByUserId_ThrowsWhenMateriaYaAprobada() {
         OfertaMateria oferta = new OfertaMateria();
+        oferta.setId(200L);
         oferta.setMallaMateriaId(77L);
         
         Materia materia = new Materia();
@@ -71,6 +74,7 @@ class TomaMateriaServiceTest {
         mm.setMateria(materia);
 
         when(ofertaMateriaRepository.findAllById(List.of(77L))).thenReturn(List.of(oferta));
+        when(tomaMateriaEstudianteRepository.existsByUserIdAndOfertaId(5L, 200L)).thenReturn(false);
         when(mallaMateriaRepository.findById(77L)).thenReturn(Optional.of(mm));
         when(estadoMateriaService.getEstadoMateria(5L, 77L)).thenReturn("aprobada");
 
@@ -81,6 +85,7 @@ class TomaMateriaServiceTest {
     @Test
     void saveByUserId_ThrowsWhenFaltaPrerequisito() {
         OfertaMateria oferta = new OfertaMateria();
+        oferta.setId(201L);
         oferta.setMallaMateriaId(77L);
         
         Materia materia = new Materia();
@@ -101,6 +106,7 @@ class TomaMateriaServiceTest {
         prerequisito.setPrerequisito(mmPre);
 
         when(ofertaMateriaRepository.findAllById(List.of(77L))).thenReturn(List.of(oferta));
+        when(tomaMateriaEstudianteRepository.existsByUserIdAndOfertaId(5L, 201L)).thenReturn(false);
         when(mallaMateriaRepository.findById(77L)).thenReturn(Optional.of(mm));
         when(estadoMateriaService.getEstadoMateria(5L, 77L)).thenReturn("pendiente");
         when(prerequisitoRepository.findByMallaMateria_Id(77L)).thenReturn(List.of(prerequisito));
@@ -113,6 +119,7 @@ class TomaMateriaServiceTest {
     @Test
     void saveByUserId_ThrowsWhenExcedeCreditos() {
         OfertaMateria oferta = new OfertaMateria();
+        oferta.setId(202L);
         oferta.setMallaMateriaId(77L);
         
         Materia materia = new Materia();
@@ -123,6 +130,7 @@ class TomaMateriaServiceTest {
         mm.setMateria(materia);
 
         when(ofertaMateriaRepository.findAllById(List.of(77L))).thenReturn(List.of(oferta));
+        when(tomaMateriaEstudianteRepository.existsByUserIdAndOfertaId(5L, 202L)).thenReturn(false);
         when(mallaMateriaRepository.findById(77L)).thenReturn(Optional.of(mm));
         when(estadoMateriaService.getEstadoMateria(5L, 77L)).thenReturn("pendiente");
         when(prerequisitoRepository.findByMallaMateria_Id(77L)).thenReturn(Collections.emptyList());
@@ -145,6 +153,7 @@ class TomaMateriaServiceTest {
         mm.setMateria(materia);
 
         when(ofertaMateriaRepository.findAllById(List.of(100L))).thenReturn(List.of(oferta));
+        when(tomaMateriaEstudianteRepository.existsByUserIdAndOfertaId(5L, 100L)).thenReturn(false);
         when(mallaMateriaRepository.findById(77L)).thenReturn(Optional.of(mm));
         when(estadoMateriaService.getEstadoMateria(5L, 77L)).thenReturn("pendiente");
         when(prerequisitoRepository.findByMallaMateria_Id(77L)).thenReturn(Collections.emptyList());
@@ -162,6 +171,23 @@ class TomaMateriaServiceTest {
         assertEquals(1, result.size());
         assertEquals("inscrita", result.get(0).estado());
         verify(estadoMateriaService).syncEstadoFromToma(5L, 77L, "inscrita");
+    }
+
+    @Test
+    void saveByUserId_ThrowsWhenOfertaYaInscrita() {
+        OfertaMateria oferta = new OfertaMateria();
+        oferta.setId(300L);
+        oferta.setMallaMateriaId(77L);
+
+        when(ofertaMateriaRepository.findAllById(List.of(300L))).thenReturn(List.of(oferta));
+        when(tomaMateriaEstudianteRepository.existsByUserIdAndOfertaId(5L, 300L)).thenReturn(true);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () ->
+            tomaMateriaService.saveByUserId(5L, new TomaMateriaRequest(List.of(300L))));
+
+        assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("Ya registraste esta materia/paralelo"));
+        verify(tomaMateriaEstudianteRepository, never()).save(any(TomaMateriaEstudiante.class));
     }
 
     @Test

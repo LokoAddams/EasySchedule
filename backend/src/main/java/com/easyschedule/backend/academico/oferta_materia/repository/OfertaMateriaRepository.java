@@ -20,6 +20,7 @@ public interface OfertaMateriaRepository extends JpaRepository<OfertaMateria, Lo
         String getHorarioJson();
         String getDocente();
         String getAula();
+        Integer getCreditos();
     }
 
     @Query(
@@ -31,7 +32,8 @@ public interface OfertaMateriaRepository extends JpaRepository<OfertaMateria, Lo
                 ma.nombre AS materiaNombre,
                 CAST(o.horario_json AS TEXT) AS horarioJson,
                 o.docente AS docente,
-                o.aula AS aula
+                o.aula AS aula,
+                ma.creditos AS creditos
             FROM ofertas o
             JOIN malla_materia mm ON mm.id = o.malla_materia_id
             JOIN materias ma ON ma.id = mm.materia_id

@@ -5,7 +5,7 @@ import java.util.List;
 public record OfertaDetalleResponse(
     Long mallaMateriaId,
     String nombreMateria,
-    int creditos,
+    Short creditos,
     List<String> prerequisitos,
     List<OfertaMateriaResponse> gruposDisponibles
 ) {}

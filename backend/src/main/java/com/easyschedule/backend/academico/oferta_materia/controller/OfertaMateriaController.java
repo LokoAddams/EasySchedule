@@ -18,7 +18,7 @@ public class OfertaMateriaController {
     }
 
     @GetMapping("/detalles/{mallaMateriaId}")
-    public OfertaDetalleResponse getDetallesMateria(@PathVariable Long mallaMateriaId) {
+    public OfertaDetalleResponse getDetallesMateria(@PathVariable("mallaMateriaId") Long mallaMateriaId) {
         return ofertaMateriaService.getDetalleParaInscripcion(mallaMateriaId);
     }
 }

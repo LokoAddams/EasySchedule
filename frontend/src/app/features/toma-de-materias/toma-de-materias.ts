@@ -52,6 +52,7 @@ export class TomaDeMaterias implements OnInit {
   protected materiasSeleccionadas: MateriaSeleccionada[] = [];
   protected totalCreditosSeleccionados = 0;
   protected creditosConfirmados = 0;
+  protected totalCreditosHorario = 0;
   protected submitLoading = false;
   protected submitError = '';
   protected submitSuccess = '';
@@ -78,6 +79,23 @@ export class TomaDeMaterias implements OnInit {
   private calcularTotalCreditos(): void {
     const creditosEnCesta = this.materiasSeleccionadas.reduce((sum, m) => sum + (Number(m.creditos) || 0), 0);
     this.totalCreditosSeleccionados = this.creditosConfirmados + creditosEnCesta;
+  }
+
+  private calcularCreditosHorario(): void {
+    // Calcular créditos totales del horario actual (sin duplicados de materias)
+    const materiasSet = new Set<string>();
+    let totalCreditos = 0;
+
+    if (this.horario && this.horario.clases && this.horario.clases.length > 0) {
+      for (const clase of this.horario.clases) {
+        if (!materiasSet.has(clase.materia)) {
+          materiasSet.add(clase.materia);
+          totalCreditos += clase.creditos || 0;
+        }
+      }
+    }
+
+    this.totalCreditosHorario = totalCreditos;
   }
 
   protected removerMateria(id: number): void {
@@ -156,6 +174,7 @@ export class TomaDeMaterias implements OnInit {
       next: (horario) => {
         this.horario = horario;
         this.buildGrid(horario.clases ?? []);
+        this.calcularCreditosHorario();
         this.loading = false;
       },
       error: () => {

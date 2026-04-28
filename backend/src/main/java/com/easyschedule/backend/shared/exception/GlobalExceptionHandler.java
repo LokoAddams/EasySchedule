@@ -84,6 +84,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {
+        log.warn("[GLOBAL_EXCEPTION] argumento invalido | path={} message={}", pathOf(request), ex.getMessage());
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", OffsetDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "Bad Request");
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex, WebRequest request) {
         log.warn("[GLOBAL_EXCEPTION] data integrity violation | path={} message={}", pathOf(request), ex.getMessage());
@@ -102,6 +115,8 @@ public class GlobalExceptionHandler {
                     message = "Error: Username is already taken!";
                 } else if (constraintName.contains("users_email_key")) {
                     message = "Error: Email is already in use!";
+                } else if (constraintName.contains("uq_toma_user_oferta")) {
+                    message = "Ya registraste esta materia/paralelo.";
                 }
             }
         }

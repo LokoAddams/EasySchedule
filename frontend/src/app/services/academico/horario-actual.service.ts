@@ -12,6 +12,7 @@ export interface HorarioClase {
   horaFin: string;
   docente: string | null;
   aula: string | null;
+  creditos: number | null;
 }
 
 export interface HorarioActualResponse {

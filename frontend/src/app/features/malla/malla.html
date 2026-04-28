@@ -148,8 +148,23 @@
             [class.malla-semesters__button--active]="sem === semestreActual"
             (click)="setSemestreActual(sem)"
           >
-            {{ sem }}{{ sem === 1 ? 'er' : 'to' }} Semestre
+            {{ sem }}{{ sem === 1 ? 'er' : (sem === 2 ? 'do' : 'to') }} Semestre
           </button>
+        </div>
+
+        <div class="malla-legend">
+          <div class="malla-legend__item">
+            <div class="malla-legend__indicator malla-legend__indicator--pendiente"></div>
+            <span class="malla-legend__label">Pendiente</span>
+          </div>
+          <div class="malla-legend__item">
+            <div class="malla-legend__indicator malla-legend__indicator--cursando"></div>
+            <span class="malla-legend__label">Cursando</span>
+          </div>
+          <div class="malla-legend__item">
+            <div class="malla-legend__indicator malla-legend__indicator--completado"></div>
+            <span class="malla-legend__label">Completado</span>
+          </div>
         </div>
       </div>
 

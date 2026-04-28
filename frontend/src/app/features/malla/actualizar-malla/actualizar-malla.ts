@@ -110,6 +110,12 @@ export class ActualizarMalla implements OnInit {
       return;
     }
 
+    // Proteger contra estado CURSANDO
+    if (this.selectedEstado === 'CURSANDO') {
+      this.toastService.error('El estado Cursando se asigna automaticamente al tomar la materia');
+      return;
+    }
+
     const estadoAActualizar = this.selectedEstado;
     this.saving = true;
 
@@ -130,7 +136,19 @@ export class ActualizarMalla implements OnInit {
       this.toastService.success('malla.UpdateCourse.success');
     } catch (error) {
       console.error('Error al actualizar:', error);
-      this.toastService.error('malla.UpdateCourse.errorUpdate');
+      
+      // Extraer mensaje de error descriptivo del backend
+      let mensajeError = 'malla.UpdateCourse.errorUpdate';
+      if (error && typeof error === 'object') {
+        const errorObj = error as any;
+        // Intentar obtener el mensaje desde diferentes estructuras posibles
+        const mensaje = errorObj.error?.message || errorObj.message || errorObj.error?.msg || null;
+        if (mensaje && typeof mensaje === 'string') {
+          mensajeError = mensaje;
+        }
+      }
+      
+      this.toastService.error(mensajeError);
       const materiaIndex = this.materias.findIndex(m => m.id === this.selectedMateriaId);
       if (materiaIndex !== -1) {
         this.materias[materiaIndex].estadoUI = this.estadoAnterior;
