@@ -63,6 +63,25 @@
 
   <hr class="toma-divider" *ngIf="!loading && !error">
 
+  <div class="toma-horario-creditos-section" *ngIf="!loading && !error">
+    <div class="toma-creditos-info">
+      <div class="toma-creditos-item">
+        <span class="toma-creditos-label">Créditos del Horario Actual:</span>
+        <span class="toma-creditos-value">{{ totalCreditosHorario }}</span>
+      </div>
+      <div class="toma-creditos-item">
+        <span class="toma-creditos-label">Créditos a Tomar (Nueva Selección):</span>
+        <span class="toma-creditos-value">{{ totalCreditosSeleccionados - creditosConfirmados }}</span>
+      </div>
+      <div class="toma-creditos-item toma-creditos-item--total">
+        <span class="toma-creditos-label">Total de Créditos:</span>
+        <span class="toma-creditos-value">{{ totalCreditosHorario + totalCreditosSeleccionados - creditosConfirmados }} / 30</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="toma-divider" *ngIf="!loading && !error">
+
   <div class="horario-section-title" *ngIf="!loading && !error">
     <h3>Vista Previa de Horario</h3>
   </div>

@@ -267,6 +267,8 @@ export class Malla implements OnInit, OnDestroy {
     });
 
     this.closeModal();
+    this.router.navigate(['toma-seleccion'], { relativeTo: this.route });
+
   }
 
   protected closeModal(): void {

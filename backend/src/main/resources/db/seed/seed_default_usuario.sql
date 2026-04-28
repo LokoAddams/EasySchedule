@@ -4,90 +4,36 @@ BEGIN;
 -- username: estudiante.sis.ucb
 -- email: estudiante.sis.ucb@easyschedule.local
 -- password (texto plano): password
--- hash bcrypt de password
-WITH target_academico AS (
-    SELECT
-        u.id AS universidad_id,
-        c.id AS carrera_id,
-        m.id AS malla_id,
-        c.codigo AS carrera_codigo,
-        ROW_NUMBER() OVER (ORDER BY m.version DESC, m.id DESC) AS rn
-    FROM universidades u
-    JOIN carreras c ON c.universidad_id = u.id
-    JOIN mallas m ON m.carrera_id = c.id
-    WHERE u.codigo = 'UCB'
-      AND c.codigo = 'SIS'
-      AND u.active = TRUE
-      AND c.active = TRUE
-      AND m.active = TRUE
-),
-selected_target AS (
-    SELECT universidad_id, carrera_id, malla_id, carrera_codigo
-    FROM target_academico
-    WHERE rn = 1
-),
-upsert_user AS (
-    INSERT INTO users (username, email, password_hash, is_active, token_version)
-    VALUES (
-        'estudiante.sis.ucb',
-        'estudiante.sis.ucb@easyschedule.local',
-        '$2a$10$h0exP0.K2jjmgIS4Svgfn.hn7r9uWsH4KbTp7dijNsxk8tIutvfoi',
-        TRUE,
-        0
-    )
-    ON CONFLICT (username) DO UPDATE
-    SET email = EXCLUDED.email,
-        password_hash = EXCLUDED.password_hash,
-        is_active = TRUE,
-        updated_at = NOW()
-    RETURNING id, username, email
-),
-resolved_user AS (
-    SELECT id, username, email
-    FROM upsert_user
-    UNION ALL
-    SELECT u.id, u.username, u.email
-    FROM users u
-    WHERE u.username = 'estudiante.sis.ucb'
-      AND NOT EXISTS (SELECT 1 FROM upsert_user)
-)
-INSERT INTO student_profiles (
-    user_id,
-    username,
-    correo,
-    nombre,
-    apellido,
-    fecha_registro,
-    semestre_actual,
-    universidad_id,
-    carrera_id,
-    malla_id,
-    profile_completed
-)
-SELECT
-    ru.id,
-    ru.username,
-    ru.email,
+-- hash bcrypt de password: $2a$10$h0exP0.K2jjmgIS4Svgfn.hn7r9uWsH4KbTp7dijNsxk8tIutvfoi
+
+-- Insert or update user
+INSERT INTO users (username, email, password_hash, is_active, token_version, created_at, updated_at)
+VALUES ('estudiante.sis.ucb', 'estudiante.sis.ucb@easyschedule.local', '$2a$10$h0exP0.K2jjmgIS4Svgfn.hn7r9uWsH4KbTp7dijNsxk8tIutvfoi', TRUE, 0, NOW(), NOW())
+ON CONFLICT (username) DO UPDATE
+SET email = EXCLUDED.email, password_hash = EXCLUDED.password_hash, is_active = TRUE, updated_at = NOW();
+
+-- Insert or update student profile if universities and carreras exist
+INSERT INTO student_profiles (user_id, username, correo, nombre, apellido, fecha_registro, semestre_actual, universidad_id, carrera_id, malla_id, profile_completed)
+SELECT 
+    u.id,
+    u.username,
+    u.email,
     'Estudiante',
     'Sistemas UCB',
     NOW(),
     1,
-    st.universidad_id,
-    st.carrera_id,
-    st.malla_id,
+    (SELECT id FROM universidades WHERE codigo = 'UCB' LIMIT 1),
+    (SELECT id FROM carreras WHERE codigo = 'SIS' AND universidad_id = (SELECT id FROM universidades WHERE codigo = 'UCB' LIMIT 1) LIMIT 1),
+    (SELECT id FROM mallas WHERE carrera_id = (SELECT id FROM carreras WHERE codigo = 'SIS' AND universidad_id = (SELECT id FROM universidades WHERE codigo = 'UCB' LIMIT 1) LIMIT 1) ORDER BY version DESC LIMIT 1),
     TRUE
-FROM resolved_user ru
-JOIN selected_target st ON TRUE
+FROM users u
+WHERE u.username = 'estudiante.sis.ucb'
 ON CONFLICT (user_id) DO UPDATE
-SET username = EXCLUDED.username,
-    correo = EXCLUDED.correo,
-    nombre = EXCLUDED.nombre,
-    apellido = EXCLUDED.apellido,
-    semestre_actual = EXCLUDED.semestre_actual,
-    universidad_id = EXCLUDED.universidad_id,
-    carrera_id = EXCLUDED.carrera_id,
-    malla_id = EXCLUDED.malla_id,
-    profile_completed = EXCLUDED.profile_completed;
+SET username = EXCLUDED.username, correo = EXCLUDED.correo, nombre = EXCLUDED.nombre, apellido = EXCLUDED.apellido, 
+    semestre_actual = EXCLUDED.semestre_actual, universidad_id = EXCLUDED.universidad_id, carrera_id = EXCLUDED.carrera_id,
+    malla_id = EXCLUDED.malla_id, profile_completed = EXCLUDED.profile_completed;
+
+COMMIT;
 
 -- Marca materias de 1er semestre como cursando para la malla seleccionada.
 WITH resolved_user AS (

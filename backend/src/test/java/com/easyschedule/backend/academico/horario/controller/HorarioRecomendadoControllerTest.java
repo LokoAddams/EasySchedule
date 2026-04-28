@@ -46,7 +46,7 @@ class HorarioRecomendadoControllerTest {
                 "Malla 2024",
                 "2026-1",
                 (short) 1,
-                List.of(new HorarioClaseResponse("Materia SIS S1 M1", "A", "Lunes", "07:00", "08:30", "Docente", "A-01-1"))
+                List.of(new HorarioClaseResponse("Materia SIS S1 M1", "A", "Lunes", "07:00", "08:30", "Docente", "A-01-1", 3))
             )
         );
 

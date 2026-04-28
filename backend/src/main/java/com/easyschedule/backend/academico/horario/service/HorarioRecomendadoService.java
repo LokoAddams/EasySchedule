@@ -166,7 +166,8 @@ public class HorarioRecomendadoService {
                     horaInicio,
                     horaFin,
                     row.getDocente(),
-                    row.getAula()
+                    row.getAula(),
+                    row.getCreditos()
                 ));
             }
         } catch (Exception ignored) {

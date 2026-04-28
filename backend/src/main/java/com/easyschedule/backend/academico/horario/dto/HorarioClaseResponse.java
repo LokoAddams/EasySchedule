@@ -7,6 +7,7 @@ public record HorarioClaseResponse(
     String horaInicio,
     String horaFin,
     String docente,
-    String aula
+    String aula,
+    Integer creditos
 ) {
 }

@@ -7,27 +7,47 @@ WITH carreras_codigo AS (
 	WHERE c.active = TRUE
 	  AND u.active = TRUE
 ),
+-- 1. CREAMOS NUESTRO DICCIONARIO DE MATERIAS REALES
+nombres_reales AS (
+	SELECT * FROM (VALUES
+		-- Semestre 1
+		(1, 1, 'Calculo I'), (1, 2, 'Algebra Basica'), (1, 3, 'Fisica Basica'), (1, 4, 'Introduccion a la Programacion'),
+		-- Semestre 2
+		(2, 1, 'Calculo II'), (2, 2, 'Algebra Lineal'), (2, 3, 'Fisica II'), (2, 4, 'Programacion Orientada a Objetos'),
+		-- Semestre 3
+		(3, 1, 'Ecuaciones Diferenciales'), (3, 2, 'Estadistica I'), (3, 3, 'Estructura de Datos'), (3, 4, 'Arquitectura de Computadoras'),
+		-- Semestre 4
+		(4, 1, 'Metodos Numericos'), (4, 2, 'Bases de Datos I'), (4, 3, 'Redes de Computadoras I'), (4, 4, 'Sistemas Operativos I'),
+		-- Semestre 5
+		(5, 1, 'Investigacion Operativa'), (5, 2, 'Bases de Datos II'), (5, 3, 'Ingenieria de Software'), (5, 4, 'Sistemas de Informacion I'),
+		-- Semestre 6
+		(6, 1, 'Redes de Computadoras II'), (6, 2, 'Diseno Grafico'), (6, 3, 'Sistemas de Informacion II'), (6, 4, 'Inteligencia Artificial'),
+		-- Semestre 7
+		(7, 1, 'Ingenieria Economica'), (7, 2, 'Taller de Sistemas de Informacion'), (7, 3, 'Sistemas Expertos'), (7, 4, 'Seguridad de Sistemas'),
+		-- Semestre 8
+		(8, 1, 'Evaluacion de Proyectos'), (8, 2, 'Auditoria de Sistemas'), (8, 3, 'Simulacion de Sistemas'), (8, 4, 'Practicas Industriales')
+	) AS t(semestre, numero, nombre_materia)
+),
 materias_regular AS (
+	-- 2. CRUZAMOS LAS CARRERAS CON LOS NOMBRES REALES
 	SELECT
-		cc.codigo || '-S' || s.semestre::TEXT || '-M' || m.numero::TEXT AS codigo,
-		'Materia ' || cc.codigo || ' S' || s.semestre::TEXT || ' M' || m.numero::TEXT AS nombre,
+		cc.codigo || '-S' || nr.semestre::TEXT || '-M' || nr.numero::TEXT AS codigo,
+		nr.nombre_materia AS nombre,
 		CASE
-			WHEN s.semestre <= 2 THEN 5
-			WHEN s.semestre <= 8 THEN 4
+			WHEN nr.semestre <= 2 THEN 5
 			ELSE 4
 		END AS creditos,
 		TRUE AS active
 	FROM carreras_codigo cc
-	JOIN (VALUES (1),(2),(3),(4),(5),(6),(7),(8)) AS s(semestre) ON TRUE
-	JOIN (VALUES (1),(2),(3),(4)) AS m(numero) ON TRUE
+	CROSS JOIN nombres_reales nr
 
 	UNION ALL
 
 	SELECT
 		cc.codigo || '-S9-M' || m.numero::TEXT AS codigo,
 		CASE
-			WHEN m.numero = 1 THEN 'Integracion Profesional ' || cc.codigo
-			ELSE 'Electiva de Profundizacion ' || cc.codigo
+			WHEN m.numero = 1 THEN 'Integracion Profesional'
+			ELSE 'Electiva de Profundizacion'
 		END AS nombre,
 		4 AS creditos,
 		TRUE AS active
@@ -37,7 +57,7 @@ materias_regular AS (
 materias_tg AS (
 	SELECT
 		cc.codigo || '-TG1' AS codigo,
-		'Taller de Grado I ' || cc.codigo AS nombre,
+		'Taller de Grado I' AS nombre,
 		5 AS creditos,
 		TRUE AS active
 	FROM carreras_codigo cc
@@ -46,7 +66,7 @@ materias_tg AS (
 
 	SELECT
 		cc.codigo || '-TG2' AS codigo,
-		'Taller de Grado II ' || cc.codigo AS nombre,
+		'Taller de Grado II' AS nombre,
 		6 AS creditos,
 		TRUE AS active
 	FROM carreras_codigo cc

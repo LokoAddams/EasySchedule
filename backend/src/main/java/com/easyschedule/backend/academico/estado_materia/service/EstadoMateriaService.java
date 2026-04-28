@@ -4,6 +4,8 @@ import com.easyschedule.backend.academico.estado_materia.dto.EstadoMateriaReques
 import com.easyschedule.backend.academico.estado_materia.dto.EstadoMateriaResponse;
 import com.easyschedule.backend.academico.estado_materia.model.EstadoMateria;
 import com.easyschedule.backend.academico.estado_materia.repository.EstadoMateriaRepository;
+import com.easyschedule.backend.academico.materia.model.Prerequisito;
+import com.easyschedule.backend.academico.materia.repository.PrerequisitoRepository;
 import java.util.List;
 import java.util.Locale;
 import org.springframework.stereotype.Service;
@@ -13,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class EstadoMateriaService {
 
     private final EstadoMateriaRepository estadoMateriaRepository;
+    private final PrerequisitoRepository prerequisitoRepository;
 
-    public EstadoMateriaService(EstadoMateriaRepository estadoMateriaRepository) {
+    public EstadoMateriaService(EstadoMateriaRepository estadoMateriaRepository, PrerequisitoRepository prerequisitoRepository) {
         this.estadoMateriaRepository = estadoMateriaRepository;
+        this.prerequisitoRepository = prerequisitoRepository;
     }
 
     public String getEstadoMateria(Long userId, Long mallaMateriaId) {
@@ -41,6 +45,17 @@ public class EstadoMateriaService {
 
     @Transactional
     public EstadoMateriaResponse saveEstado(Long userId, EstadoMateriaRequest request) {
+        // Proteger contra estado CURSANDO - solo se debe asignar al tomar una materia
+        String estadoNormalizado = request.estado() == null ? "" : request.estado().trim().toLowerCase(Locale.ROOT);
+        if ("cursando".equals(estadoNormalizado)) {
+            throw new IllegalArgumentException("El estado 'cursando' se asigna automaticamente al tomar la materia. Solo se permite cambiar a 'aprobada' o 'pendiente'.");
+        }
+
+        // Validar prerequisitos si se intenta cambiar a APROBADA
+        if ("aprobada".equals(estadoNormalizado)) {
+            validarPrerequisitosCompletados(userId, request.mallaMateriaId());
+        }
+
         estadoMateriaRepository.upsertEstado(
             userId,
             request.mallaMateriaId(),
@@ -55,6 +70,14 @@ public class EstadoMateriaService {
     @Transactional
     public List<EstadoMateriaResponse> saveEstados(Long userId, List<EstadoMateriaRequest> requests) {
         return requests.stream()
+            .filter(request -> {
+                String estadoNormalizado = request.estado() == null ? "" : request.estado().trim().toLowerCase(Locale.ROOT);
+                if ("cursando".equals(estadoNormalizado)) {
+                    // Skip or log warning for cursando estado
+                    return false;
+                }
+                return true;
+            })
             .map(request -> saveEstado(userId, request))
             .toList();
     }
@@ -92,5 +115,32 @@ public class EstadoMateriaService {
             case "retirada", "reprobada" -> "pendiente";
             default -> "cursando";
         };
+    }
+
+    private void validarPrerequisitosCompletados(Long userId, Long mallaMateriaId) {
+        // Obtener todos los prerequisitos de la materia
+        List<Prerequisito> prerequisitos = prerequisitoRepository.findByMallaMateria_Id(mallaMateriaId);
+        
+        if (prerequisitos.isEmpty()) {
+            // No tiene prerequisitos, puede ser aprobada
+            return;
+        }
+
+        // Verificar que todos los prerequisitos estan aprobados
+        for (Prerequisito prereq : prerequisitos) {
+            Long prereqMallaMateriaId = prereq.getPrerequisito().getId();
+            
+            EstadoMateria estadoPrereq = estadoMateriaRepository
+                .findByUserIdAndMallaMateria_Id(userId, prereqMallaMateriaId)
+                .orElse(null);
+            
+            // Si el prerequisito no tiene estado registrado o no está aprobado, lanzar error
+            if (estadoPrereq == null || !"aprobada".equalsIgnoreCase(estadoPrereq.getEstado())) {
+                String nombrePrereq = prereq.getPrerequisito().getMateria().getNombre();
+                throw new IllegalArgumentException(
+                    "No se puede cambiar a completado. Primero debe completar el prerequisito: " + nombrePrereq
+                );
+            }
+        }
     }
 }
