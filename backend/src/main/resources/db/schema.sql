@@ -135,6 +135,31 @@ CREATE TABLE IF NOT EXISTS toma_materia_estudiante (
     CONSTRAINT uq_toma_user_oferta UNIQUE (user_id, oferta_id)
 );
 
+CREATE OR REPLACE FUNCTION fn_cleanup_toma_on_estado_update()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF OLD.estado = 'cursando' AND NEW.estado IN ('pendiente', 'aprobada', 'completado') THEN
+        DELETE FROM toma_materia_estudiante t
+        USING ofertas o
+        WHERE t.oferta_id = o.id
+          AND t.user_id = NEW.user_id
+          AND o.malla_materia_id = NEW.malla_materia_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_cleanup_toma_on_estado_update ON estado_materia_estudiante;
+
+CREATE TRIGGER trg_cleanup_toma_on_estado_update
+AFTER UPDATE OF estado ON estado_materia_estudiante
+FOR EACH ROW
+WHEN (OLD.estado IS DISTINCT FROM NEW.estado)
+EXECUTE FUNCTION fn_cleanup_toma_on_estado_update();
+
 CREATE TABLE IF NOT EXISTS horarios_recomendados (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,

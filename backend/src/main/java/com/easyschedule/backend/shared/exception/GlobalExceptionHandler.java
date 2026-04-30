@@ -106,7 +106,10 @@ public class GlobalExceptionHandler {
         body.put("status", HttpStatus.CONFLICT.value());
         body.put("error", "Conflict");
 
-        String message = "Data integrity conflict. Check unique and foreign keys.";
+        String message = cleanDatabaseMessage(ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : null);
+        if (message == null || message.isBlank()) {
+            message = "Conflicto de integridad al guardar los datos.";
+        }
         if (ex.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
             org.hibernate.exception.ConstraintViolationException cve = (org.hibernate.exception.ConstraintViolationException) ex.getCause();
             String constraintName = cve.getConstraintName();
@@ -117,6 +120,8 @@ public class GlobalExceptionHandler {
                     message = "Error: Email is already in use!";
                 } else if (constraintName.contains("uq_toma_user_oferta")) {
                     message = "Ya registraste esta materia/paralelo.";
+                } else if (constraintName.contains("ck_estado_materia")) {
+                    message = "El estado de la materia no es válido.";
                 }
             }
         }
@@ -172,5 +177,19 @@ public class GlobalExceptionHandler {
 
     private String pathOf(WebRequest request) {
         return request.getDescription(false).replace("uri=", "");
+    }
+
+    private String cleanDatabaseMessage(String message) {
+        if (message == null) {
+            return null;
+        }
+
+        String cleaned = message.trim().replaceFirst("(?i)^error:\\s*", "");
+        int newlineIndex = cleaned.indexOf('\n');
+        if (newlineIndex >= 0) {
+            cleaned = cleaned.substring(0, newlineIndex).trim();
+        }
+
+        return cleaned;
     }
 }

@@ -36,6 +36,7 @@ describe('TomaDeMaterias', () => {
       const translations: Record<string, string> = {
         'tomaMaterias.messages.noScheduleToExport': 'No hay horario disponible para exportar.',
         'tomaMaterias.messages.unsupportedFormat': 'Formato no soportado por el momento.',
+        'tomaMaterias.messages.unexpectedRegistrationError': 'Ocurrio un error inesperado al registrar las materias.',
       };
 
       return translations[key] ?? key;
@@ -304,5 +305,23 @@ describe('TomaDeMaterias', () => {
 
     expect((component as any).exportInfo).toBe('No hay horario disponible para exportar.');
     expect((component as any).exportLoading).toBeFalse();
+  });
+
+  it('shows backend registration message when available', () => {
+    const backendError = new HttpErrorResponse({
+      status: 400,
+      error: { message: 'Falta prerrequisito: Algebra Lineal' },
+    });
+
+    expect((component as any).extractApiErrorMessage(backendError)).toBe('Falta prerrequisito: Algebra Lineal');
+  });
+
+  it('falls back to the generic registration message when backend message is not useful', () => {
+    const backendError = new HttpErrorResponse({
+      status: 500,
+      error: { message: 'Internal Server Error' },
+    });
+
+    expect((component as any).extractApiErrorMessage(backendError)).toBe('Ocurrio un error inesperado al registrar las materias.');
   });
 });

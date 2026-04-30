@@ -188,11 +188,51 @@ export class TomaDeMaterias implements OnInit {
   }
 
   private extractApiErrorMessage(error: HttpErrorResponse): string {
-    if (!error) {
-      return this.translateService.instant('tomaMaterias.messages.unexpectedRegistrationError');
+    const backendMessage = this.extractBackendMessage(error);
+    if (backendMessage) {
+      return backendMessage;
     }
 
     return this.translateService.instant('tomaMaterias.messages.unexpectedRegistrationError');
+  }
+
+  private extractBackendMessage(error: HttpErrorResponse): string {
+    if (!error?.error) {
+      return '';
+    }
+
+    const rawError = error.error as { message?: unknown; error?: unknown } | string;
+
+    let message = '';
+    if (typeof rawError === 'string') {
+      message = rawError;
+    } else if (typeof rawError.message === 'string') {
+      message = rawError.message;
+    } else if (typeof rawError.error === 'string') {
+      message = rawError.error;
+    } else if (rawError.error && typeof rawError.error === 'object') {
+      const nestedError = rawError.error as { message?: unknown };
+      if (typeof nestedError.message === 'string') {
+        message = nestedError.message;
+      }
+    }
+
+    const normalized = message.trim();
+    if (!normalized) {
+      return '';
+    }
+
+    const lowerCaseMessage = normalized.toLowerCase();
+    if (
+      lowerCaseMessage === 'error interno del servidor' ||
+      lowerCaseMessage === 'internal server error' ||
+      lowerCaseMessage === 'error en la solicitud' ||
+      lowerCaseMessage.includes('unexpected error')
+    ) {
+      return '';
+    }
+
+    return normalized;
   }
 
   private cargarHorarioYSelecciones(): void {
