@@ -49,7 +49,7 @@ class MallaControllerTest {
     @Test
     void findMateriasByMallaReturnsEstadoForAuthenticatedUser() throws Exception {
         when(mallaService.findMateriasByMalla(16L, 7L)).thenReturn(List.of(
-            new MallaMateriaResponse(501L, 33L, "SIS101", "Algoritmos", (short) 1, "aprobada")
+            new MallaMateriaResponse(501L, 33L, "SIS101", "Algoritmos", (short) 1, "aprobada", List.of())
         ));
 
         mockMvc.perform(get("/api/academico/mallas/16/materias").principal(() -> "7"))
