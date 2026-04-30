@@ -18,6 +18,7 @@ export interface MallaMateria {
   nombreMateria: string;
   semestreSugerido: number;
   estado: 'aprobada' | 'cursando' | 'pendiente' | null;
+  prerequisitosIds: number[];
 }
 
 export interface OfertaMateriaSimple {
