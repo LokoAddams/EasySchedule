@@ -166,12 +166,25 @@
             <span class="malla-legend__label">{{ 'malla.UpdateCourse.aprobada' | translate }}</span>
           </div>
         </div>
+        <div class="malla-mobile-tip mobile-only">
+          💡 En computadora puedes ver un mapa visual con las conexiones entre materias y sus prerrequisitos.
+        </div>
       </div>
 
-      <div class="malla-board-wrapper" *ngIf="!loadingMaterias && !loadMateriasError && materias.length > 0">
+      <div class="malla-board-wrapper" *ngIf="!loadingMaterias && !loadMateriasError && materias.length > 0" style="position: relative;">
+        <svg class="malla-lines-overlay" *ngIf="prereqLines.length > 0">
+          <path *ngFor="let line of prereqLines" 
+                [attr.d]="'M ' + line.x1 + ' ' + line.y1 + ' C ' + (line.x1 + 40) + ' ' + line.y1 + ', ' + (line.x2 - 40) + ' ' + line.y2 + ', ' + line.x2 + ' ' + line.y2" 
+                stroke="#ff9800" stroke-width="2" fill="none" stroke-dasharray="5,5" />
+        </svg>
+
         <div class="malla-board">
           <div class="malla-board__column" *ngFor="let sem of semestres" [ngClass]="{'malla-board__column--actual': sem === semestreActual}">
+            <h4 class="malla-board__column-title">{{ 'malla.modal.semesterLabel' | translate: { semester: sem } }}</h4>
             <div class="malla-subject" *ngFor="let materia of materiasPorSemestre.get(sem)"
+                 [attr.id]="'subject-' + materia.id"
+                 (mouseenter)="onMateriaHover(materia.id)"
+                 (mouseleave)="onMateriaHover(null)"
                  (click)="onMateriaClick(materia)"
                  [ngClass]="{
                 'malla-subject--aprobada': materia.estado === 'aprobada',
@@ -182,6 +195,13 @@
               }">
               <div class="malla-subject__code">{{ materia.codigoMateria }}</div>
               <div class="malla-subject__name">{{ materia.nombreMateria }}</div>
+              
+              <div class="malla-subject__prereqs mobile-only" *ngIf="materia.prerequisitosIds && materia.prerequisitosIds.length > 0">
+                <span class="malla-subject__prereq-label">Prerreq:</span>
+                <button type="button" class="malla-subject__prereq-btn" *ngFor="let pid of materia.prerequisitosIds" (click)="enfocarMateria(pid, $event)">
+                  {{ getMateriaCodigo(pid) }}
+                </button>
+              </div>
             </div>
           </div>
         </div>

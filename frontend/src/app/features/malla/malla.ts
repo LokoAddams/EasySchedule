@@ -1,12 +1,12 @@
 import { NgFor, NgIf, NgClass } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter, firstValueFrom, Subscription } from 'rxjs';
 
 import { CarreraCatalogoItem, CarreraService } from '../../services/academico/carrera.service';
-import { EstadoMateriaService, EstadoMateriaItem } from '../../services/academico/estado-materia.service';
+import { EstadoMateriaService, EstadoMateriaItem, EstadoMateriaRequest } from '../../services/academico/estado-materia.service';
 import { FeatureToggleService } from '../../services/feature-toggle.service';
 import { MallaCatalogoItem, MallaCatalogoService, MallaMateria } from '../../services/academico/malla-catalogo.service';
 import {
@@ -239,8 +239,86 @@ export class Malla implements OnInit, OnDestroy {
   }
 
   protected onMateriaClick(materia: MallaMateria): void {
-    if (materia.estado === 'aprobada' || materia.estado === 'cursando') return;
+    this.selectedMateriaParaAccion = materia;
+    this.showAccionesModal = true;
+  }
 
+  protected hoveredMateriaId: number | null = null;
+  protected prereqLines: { x1: number, y1: number, x2: number, y2: number }[] = [];
+
+  protected onMateriaHover(materiaId: number | null): void {
+    if (window.innerWidth < 768) return;
+    this.hoveredMateriaId = materiaId;
+    // Delay to ensure rendering is complete if needed, but synchronous is fine since DOM exists
+    this.updatePrereqLines();
+  }
+
+  @HostListener('window:resize')
+  protected updatePrereqLines(): void {
+    if (!this.hoveredMateriaId) {
+      this.prereqLines = [];
+      return;
+    }
+    const lines: { x1: number, y1: number, x2: number, y2: number }[] = [];
+    const target = this.materias.find(m => m.id === this.hoveredMateriaId);
+    
+    if (!target || !target.prerequisitosIds || target.prerequisitosIds.length === 0) {
+      this.prereqLines = [];
+      return;
+    }
+
+    const boardWrapper = document.querySelector('.malla-board-wrapper') as HTMLElement;
+    const wrapperRect = boardWrapper?.getBoundingClientRect();
+    if (!wrapperRect) return;
+
+    const targetEl = document.getElementById(`subject-${target.id}`);
+    if (targetEl) {
+      const tRect = targetEl.getBoundingClientRect();
+      const scrollLeft = boardWrapper.scrollLeft || 0;
+      const x2 = tRect.left - wrapperRect.left + scrollLeft;
+      const y2 = tRect.top - wrapperRect.top + (tRect.height / 2);
+
+      for (const pid of target.prerequisitosIds) {
+        const pEl = document.getElementById(`subject-${pid}`);
+        if (pEl) {
+          const pRect = pEl.getBoundingClientRect();
+          const x1 = pRect.right - wrapperRect.left + scrollLeft;
+          const y1 = pRect.top - wrapperRect.top + (pRect.height / 2);
+          lines.push({ x1, y1, x2, y2 });
+        }
+      }
+    }
+    this.prereqLines = lines;
+  }
+
+  protected getMateriaCodigo(id: number): string {
+    return this.materias.find(m => m.id === id)?.codigoMateria ?? '???';
+  }
+
+  protected enfocarMateria(id: number, event: Event): void {
+    event.stopPropagation();
+    const el = document.getElementById(`subject-${id}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('malla-subject--highlighted');
+      setTimeout(() => el.classList.remove('malla-subject--highlighted'), 2000);
+    }
+  }
+
+  protected closeAccionesModal(): void {
+    this.showAccionesModal = false;
+    this.selectedMateriaParaAccion = null;
+  }
+
+  protected onTomarMateriaClick(): void {
+    const materia = this.selectedMateriaParaAccion;
+    if (!materia) return;
+    
+    if (materia.estado === 'aprobada' || materia.estado === 'cursando') {
+      return;
+    }
+
+    this.showAccionesModal = false;
     this.showModal = true;
     this.loadingDetalle = true;
     this.selectedOfertaId = null;
