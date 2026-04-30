@@ -173,7 +173,13 @@
 			<form class="perfil-password-form" [formGroup]="passwordForm" (ngSubmit)="guardarCambioContrasenia()">
 				<label class="perfil-field">
 					<span>{{ 'perfil.password.fields.currentPassword' | translate }}</span>
-					<input type="password" formControlName="currentPassword" autocomplete="current-password" />
+					<div class="input-with-icon">
+						<input [type]="showCurrentPassword ? 'text' : 'password'" formControlName="currentPassword" autocomplete="current-password" />
+						<button type="button" class="toggle-password" (click)="toggleCurrentPasswordVisibility()" aria-label="Toggle password visibility">
+							<svg *ngIf="!showCurrentPassword" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+							<svg *ngIf="showCurrentPassword" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+						</button>
+					</div>
 					<small class="form-error" *ngIf="passwordForm.controls.currentPassword.touched && passwordForm.controls.currentPassword.invalid">
 						{{ 'perfil.validation.required' | translate }}
 					</small>
@@ -181,7 +187,13 @@
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.password.fields.newPassword' | translate }}</span>
-					<input type="password" formControlName="newPassword" autocomplete="new-password" />
+					<div class="input-with-icon">
+						<input [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword" autocomplete="new-password" />
+						<button type="button" class="toggle-password" (click)="toggleNewPasswordVisibility()" aria-label="Toggle password visibility">
+							<svg *ngIf="!showNewPassword" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+							<svg *ngIf="showNewPassword" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+						</button>
+					</div>
 					<small class="form-error" *ngIf="passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.errors?.['required']">
 						{{ 'perfil.validation.required' | translate }}
 					</small>
@@ -192,7 +204,13 @@
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.password.fields.confirmNewPassword' | translate }}</span>
-					<input type="password" formControlName="confirmNewPassword" autocomplete="new-password" />
+					<div class="input-with-icon">
+						<input [type]="showConfirmNewPassword ? 'text' : 'password'" formControlName="confirmNewPassword" autocomplete="new-password" />
+						<button type="button" class="toggle-password" (click)="toggleConfirmNewPasswordVisibility()" aria-label="Toggle password visibility">
+							<svg *ngIf="!showConfirmNewPassword" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+							<svg *ngIf="showConfirmNewPassword" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+						</button>
+					</div>
 					<small class="form-error" *ngIf="passwordForm.controls.confirmNewPassword.touched && passwordForm.controls.confirmNewPassword.invalid">
 						{{ 'perfil.validation.required' | translate }}
 					</small>

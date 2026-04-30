@@ -29,6 +29,7 @@ interface LoginResponse {
 export class LoginComponent {
 
   loading = false;
+  showPassword = false;
 
 
   form!: FormGroup;
@@ -47,6 +48,10 @@ export class LoginComponent {
       identifier: ['', Validators.required],
       password: ['', Validators.required]
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   async login(): Promise<void> {

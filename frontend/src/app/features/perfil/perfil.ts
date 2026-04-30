@@ -44,6 +44,9 @@ export class Perfil implements OnInit {
   protected errorKey = '';
   protected showIdentityConfirmModal = false;
   protected showChangePasswordModal = false;
+  protected showCurrentPassword = false;
+  protected showNewPassword = false;
+  protected showConfirmNewPassword = false;
   protected readonly fechaNacimientoMinDate: NgbDateStruct = { year: 1950, month: 1, day: 1 };
   protected readonly fechaNacimientoMaxDate: NgbDateStruct;
   protected readonly editForm: PerfilEditForm;
@@ -206,6 +209,9 @@ export class Perfil implements OnInit {
     });
     this.passwordForm.markAsPristine();
     this.passwordForm.markAsUntouched();
+    this.showCurrentPassword = false;
+    this.showNewPassword = false;
+    this.showConfirmNewPassword = false;
     this.showChangePasswordModal = true;
   }
 
@@ -266,6 +272,18 @@ export class Perfil implements OnInit {
         this.toastService.error('perfil.password.error.generic');
       },
     });
+  }
+
+  protected toggleCurrentPasswordVisibility(): void {
+    this.showCurrentPassword = !this.showCurrentPassword;
+  }
+
+  protected toggleNewPasswordVisibility(): void {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  protected toggleConfirmNewPasswordVisibility(): void {
+    this.showConfirmNewPassword = !this.showConfirmNewPassword;
   }
 
   protected showPasswordMismatchError(): boolean {

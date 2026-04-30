@@ -109,6 +109,39 @@
       line-height: 1;
     }
   }
+
+  .input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .input-with-icon input {
+    padding-right: 2.8rem !important;
+  }
+  
+  .toggle-password {
+    position: absolute;
+    right: 0.8rem;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    &:hover {
+      color: #1f3658;
+    }
+  }
+  
+  .eye-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
   
   input {
     height: 2.1rem;
