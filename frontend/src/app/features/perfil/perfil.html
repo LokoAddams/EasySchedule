@@ -66,7 +66,13 @@
 			</div>
 
 			<div class="perfil-actions">
-				<button class="perfil-edit-btn" type="button" (click)="activarEdicion()">{{ 'perfil.actions.edit' | translate }}</button>
+				<button class="perfil-edit-btn" type="button" (click)="activarEdicion()"
+					[ngbPopover]="!perfil.profileCompleted ? ('perfil.hints.completeProfile' | translate) : ''"
+					triggers="manual"
+					placement="top"
+					popoverClass="hint-popover hint-popover--edit"
+					#editBtnPopover="ngbPopover"
+				>{{ 'perfil.actions.edit' | translate }}</button>
 				<button class="perfil-password-btn" type="button" (click)="abrirCambioContrasenia()">{{ 'perfil.actions.changePassword' | translate }}</button>
 			</div>
 		</article>
@@ -94,7 +100,13 @@
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.nombre' | translate }}</span>
-					<input type="text" formControlName="nombre" />
+					<input type="text" formControlName="nombre" 
+						[ngbPopover]="('perfil.hints.missingField' | translate)"
+						triggers="manual"
+						placement="top"
+						popoverClass="hint-popover hint-popover--field"
+						#nombrePopover="ngbPopover"
+					/>
 					<small class="form-error" *ngIf="editForm.controls.nombre.touched && editForm.controls.nombre.invalid">
 						{{ 'perfil.validation.required' | translate }}
 					</small>
@@ -108,7 +120,13 @@
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.apellido' | translate }}</span>
-					<input type="text" formControlName="apellido" />
+					<input type="text" formControlName="apellido" 
+						[ngbPopover]="('perfil.hints.missingField' | translate)"
+						triggers="manual"
+						placement="top"
+						popoverClass="hint-popover hint-popover--field"
+						#apellidoPopover="ngbPopover"
+					/>
 					<small class="form-error" *ngIf="editForm.controls.apellido.touched && editForm.controls.apellido.invalid">
 						{{ 'perfil.validation.required' | translate }}
 					</small>
@@ -122,7 +140,13 @@
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.carnet' | translate }}</span>
-					<input type="text" formControlName="carnetIdentidad" />
+					<input type="text" formControlName="carnetIdentidad" 
+						[ngbPopover]="('perfil.hints.missingField' | translate)"
+						triggers="manual"
+						placement="top"
+						popoverClass="hint-popover hint-popover--field"
+						#carnetPopover="ngbPopover"
+					/>
 					<small class="form-error" *ngIf="editForm.controls.carnetIdentidad.touched && editForm.controls.carnetIdentidad.invalid">
 						{{ 'perfil.validation.required' | translate }}
 					</small>
@@ -146,6 +170,11 @@
 							[container]="'body'"
 							[readonly]="true"
 							(click)="fechaNacimientoPicker.toggle()"
+							[ngbPopover]="('perfil.hints.missingField' | translate)"
+							triggers="manual"
+							placement="top"
+							popoverClass="hint-popover hint-popover--field"
+							#fechaPopover="ngbPopover"
 						/>
 					</div>
 					<small class="form-error" *ngIf="editForm.controls.fechaNacimiento.touched && editForm.controls.fechaNacimiento.invalid">

@@ -53,6 +53,12 @@ export class Perfil implements OnInit {
   protected readonly passwordForm: PasswordChangeForm;
   private pendingUpdatePayload: PerfilUpdateRequest | null = null;
 
+  @ViewChild('editBtnPopover') editBtnPopover?: NgbPopover;
+  @ViewChild('nombrePopover') nombrePopover?: NgbPopover;
+  @ViewChild('apellidoPopover') apellidoPopover?: NgbPopover;
+  @ViewChild('carnetPopover') carnetPopover?: NgbPopover;
+  @ViewChild('fechaPopover') fechaPopover?: NgbPopover;
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly perfilService: PerfilService,
@@ -107,6 +113,12 @@ export class Perfil implements OnInit {
         this.authSessionService.setCurrentUsername(perfilResponse.username);
         this.authSessionService.setProfileCompleted(Boolean(perfilResponse.profileCompleted));
         void this.sincronizarCamposAcademicos();
+
+        setTimeout(() => {
+          if (!this.perfil?.profileCompleted && this.editBtnPopover) {
+            this.editBtnPopover.open();
+          }
+        }, 300);
       },
       error: (error: { status?: number }) => {
         this.loading = false;
@@ -128,9 +140,20 @@ export class Perfil implements OnInit {
       return;
     }
 
+    if (this.editBtnPopover?.isOpen()) {
+      this.editBtnPopover.close();
+    }
+
     this.editMode = true;
     this.errorKey = '';
     this.cargarFormulario(this.perfil);
+
+    setTimeout(() => {
+      if (!this.editForm.controls.nombre.value) this.nombrePopover?.open();
+      if (!this.editForm.controls.apellido.value) this.apellidoPopover?.open();
+      if (!this.editForm.controls.carnetIdentidad.value) this.carnetPopover?.open();
+      if (!this.editForm.controls.fechaNacimiento.value) this.fechaPopover?.open();
+    }, 300);
   }
 
   protected esCampoSoloLectura(fieldName: string): boolean {
@@ -166,6 +189,12 @@ export class Perfil implements OnInit {
     if (this.perfil) {
       this.cargarFormulario(this.perfil);
     }
+
+    setTimeout(() => {
+      if (!this.perfil?.profileCompleted && this.editBtnPopover) {
+        this.editBtnPopover.open();
+      }
+    }, 300);
   }
 
   protected guardarEdicion(): void {
