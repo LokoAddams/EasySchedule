@@ -138,4 +138,114 @@ class AuthServiceTest {
         verify(userRepository, never()).save(any());
     }
 
+    @Test
+    void changePasswordThrowsWhenUserNotFound() {
+        when(userRepository.findById(99L)).thenReturn(java.util.Optional.empty());
+        ChangePasswordRequest request = new ChangePasswordRequest();
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+            () -> authService.changePassword(99L, request));
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    @Test
+    void changePasswordThrowsWhenCurrentPasswordIncorrect() {
+        User user = new User("testuser", "testuser@mail.com", "old-hash");
+        user.setId(8L);
+        ChangePasswordRequest request = new ChangePasswordRequest();
+        request.setCurrentPassword("wrong-password");
+
+        when(userRepository.findById(8L)).thenReturn(java.util.Optional.of(user));
+        when(encoder.matches("wrong-password", "old-hash")).thenReturn(false);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+            () -> authService.changePassword(8L, request));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
+    @Test
+    void changePasswordThrowsWhenNewPasswordEqualsOld() {
+        User user = new User("testuser", "testuser@mail.com", "old-hash");
+        user.setId(8L);
+        ChangePasswordRequest request = new ChangePasswordRequest();
+        request.setCurrentPassword("old-password");
+        request.setNewPassword("old-password");
+        request.setConfirmNewPassword("old-password");
+
+        when(userRepository.findById(8L)).thenReturn(java.util.Optional.of(user));
+        when(encoder.matches("old-password", "old-hash")).thenReturn(true);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+            () -> authService.changePassword(8L, request));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
+    @Test
+    void loginReturnsOkWhenCredentialsAreValid() {
+        com.easyschedule.backend.auth.dto.request.LoginRequest loginRequest = new com.easyschedule.backend.auth.dto.request.LoginRequest();
+        loginRequest.setIdentifier("testuser");
+        loginRequest.setPassword("password123");
+
+        User user = new User("testuser", "testuser@mail.com", "hashed-password");
+        user.setId(1L);
+
+        when(userRepository.findByUsernameIgnoreCase("testuser")).thenReturn(java.util.Optional.of(user));
+        when(encoder.matches("password123", "hashed-password")).thenReturn(true);
+        when(sessionTokenService.issueToken(1L)).thenReturn("mock-token");
+        when(sessionTokenService.getTokenTtlSeconds()).thenReturn(3600L);
+
+        ResponseEntity<?> response = authService.login(loginRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Map<?, ?> body = (Map<?, ?>) response.getBody();
+        assertEquals("mock-token", body.get("token"));
+        assertEquals("testuser", body.get("username"));
+    }
+
+    @Test
+    void loginReturnsUnauthorizedWhenUserNotFound() {
+        com.easyschedule.backend.auth.dto.request.LoginRequest loginRequest = new com.easyschedule.backend.auth.dto.request.LoginRequest();
+        loginRequest.setIdentifier("unknown");
+
+        when(userRepository.findByUsernameIgnoreCase("unknown")).thenReturn(java.util.Optional.empty());
+        when(userRepository.findByEmailIgnoreCase("unknown")).thenReturn(java.util.Optional.empty());
+
+        ResponseEntity<?> response = authService.login(loginRequest);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    }
+
+    @Test
+    void loginReturnsUnauthorizedWhenPasswordIsIncorrect() {
+        com.easyschedule.backend.auth.dto.request.LoginRequest loginRequest = new com.easyschedule.backend.auth.dto.request.LoginRequest();
+        loginRequest.setIdentifier("testuser");
+        loginRequest.setPassword("wrong");
+
+        User user = new User("testuser", "testuser@mail.com", "hashed-password");
+
+        when(userRepository.findByUsernameIgnoreCase("testuser")).thenReturn(java.util.Optional.of(user));
+        when(encoder.matches("wrong", "hashed-password")).thenReturn(false);
+
+        ResponseEntity<?> response = authService.login(loginRequest);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    }
+
+    @Test
+    void logoutRevokesToken() {
+        authService.logout("Bearer my-token");
+        verify(sessionTokenService).revokeToken("my-token");
+    }
+
+    @Test
+    void logoutDoesNothingWhenHeaderIsInvalid() {
+        authService.logout(null);
+        verify(sessionTokenService).revokeToken("");
+
+        authService.logout("InvalidHeader");
+        verify(sessionTokenService, org.mockito.Mockito.atLeastOnce()).revokeToken("");
+    }
 }
