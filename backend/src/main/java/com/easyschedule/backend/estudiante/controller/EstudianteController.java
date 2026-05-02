@@ -96,6 +96,16 @@ public class EstudianteController {
         return estudianteService.updateProfile(username, request);
     }
 
+    @RequestMapping(value = "/perfil/{username}/tour", method = { RequestMethod.PATCH, RequestMethod.POST })
+    public EstudianteResponse completeTour(
+            @PathVariable("username") String username,
+            Principal principal) {
+        Long userId = getAuthenticatedUserId(principal);
+        validateProfileOwnership(username, userId);
+        log.info("[TOUR] Marcando tour como completado para el estudiante con ID: {}", userId);
+        return estudianteService.completeTour(username);
+    }
+
     private void validateProfileOwnership(String username, Long userId) {
         if (userId == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sesión inválida");

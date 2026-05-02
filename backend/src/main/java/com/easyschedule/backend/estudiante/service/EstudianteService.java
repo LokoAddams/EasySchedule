@@ -175,9 +175,20 @@ public class EstudianteService {
             estudiante.getUniversidadId(),
             estudiante.getCarreraId(),
             mallaId,
-            estudiante.isProfileCompleted()
+            estudiante.isProfileCompleted(),
+            estudiante.isTourCompleted()
         );
     }
+    @Transactional
+    public EstudianteResponse completeTour(String username) {
+        log.debug("[TOUR] marcando tour como completado | identifier={}", username);
+        Estudiante estudiante = getOrCreateByIdentifier(username);
+        estudiante.setTourCompleted(true);
+        Estudiante saved = estudianteRepository.save(estudiante);
+        log.info("[TOUR] tour marcado como completado para el estudiante con ID: {}", saved.getId());
+        return toResponse(saved);
+    }
+
     public EstudianteResponse findByUsername(String username) {
         log.debug("[PERFIL] búsqueda por identificador iniciada | identifier={}", username);
         EstudianteResponse response = toResponse(getOrCreateByIdentifier(username));
