@@ -181,6 +181,7 @@ describe('Malla component logic', () => {
         nombreMateria: 'Programacion I',
         semestreSugerido: 1,
         estado: 'aprobada',
+        prerequisitosIds: [],
       },
       {
         id: 2,
@@ -189,6 +190,7 @@ describe('Malla component logic', () => {
         nombreMateria: 'Programacion II',
         semestreSugerido: 2,
         estado: null,
+        prerequisitosIds: [],
       },
     ]));
 
