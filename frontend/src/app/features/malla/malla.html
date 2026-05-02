@@ -1,10 +1,60 @@
 <ng-container *ngIf="mallaEnabled">
+  <ng-template #tourStep1>
+    <div style="max-width: 280px;">
+      <p style="margin-bottom: 0.75rem; line-height: 1.5;">
+        Estos son los estados de tus materias. Solo puedes cambiarlas manualmente a <strong>Pendiente</strong> o <strong>Completado</strong>. Para cambiar a <strong>En curso</strong> debes tomar la materia.
+      </p>
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button class="malla-button malla-button--ghost" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0;" (click)="noVolverAMostrarTour()">No volver a mostrar</button>
+        <button class="malla-button malla-button--save" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0;" (click)="siguienteTour(2)">Siguiente</button>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #tourStep2>
+    <div style="max-width: 280px;">
+      <p style="margin-bottom: 0.75rem; line-height: 1.5;">
+        Haz click sobre una materia para <strong>tomarla</strong> o <strong>cambiar su estado</strong>.
+      </p>
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button class="malla-button malla-button--ghost" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0;" (click)="noVolverAMostrarTour()">No volver a mostrar</button>
+        <button class="malla-button malla-button--save" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0;" (click)="siguienteTour(3)">Siguiente</button>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #tourStep3>
+    <div style="max-width: 280px;">
+      <p style="margin-bottom: 0.75rem; line-height: 1.5;">
+        ¡<strong>Armemos tu horario</strong>! Ve a <strong>Toma de Materias</strong> para seleccionar tus materias y construir tu horario del semestre.
+      </p>
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button class="malla-button malla-button--ghost" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0;" (click)="noVolverAMostrarTour()">No volver a mostrar</button>
+        <button class="malla-button malla-button--save" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0;" (click)="irATomaYCerrarTour()">¡Vamos!</button>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #tourStep4>
+    <div style="max-width: 280px;">
+      <p style="margin-bottom: 0.75rem; line-height: 1.5;">
+        Desde aquí puedes <strong>Cambiar Malla</strong> o <strong>Cambiar Universidad</strong> si lo necesitas.
+      </p>
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button class="malla-button malla-button--ghost" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0;" (click)="noVolverAMostrarTour()">No volver a mostrar</button>
+        <button class="malla-button malla-button--save" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0;" (click)="finalizarTour()">¡Entendido!</button>
+      </div>
+    </div>
+  </ng-template>
+
+
   <section class="malla-page">
     <header class="malla-page__header">
       <h1>{{ 'malla.title' | translate }}</h1>
       <p>{{ 'malla.description' | translate }}</p>
 
-      <div class="malla-page__actions" *ngIf="step === 'resumen'">
+      <div class="malla-page__actions" *ngIf="step === 'resumen'"
+           [ngbPopover]="tourStep4" triggers="manual" placement="bottom" popoverClass="hint-popover" #popoverStep4="ngbPopover">
         <button type="button" class="malla-button malla-button--outline" (click)="onCambiarMallaClick()">
           {{ 'malla.actions.changeMalla' | translate }}
         </button>
@@ -152,7 +202,8 @@
           </button>
         </div>
 
-        <div class="malla-legend">
+        <div class="malla-legend"
+             [ngbPopover]="tourStep1" triggers="manual" placement="bottom" popoverClass="hint-popover" #popoverStep1="ngbPopover">
           <div class="malla-legend__item">
             <div class="malla-legend__indicator malla-legend__indicator--pendiente"></div>
             <span class="malla-legend__label">{{ 'malla.UpdateCourse.pendiente' | translate }}</span>
@@ -179,13 +230,15 @@
         </svg>
 
         <div class="malla-board">
-          <div class="malla-board__column" *ngFor="let sem of semestres" [ngClass]="{'malla-board__column--actual': sem === semestreActual}">
+          <div class="malla-board__column" *ngFor="let sem of semestres; let isFirstSem = first" [ngClass]="{'malla-board__column--actual': sem === semestreActual}">
             <h4 class="malla-board__column-title">{{ 'malla.modal.semesterLabel' | translate: { semester: sem } }}</h4>
-            <div class="malla-subject" *ngFor="let materia of materiasPorSemestre.get(sem)"
+            <div class="malla-subject" *ngFor="let materia of materiasPorSemestre.get(sem); let isFirstMat = first"
                  [attr.id]="'subject-' + materia.id"
                  (mouseenter)="onMateriaHover(materia.id)"
                  (mouseleave)="onMateriaHover(null)"
                  (click)="onMateriaClick(materia)"
+                 [ngbPopover]="isFirstSem && isFirstMat ? tourStep2 : null"
+                 triggers="manual" placement="bottom" popoverClass="hint-popover" #popoverStep2="ngbPopover"
                  [ngClass]="{
                 'malla-subject--aprobada': materia.estado === 'aprobada',
                 'malla-subject--cursando': materia.estado === 'cursando',
@@ -212,7 +265,9 @@
       </div>
     </div>
 
-    <button type="button" class="malla-button malla-button--outline" *ngIf="step === 'resumen'" (click)="onActualizarMallaClick()">
+    <button type="button" class="malla-button malla-button--outline" *ngIf="step === 'resumen'"
+            [ngbPopover]="tourStep3" triggers="manual" placement="top" popoverClass="hint-popover" #popoverStep3="ngbPopover"
+            (click)="onActualizarMallaClick()">
       {{ 'malla.actions.changeStatus' | translate }}
     </button>
   </section>
