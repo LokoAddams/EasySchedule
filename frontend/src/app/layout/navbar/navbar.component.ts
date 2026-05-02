@@ -20,6 +20,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected mallaEnabled = false;
   protected tomaMateriasEnabled = false;
   private flagsSubscription?: Subscription;
+  private profileCompletedSubscription?: Subscription;
+
+  @ViewChild('mallaPopover') mallaPopover?: NgbPopover;
 
   constructor(
     private readonly router: Router,
@@ -36,10 +39,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
 
     void this.featureToggleService.loadFlags();
+
+    this.profileCompletedSubscription = this.authSessionService.profileCompleted$.subscribe((completed) => {
+      if (completed && this.mallaPopover) {
+        this.mallaPopover.open();
+        setTimeout(() => {
+          if (this.mallaPopover?.isOpen()) {
+            this.mallaPopover.close();
+          }
+        }, 5000); // auto close after 5 seconds
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.flagsSubscription?.unsubscribe();
+    this.profileCompletedSubscription?.unsubscribe();
   }
 
   protected setLanguage(lang: string): void {

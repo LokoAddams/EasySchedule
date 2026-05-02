@@ -11,7 +11,13 @@
       <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'navbar.home' | translate }}</a>
     </li>
     <li *ngIf="isLoggedIn() && mallaEnabled">
-      <a routerLink="/malla" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'navbar.malla' | translate }}</a>
+      <a routerLink="/malla" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+         [ngbPopover]="('navbar.hints.chooseMalla' | translate)"
+         triggers="manual"
+         placement="bottom"
+         popoverClass="hint-popover hint-popover--malla"
+         #mallaPopover="ngbPopover"
+      >{{ 'navbar.malla' | translate }}</a>
     </li>
     <li *ngIf="isLoggedIn() && tomaMateriasEnabled">
       <a routerLink="/toma-de-materias" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'navbar.tomaMaterias' | translate }}</a>
