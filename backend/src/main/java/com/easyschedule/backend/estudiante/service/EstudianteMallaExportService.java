@@ -41,17 +41,25 @@ public class EstudianteMallaExportService {
         }
 
         Long mallaId = estudiante.getMalla().getId();
+
+        // ✅ Método correcto (1 parámetro)
         List<MallaMateriaResponse> materias = mallaService.findMateriasByMalla(mallaId);
+
         List<EstadoMateria> estados = estadoMateriaRepository.findByUserIdAndMallaId(estudianteId, mallaId);
 
+        // ✅ Mapping correcto según tu modelo
         Map<Long, String> estadoPorMallaMateriaId = estados.stream()
-                .collect(Collectors.toMap(EstadoMateria::getMallaMateriaId, EstadoMateria::getEstado));
+                .collect(Collectors.toMap(
+                        EstadoMateria::getMallaMateriaId,
+                        EstadoMateria::getEstado
+                ));
 
         StringBuilder csv = new StringBuilder();
         csv.append("Semestre,Codigo,Materia,Estado\n");
 
         for (MallaMateriaResponse materia : materias) {
             String estado = estadoPorMallaMateriaId.getOrDefault(materia.id(), "PENDIENTE");
+
             csv.append(materia.semestreSugerido() != null ? materia.semestreSugerido() : "")
                .append(",")
                .append(escapeCsv(materia.codigoMateria()))
