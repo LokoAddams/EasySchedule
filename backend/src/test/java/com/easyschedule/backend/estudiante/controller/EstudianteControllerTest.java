@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-
+import com.easyschedule.backend.estudiante.service.EstudianteMallaExportService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -39,6 +39,10 @@ class EstudianteControllerTest {
 
     @MockitoBean
     private BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter;
+
+    @MockitoBean
+    private EstudianteMallaExportService exportService;
+
 
     @Test
     void findProfileByUsernameReturnsOk() throws Exception {

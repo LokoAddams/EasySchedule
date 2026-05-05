@@ -20,6 +20,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestParam;
+import com.easyschedule.backend.estudiante.service.EstudianteMallaExportService;
+import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
+
 import java.security.Principal;
 
 import java.util.List;
@@ -33,9 +39,11 @@ public class EstudianteController {
     private static final Logger log = LoggerFactory.getLogger(EstudianteController.class);
 
     private final EstudianteService estudianteService;
+    private final EstudianteMallaExportService exportService;
 
-    public EstudianteController(EstudianteService estudianteService) {
+    public EstudianteController(EstudianteService estudianteService, EstudianteMallaExportService exportService) {
         this.estudianteService = estudianteService;
+        this.exportService = exportService;
     }
 
     @GetMapping
@@ -94,6 +102,27 @@ public class EstudianteController {
         validateProfileOwnership(username, userId);
         log.info("[PERFIL-EDICION] Intento de actualización de perfil para el estudiante con ID: {}", userId);
         return estudianteService.updateProfile(username, request);
+    }
+
+    @GetMapping("/{id}/malla/export")
+    public ResponseEntity<byte[]> exportMalla(
+            @PathVariable("id") Long id,
+            @RequestParam(name = "formato", defaultValue = "CSV") String formato,
+            Principal principal) {
+        Long userId = getAuthenticatedUserId(principal);
+        if (!id.equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permisos para acceder a esta malla");
+        }
+
+        try {
+            byte[] data = exportService.exportarMalla(id, formato);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "malla_curricular.csv");
+            return new ResponseEntity<>(data, headers, HttpStatus.OK);
+        } catch (ResourceNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
     }
 
     private void validateProfileOwnership(String username, Long userId) {
