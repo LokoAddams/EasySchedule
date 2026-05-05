@@ -42,12 +42,11 @@ public class EstudianteMallaExportService {
 
         Long mallaId = estudiante.getMalla().getId();
 
-        // ✅ Método correcto (1 parámetro)
-        List<MallaMateriaResponse> materias = mallaService.findMateriasByMalla(mallaId);
+        // 🔥 usa versión compatible con CI
+        List<MallaMateriaResponse> materias = mallaService.findMateriasByMalla(mallaId, estudianteId);
 
         List<EstadoMateria> estados = estadoMateriaRepository.findByUserIdAndMallaId(estudianteId, mallaId);
 
-        // ✅ Mapping correcto según tu modelo
         Map<Long, String> estadoPorMallaMateriaId = estados.stream()
                 .collect(Collectors.toMap(
                         EstadoMateria::getMallaMateriaId,

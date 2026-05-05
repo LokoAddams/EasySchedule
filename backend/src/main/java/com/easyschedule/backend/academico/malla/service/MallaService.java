@@ -10,35 +10,41 @@ import org.springframework.stereotype.Service;
 @Service
 public class MallaService {
 
-	private final MallaRepository mallaRepository;
-	private final MallaMateriaRepository mallaMateriaRepository;
+    private final MallaRepository mallaRepository;
+    private final MallaMateriaRepository mallaMateriaRepository;
 
-	public MallaService(MallaRepository mallaRepository, MallaMateriaRepository mallaMateriaRepository) {
-		this.mallaRepository = mallaRepository;
-		this.mallaMateriaRepository = mallaMateriaRepository;
-	}
+    public MallaService(MallaRepository mallaRepository, MallaMateriaRepository mallaMateriaRepository) {
+        this.mallaRepository = mallaRepository;
+        this.mallaMateriaRepository = mallaMateriaRepository;
+    }
 
-	public List<MallaResponse> findActiveByCarrera(Long carreraId) {
-		return mallaRepository.findByCarreraIdAndActiveTrueOrderByVersionDesc(carreraId).stream()
-			.map((malla) -> new MallaResponse(
-				malla.getId(),
-				malla.getCarreraId(),
-				malla.getNombre(),
-				malla.getVersion(),
-				malla.isActive()
-			))
-			.toList();
-	}
+    public List<MallaResponse> findActiveByCarrera(Long carreraId) {
+        return mallaRepository.findByCarreraIdAndActiveTrueOrderByVersionDesc(carreraId).stream()
+            .map((malla) -> new MallaResponse(
+                malla.getId(),
+                malla.getCarreraId(),
+                malla.getNombre(),
+                malla.getVersion(),
+                malla.isActive()
+            ))
+            .toList();
+    }
 
-	public List<MallaMateriaResponse> findMateriasByMalla(Long mallaId) {
-		return mallaMateriaRepository.findByMallaIdAndMateriaActiveTrueOrderBySemestreSugeridoAsc(mallaId).stream()
-			.map(mm -> new MallaMateriaResponse(
-				mm.getId(),
-				mm.getMateria().getId(),
-				mm.getMateria().getCodigo(),
-				mm.getMateria().getNombre(),
-				mm.getSemestreSugerido()
-			))
-			.toList();
-	}
+    // ✔ Método original (se mantiene)
+    public List<MallaMateriaResponse> findMateriasByMalla(Long mallaId) {
+        return mallaMateriaRepository.findByMallaIdAndMateriaActiveTrueOrderBySemestreSugeridoAsc(mallaId).stream()
+            .map(mm -> new MallaMateriaResponse(
+                mm.getId(),
+                mm.getMateria().getId(),
+                mm.getMateria().getCodigo(),
+                mm.getMateria().getNombre(),
+                mm.getSemestreSugerido()
+            ))
+            .toList();
+    }
+
+    // 🔥 NUEVO MÉTODO (compatibilidad con CI)
+    public List<MallaMateriaResponse> findMateriasByMalla(Long mallaId, Long estudianteId) {
+        return findMateriasByMalla(mallaId);
+    }
 }
