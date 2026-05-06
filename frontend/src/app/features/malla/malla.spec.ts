@@ -8,9 +8,11 @@ import { UniversidadService } from '../../services/academico/universidad.service
 import { FeatureToggleService, FeatureFlags } from '../../services/feature-toggle.service';
 import { TomaSeleccionService } from '../../services/academico/toma-seleccion.service';
 import { TranslateService } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { ToastService } from '../../core/services/toast.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
-import { ToastService } from '../../core/services/toast.service';
+import { TourHintsService } from '../../services/tour-hints.service';
 
 describe('Malla component logic', () => {
   let component: Malla;
@@ -23,11 +25,13 @@ describe('Malla component logic', () => {
   let estadoMateriaServiceSpy: jasmine.SpyObj<any>;
   let tomaSeleccionServiceSpy: jasmine.SpyObj<TomaSeleccionService>;
   let translateServiceSpy: jasmine.SpyObj<TranslateService>;
-  let authSessionServiceSpy: jasmine.SpyObj<AuthSessionService>;
-  let perfilServiceSpy: jasmine.SpyObj<PerfilService>;
-  let toastServiceSpy: jasmine.SpyObj<ToastService>;
   let routerSpy: jasmine.SpyObj<any>;
   let activatedRouteStub: any;
+  let httpSpy: jasmine.SpyObj<HttpClient>;
+  let toastServiceSpy: jasmine.SpyObj<ToastService>;
+  let authSessionServiceSpy: jasmine.SpyObj<AuthSessionService>;
+  let perfilServiceSpy: jasmine.SpyObj<PerfilService>;
+  let tourHintsServiceSpy: jasmine.SpyObj<TourHintsService>;
 
   beforeEach(() => {
     flagsSubject = new BehaviorSubject<FeatureFlags>({ malla: true, tomaMaterias: false });
@@ -40,18 +44,20 @@ describe('Malla component logic', () => {
     carreraServiceSpy = jasmine.createSpyObj<CarreraService>('CarreraService', ['getCarrerasActivasPorUniversidad']);
     mallaCatalogoServiceSpy = jasmine.createSpyObj<MallaCatalogoService>('MallaCatalogoService', ['getMallasActivasPorCarrera', 'getMateriasPorMalla']);
     seleccionAcademicaServiceSpy = jasmine.createSpyObj<SeleccionAcademicaService>('SeleccionAcademicaService', ['getSeleccionActual', 'guardarSeleccion']);
-    estadoMateriaServiceSpy = jasmine.createSpyObj('EstadoMateriaService', ['getEstadosMateria']);
+    estadoMateriaServiceSpy = jasmine.createSpyObj('EstadoMateriaService', ['getEstadosMateria', 'guardarEstado']);
     tomaSeleccionServiceSpy = jasmine.createSpyObj<TomaSeleccionService>('TomaSeleccionService', ['agregarMateria']);
     Object.defineProperty(tomaSeleccionServiceSpy, 'seleccion$', { value: of([]) });
     translateServiceSpy = jasmine.createSpyObj<TranslateService>('TranslateService', ['instant']);
     translateServiceSpy.instant.and.callFake((key: string) => key);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
+    activatedRouteStub = { snapshot: { queryParams: {} } };
+    httpSpy = jasmine.createSpyObj<HttpClient>('HttpClient', ['get', 'post']);
+    toastServiceSpy = jasmine.createSpyObj<ToastService>('ToastService', ['success', 'error']);
     authSessionServiceSpy = jasmine.createSpyObj<AuthSessionService>('AuthSessionService', ['getCurrentUsername']);
     authSessionServiceSpy.getCurrentUsername.and.returnValue('testuser');
     perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername', 'completeTour']);
     perfilServiceSpy.getPerfilByUsername.and.returnValue(of({ tourCompleted: true } as any));
-    toastServiceSpy = jasmine.createSpyObj<ToastService>('ToastService', ['success', 'error']);
-    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
-    activatedRouteStub = { snapshot: { queryParams: {} } };
+    tourHintsServiceSpy = jasmine.createSpyObj<TourHintsService>('TourHintsService', ['closeTomaMateriasPopover']);
 
     component = new (Malla as any)(
       featureServiceMock,
@@ -67,12 +73,13 @@ describe('Malla component logic', () => {
       toastServiceSpy,
       authSessionServiceSpy,
       perfilServiceSpy,
+      tourHintsServiceSpy,
+      httpSpy,
     );
   });
 
   it('sets required error when trying to save universidad without selection', () => {
     (component as any).onGuardarUniversidadClick();
-
     expect((component as any).universidadRequiredError).toBeTrue();
   });
 
