@@ -145,10 +145,6 @@ Reglas obligatorias:
     private readonly perfilService: PerfilService,
     private readonly tourHintsService: TourHintsService,
     private readonly http: HttpClient,
-    private readonly toastService: ToastService,
-    private readonly authSessionService: AuthSessionService,
-    private readonly perfilService: PerfilService,
-    private readonly tourHintsService: TourHintsService,
   ) {}
 
   ngOnInit(): void {
