@@ -59,6 +59,9 @@ public class Estudiante {
     @Column(name = "profile_completed", nullable = false)
     private boolean profileCompleted;
 
+    @Column(name = "tour_completed", nullable = false)
+    private boolean tourCompleted;
+
     @MapsId
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -177,6 +180,14 @@ public class Estudiante {
 
     public void setProfileCompleted(boolean profileCompleted) {
         this.profileCompleted = profileCompleted;
+    }
+
+    public boolean isTourCompleted() {
+        return tourCompleted;
+    }
+
+    public void setTourCompleted(boolean tourCompleted) {
+        this.tourCompleted = tourCompleted;
     }
 
 }

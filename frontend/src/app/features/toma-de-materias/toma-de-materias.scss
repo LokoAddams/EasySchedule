@@ -172,6 +172,66 @@ h1 {
 	font-weight: 600;
 }
 
+.mobile-only {
+	display: none;
+}
+
+.horario-mobile-list {
+	margin-top: 1.2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.2rem;
+}
+
+.horario-day-card {
+	background: #dce1e8;
+	border: 1px solid rgba(34, 53, 74, 0.25);
+	border-radius: 14px;
+	overflow: hidden;
+}
+
+.horario-day-title {
+	margin: 0;
+	background: #3f6383;
+	color: #f5f9ff;
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.15rem;
+	padding: 0.75rem 1rem;
+	letter-spacing: 0.02em;
+}
+
+.horario-class-item {
+	padding: 1rem;
+	border-bottom: 1px solid rgba(34, 53, 74, 0.15);
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+
+.class-time {
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	color: #274a69;
+	font-size: 0.95rem;
+}
+
+.class-name {
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.05rem;
+	font-weight: 700;
+	color: #112033;
+}
+
+.class-meta {
+	font-size: 0.85rem;
+	color: #3b4655;
+	margin-top: 0.15rem;
+}
+
 .toma-seleccion-container {
 	margin-top: 1.25rem;
 	padding: 1.05rem;
@@ -505,5 +565,13 @@ h1 {
 
 	.horario-grid {
 		min-width: 920px;
+	}
+
+	.desktop-only {
+		display: none;
+	}
+
+	.mobile-only {
+		display: flex;
 	}
 }

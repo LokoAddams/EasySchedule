@@ -35,6 +35,9 @@
     "aria": {
       "goHome": "Ir al inicio",
       "profile": "Ir al perfil"
+    },
+    "hints": {
+      "chooseMalla": "¡Elijamos tu Universidad y Carrera!"
     }
   },
   "home": {
@@ -153,6 +156,7 @@
       "import": "Importar malla",
       "cancel": "Cancelar",
       "success": "Malla importada exitosamente. Se importaron {{count}} materias y {{prerequisitos}} prerrequisitos."
+      "changeStatusSingle": "Actualizar estado de materia"
     },
     "error": {
       "loadUniversidades": "No se pudieron cargar las universidades disponibles.",
@@ -307,6 +311,10 @@
     "readOnly": "Se actualiza según la malla.",
     "loading": "Cargando datos del perfil...",
     "avatarAlt": "Avatar del usuario",
+    "hints": {
+      "completeProfile": "Completa tu perfil para acceder a Malla y Toma de Materias",
+      "missingField": "Campo obligatorio para completar tu perfil"
+    },
     "fields": {
       "username": "Nombre de usuario",
       "nombre": "Nombre",
@@ -335,7 +343,24 @@
     },
     "validation": {
       "required": "Este campo es obligatorio.",
-      "emailInvalid": "Formato de correo electrónico inválido."
+      "emailInvalid": "Formato de correo electrónico inválido.",
+      "carnet": {
+        "maxLength": "El carnet de identidad no puede exceder 8 caracteres.",
+        "invalidChars": "El carnet de identidad solo puede contener letras y números."
+      },
+      "nombre": {
+        "minLength": "El nombre debe tener al menos 2 caracteres.",
+        "maxLength": "El nombre no puede exceder 50 caracteres.",
+        "invalidChars": "El nombre solo puede contener letras, espacios y acentos."
+      },
+      "username": {
+        "minLength": "El nombre de usuario debe tener al menos 3 caracteres.",
+        "maxLength": "El nombre de usuario no puede exceder 30 caracteres.",
+        "invalidChars": "El nombre de usuario solo puede contener letras, números, puntos y guiones."
+      },
+      "email": {
+        "maxLength": "El correo electrónico no puede exceder 100 caracteres."
+      }
     },
     "success": {
       "updated": "Perfil actualizado correctamente."

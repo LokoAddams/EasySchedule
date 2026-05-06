@@ -10,6 +10,7 @@ import com.easyschedule.backend.academico.malla.model.MallaMateria;
 import com.easyschedule.backend.academico.malla.repository.MallaMateriaRepository;
 import com.easyschedule.backend.academico.malla.repository.MallaRepository;
 import com.easyschedule.backend.academico.materia.model.Materia;
+import com.easyschedule.backend.academico.materia.repository.PrerequisitoRepository;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,9 @@ class MallaServiceTest {
     @Mock
     private EstadoMateriaService estadoMateriaService;
 
+    @Mock
+    private PrerequisitoRepository prerequisitoRepository;
+
     @InjectMocks
     private MallaService mallaService;
 
@@ -47,6 +51,7 @@ class MallaServiceTest {
         when(mallaMateriaRepository.findByMallaIdAndMateriaActiveTrueOrderBySemestreSugeridoAsc(99L))
             .thenReturn(List.of(mallaMateria));
         when(estadoMateriaService.getEstadoMateria(7L, 11L)).thenReturn("cursando");
+        when(prerequisitoRepository.findByMallaMateria_Id(11L)).thenReturn(List.of());
 
         List<MallaMateriaResponse> result = mallaService.findMateriasByMalla(99L, 7L);
 

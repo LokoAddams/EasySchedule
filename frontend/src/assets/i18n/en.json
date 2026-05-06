@@ -35,6 +35,9 @@
     "aria": {
       "goHome": "Go to home",
       "profile": "Go to profile"
+    },
+    "hints": {
+      "chooseMalla": "Let's choose your University and Career!"
     }
   },
   "home": {
@@ -309,6 +312,10 @@
     "readOnly": "Updated according to the curriculum.",
     "loading": "Loading profile data...",
     "avatarAlt": "User avatar",
+    "hints": {
+      "completeProfile": "Complete your profile to access Curriculum and Course Selection",
+      "missingField": "Required field to complete your profile"
+    },
     "fields": {
       "username": "Username",
       "nombre": "First Name",
@@ -337,7 +344,24 @@
     },
     "validation": {
       "required": "This field is required.",
-      "emailInvalid": "Invalid email format."
+      "emailInvalid": "Invalid email format.",
+      "carnet": {
+        "maxLength": "Identity card cannot exceed 8 characters.",
+        "invalidChars": "Identity card can only contain letters and numbers."
+      },
+      "nombre": {
+        "minLength": "Name must be at least 2 characters.",
+        "maxLength": "Name cannot exceed 50 characters.",
+        "invalidChars": "Name can only contain letters, spaces, and accents."
+      },
+      "username": {
+        "minLength": "Username must be at least 3 characters.",
+        "maxLength": "Username cannot exceed 30 characters.",
+        "invalidChars": "Username can only contain letters, numbers, periods, and hyphens."
+      },
+      "email": {
+        "maxLength": "Email cannot exceed 100 characters."
+      }
     },
     "success": {
       "updated": "Profile updated successfully."

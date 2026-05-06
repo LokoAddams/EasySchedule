@@ -31,6 +31,8 @@ export class Registro {
   successMessageKey = '';
   errorMessageKey = '';
   loading = false;
+  showPassword = false;
+  showConfirmPassword = false;
   private readonly primaryRegisterPath = '/api/estudiantes/registro';
   private readonly fallbackRegisterPath = '/api/registro';
 
@@ -63,6 +65,14 @@ export class Registro {
     }
 
     return pass === confirm ? null : { mismatch: true };
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   registrar() {

@@ -1,13 +1,14 @@
 import { NgFor, NgIf, NgClass } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, HostListener, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter, firstValueFrom, Subscription } from 'rxjs';
+import { NgbPopover, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { CarreraCatalogoItem, CarreraService } from '../../services/academico/carrera.service';
-import { EstadoMateriaService, EstadoMateriaItem } from '../../services/academico/estado-materia.service';
+import { EstadoMateriaService, EstadoMateriaItem, EstadoMateriaRequest } from '../../services/academico/estado-materia.service';
 import { FeatureToggleService } from '../../services/feature-toggle.service';
 import { MallaCatalogoItem, MallaCatalogoService, MallaMateria } from '../../services/academico/malla-catalogo.service';
 import {
@@ -17,6 +18,10 @@ import {
 import { UniversidadCatalogoItem, UniversidadService } from '../../services/academico/universidad.service';
 import { TomaSeleccionService } from '../../services/academico/toma-seleccion.service';
 import { OfertaDetalleResponse, OfertaMateriaSimple } from '../../services/academico/malla-catalogo.service';
+import { ToastService } from '../../core/services/toast.service';
+import { AuthSessionService } from '../../core/services/auth-session.service';
+import { PerfilService } from '../perfil/perfil.service';
+import { TourHintsService } from '../../services/tour-hints.service';
 
 type SeleccionStep = 'universidad' | 'carrera' | 'malla' | 'resumen';
 type EditMode = 'universidad' | 'malla' | null;
@@ -29,7 +34,7 @@ interface SeleccionSnapshot {
 
 @Component({
   selector: 'app-malla',
-  imports: [FormsModule, NgFor, NgIf, NgClass, TranslatePipe],
+  imports: [FormsModule, NgFor, NgIf, NgClass, TranslatePipe, NgbPopoverModule],
   templateUrl: './malla.html',
   styleUrl: './malla.scss',
 })
@@ -76,6 +81,8 @@ export class Malla implements OnInit, OnDestroy {
   private materiasLoadedForMallaId: number | null = null;
 
   protected showModal = false;
+  protected showAccionesModal = false;
+  protected selectedMateriaParaAccion: MallaMateria | null = null;
   protected materiaDetalle: OfertaDetalleResponse | null = null;
   protected loadingDetalle = false;
   protected selectedOfertaId: number | null = null;
@@ -116,6 +123,11 @@ Reglas obligatorias:
     }
     return this.fullPrompt;
   }
+  @ViewChild('popoverStep1') popoverStep1?: NgbPopover;
+  @ViewChild('popoverStep2') popoverStep2?: NgbPopover;
+  @ViewChild('popoverStep4') popoverStep4?: NgbPopover;
+
+  protected tourStep = 0;
 
   constructor(
     private readonly featureService: FeatureToggleService,
@@ -129,6 +141,10 @@ Reglas obligatorias:
     private readonly tomaSeleccionService: TomaSeleccionService,
     private readonly translateService: TranslateService,
     private readonly http: HttpClient,
+    private readonly toastService: ToastService,
+    private readonly authSessionService: AuthSessionService,
+    private readonly perfilService: PerfilService,
+    private readonly tourHintsService: TourHintsService,
   ) {}
 
   ngOnInit(): void {
@@ -182,12 +198,92 @@ Reglas obligatorias:
     void this.prepareMallaEditMode();
   }
 
+  protected showActualizarModal = false;
+  protected selectedMateriaIdActualizar: number | null = null;
+  protected selectedEstadoActualizar: 'APROBADA' | 'CURSANDO' | 'PENDIENTE' = 'PENDIENTE';
+  protected savingEstado = false;
+
   protected onActualizarMallaClick(): void {
     if (this.selectedMallaId === null) {
       return;
     }
 
-    void this.router.navigate(['actualizar'], { relativeTo: this.route });
+    this.showActualizarModal = true;
+    if (this.showAccionesModal) {
+      const materiaId = this.selectedMateriaParaAccion?.id ?? null;
+      this.closeAccionesModal();
+      this.selectedMateriaIdActualizar = materiaId;
+    } else {
+      this.selectedMateriaIdActualizar = this.materias.length > 0 ? this.materias[0].id : null;
+    }
+    this.onMateriaActualizarChange();
+  }
+
+  protected closeActualizarModal(): void {
+    this.showActualizarModal = false;
+  }
+
+  protected onMateriaActualizarChange(): void {
+    const materia = this.materias.find(m => m.id === this.selectedMateriaIdActualizar);
+    if (materia) {
+      this.selectedEstadoActualizar = this.mapEstadoBDToUI(materia.estado);
+    }
+  }
+
+  protected async actualizarMateriaSeleccionada(): Promise<void> {
+    if (this.selectedMateriaIdActualizar === null) return;
+    
+    if (this.selectedEstadoActualizar === 'CURSANDO') {
+      this.toastService.error('malla.UpdateCourse.cursandoAutoAssigned');
+      return;
+    }
+
+    this.savingEstado = true;
+    try {
+      const request: EstadoMateriaRequest = {
+        mallaMateriaId: this.selectedMateriaIdActualizar,
+        estado: this.mapEstadoUIToBD(this.selectedEstadoActualizar),
+      };
+
+      await firstValueFrom(this.estadoMateriaService.guardarEstado(request));
+
+      const materia = this.materias.find(m => m.id === this.selectedMateriaIdActualizar);
+      if (materia) {
+        materia.estado = request.estado;
+      }
+
+      this.toastService.success('malla.UpdateCourse.success');
+      this.closeActualizarModal();
+    } catch (error) {
+      this.toastService.error('malla.UpdateCourse.errorUpdate');
+    } finally {
+      this.savingEstado = false;
+    }
+  }
+
+  protected getEstadoLabelKey(estado: 'APROBADA' | 'CURSANDO' | 'PENDIENTE'): string {
+    const labelMap = {
+      'APROBADA': 'malla.UpdateCourse.aprobada',
+      'CURSANDO': 'malla.UpdateCourse.cursando',
+      'PENDIENTE': 'malla.UpdateCourse.pendiente',
+    };
+    return labelMap[estado];
+  }
+
+  private mapEstadoUIToBD(estado: 'APROBADA' | 'CURSANDO' | 'PENDIENTE'): 'aprobada' | 'pendiente' | 'cursando' {
+    const map = {
+      'APROBADA': 'aprobada' as const,
+      'CURSANDO': 'cursando' as const,
+      'PENDIENTE': 'pendiente' as const,
+    };
+    return map[estado];
+  }
+
+  protected mapEstadoBDToUI(estado: string | null | undefined): 'APROBADA' | 'CURSANDO' | 'PENDIENTE' {
+    if (!estado) return 'PENDIENTE';
+    if (estado === 'aprobada') return 'APROBADA';
+    if (estado === 'cursando') return 'CURSANDO';
+    return 'PENDIENTE';
   }
 
   protected onCancelChangeClick(): void {
@@ -277,8 +373,86 @@ Reglas obligatorias:
   }
 
   protected onMateriaClick(materia: MallaMateria): void {
-    if (materia.estado === 'aprobada' || materia.estado === 'cursando') return;
+    this.selectedMateriaParaAccion = materia;
+    this.showAccionesModal = true;
+  }
 
+  protected hoveredMateriaId: number | null = null;
+  protected prereqLines: { x1: number, y1: number, x2: number, y2: number }[] = [];
+
+  protected onMateriaHover(materiaId: number | null): void {
+    if (window.innerWidth < 768) return;
+    this.hoveredMateriaId = materiaId;
+    // Delay to ensure rendering is complete if needed, but synchronous is fine since DOM exists
+    this.updatePrereqLines();
+  }
+
+  @HostListener('window:resize')
+  protected updatePrereqLines(): void {
+    if (!this.hoveredMateriaId) {
+      this.prereqLines = [];
+      return;
+    }
+    const lines: { x1: number, y1: number, x2: number, y2: number }[] = [];
+    const target = this.materias.find(m => m.id === this.hoveredMateriaId);
+    
+    if (!target || !target.prerequisitosIds || target.prerequisitosIds.length === 0) {
+      this.prereqLines = [];
+      return;
+    }
+
+    const boardWrapper = document.querySelector('.malla-board-wrapper') as HTMLElement;
+    const wrapperRect = boardWrapper?.getBoundingClientRect();
+    if (!wrapperRect) return;
+
+    const targetEl = document.getElementById(`subject-${target.id}`);
+    if (targetEl) {
+      const tRect = targetEl.getBoundingClientRect();
+      const scrollLeft = boardWrapper.scrollLeft || 0;
+      const x2 = tRect.left - wrapperRect.left + scrollLeft;
+      const y2 = tRect.top - wrapperRect.top + (tRect.height / 2);
+
+      for (const pid of target.prerequisitosIds) {
+        const pEl = document.getElementById(`subject-${pid}`);
+        if (pEl) {
+          const pRect = pEl.getBoundingClientRect();
+          const x1 = pRect.right - wrapperRect.left + scrollLeft;
+          const y1 = pRect.top - wrapperRect.top + (pRect.height / 2);
+          lines.push({ x1, y1, x2, y2 });
+        }
+      }
+    }
+    this.prereqLines = lines;
+  }
+
+  protected getMateriaCodigo(id: number): string {
+    return this.materias.find(m => m.id === id)?.codigoMateria ?? '???';
+  }
+
+  protected enfocarMateria(id: number, event: Event): void {
+    event.stopPropagation();
+    const el = document.getElementById(`subject-${id}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('malla-subject--highlighted');
+      setTimeout(() => el.classList.remove('malla-subject--highlighted'), 2000);
+    }
+  }
+
+  protected closeAccionesModal(): void {
+    this.showAccionesModal = false;
+    this.selectedMateriaParaAccion = null;
+  }
+
+  protected onTomarMateriaClick(): void {
+    const materia = this.selectedMateriaParaAccion;
+    if (!materia) return;
+    
+    if (materia.estado === 'aprobada' || materia.estado === 'cursando') {
+      return;
+    }
+
+    this.showAccionesModal = false;
     this.showModal = true;
     this.loadingDetalle = true;
     this.selectedOfertaId = null;
@@ -530,18 +704,77 @@ Reglas obligatorias:
       this.loadingMaterias = false;
       if (!this.loadMateriasError) {
         this.materiasLoadedForMallaId = mallaId;
+        this.iniciarTour();
       }
     }
   }
 
-  private mapEstadoBDToUI(estado: string | undefined): 'APROBADA' | 'CURSANDO' | 'PENDIENTE' {
-    if (!estado) return 'PENDIENTE';
-    const map: Record<string, 'APROBADA' | 'CURSANDO' | 'PENDIENTE'> = {
-      'aprobada': 'APROBADA',
-      'cursando': 'CURSANDO',
-      'pendiente': 'PENDIENTE',
-    };
-    return map[estado] ?? 'PENDIENTE';
+  private getTourStorageKey(): string {
+    const username = this.authSessionService.getCurrentUsername();
+    return username ? `malla.tourCompleted.${username}` : 'malla.tourCompleted';
+  }
+
+  protected iniciarTour(): void {
+    const storageKey = this.getTourStorageKey();
+
+    // Migrar clave global antigua a clave por usuario (si existe)
+    const legacyKey = 'malla.tourCompleted';
+    if (localStorage.getItem(legacyKey) === 'true') {
+      // La clave vieja se elimina para no bloquear a otros usuarios
+      localStorage.removeItem(legacyKey);
+    }
+
+    // Verificar primero en localStorage (clave por usuario) para evitar flash
+    if (localStorage.getItem(storageKey) === 'true') {
+      return;
+    }
+
+    // Verificar en el backend (fuente de verdad, persiste entre dispositivos)
+    const username = this.authSessionService.getCurrentUsername();
+    if (username) {
+      this.perfilService.getPerfilByUsername(username).subscribe({
+        next: (perfil) => {
+          if (perfil.tourCompleted) {
+            localStorage.setItem(storageKey, 'true');
+            return;
+          }
+          this.lanzarTourConRetraso();
+        },
+        error: () => {
+          // Si falla la consulta, mostramos el tour de todas formas
+          this.lanzarTourConRetraso();
+        }
+      });
+    } else {
+      this.lanzarTourConRetraso();
+    }
+  }
+
+  private lanzarTourConRetraso(): void {
+    // Pequeno retraso para asegurar que los elementos del DOM esten listos
+    setTimeout(() => {
+      this.siguienteTour(1);
+    }, 800);
+  }
+
+  protected siguienteTour(step: number): void {
+    this.popoverStep1?.close();
+    this.popoverStep2?.close();
+    this.popoverStep4?.close();
+    this.tourHintsService.closeTomaMateriasPopover();
+
+    setTimeout(() => {
+      if (step === 1) this.popoverStep1?.open();
+      if (step === 2) this.popoverStep2?.open();
+      if (step === 3) this.tourHintsService.openTomaMateriasPopover();
+      if (step === 4) this.popoverStep4?.open();
+    }, 100);
+  }
+
+  protected finalizarTour(): void {
+    this.cerrarTodosLosPopovers();
+    localStorage.setItem(this.getTourStorageKey(), 'true');
+    this.persistirTourCompletado();
   }
 
   public openImportModal(): void {
@@ -648,4 +881,33 @@ Reglas obligatorias:
   public toggleTutorial(): void {
     this.showTutorial = !this.showTutorial;
   }
+  protected irATomaYCerrarTour(): void {
+    this.cerrarTodosLosPopovers();
+    localStorage.setItem(this.getTourStorageKey(), 'true');
+    this.persistirTourCompletado();
+    void this.router.navigate(['/toma-de-materias']);
+  }
+
+  protected noVolverAMostrarTour(): void {
+    this.cerrarTodosLosPopovers();
+    localStorage.setItem(this.getTourStorageKey(), 'true');
+    this.persistirTourCompletado();
+  }
+
+  private cerrarTodosLosPopovers(): void {
+    this.popoverStep1?.close();
+    this.popoverStep2?.close();
+    this.popoverStep4?.close();
+    this.tourHintsService.closeTomaMateriasPopover();
+  }
+
+  private persistirTourCompletado(): void {
+    const username = this.authSessionService.getCurrentUsername();
+    if (!username) return;
+    this.perfilService.completeTour(username).subscribe({
+      next: () => {},
+      error: () => {}
+    });
+  }
+
 }

@@ -14,6 +14,7 @@ export interface PerfilResponse {
 	universidad: string | null;
 	universidadId?: number | null;
 	profileCompleted?: boolean;
+	tourCompleted?: boolean;
 }
 
 export interface MallaResponse {

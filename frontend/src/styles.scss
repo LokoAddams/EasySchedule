@@ -92,3 +92,41 @@ body {
   font-weight: 600;
   line-height: 1.2;
 }
+
+/* Hint Popovers */
+.hint-popover .popover-body {
+  font-weight: 700;
+  color: var(--color-blue-dark);
+  background-color: var(--color-sand);
+  border: 2px solid var(--color-blue);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 0.75rem 1rem;
+}
+
+.hint-popover .popover-arrow::before {
+  border-top-color: var(--color-blue) !important;
+  border-bottom-color: var(--color-blue) !important;
+}
+
+.hint-popover .popover-arrow::after {
+  border-top-color: var(--color-sand) !important;
+  border-bottom-color: var(--color-sand) !important;
+}
+
+.hint-popover--field .popover-body {
+  color: var(--color-error);
+  border-color: var(--color-error);
+  background-color: #fffaf9;
+}
+
+.hint-popover--field .popover-arrow::before {
+  border-top-color: var(--color-error) !important;
+  border-bottom-color: var(--color-error) !important;
+}
+
+.hint-popover--field .popover-arrow::after {
+  border-top-color: #fffaf9 !important;
+  border-bottom-color: #fffaf9 !important;
+}
+

@@ -28,4 +28,26 @@ class SessionTokenServiceTest {
     void tokenTtlIsOneHour() {
         assertEquals(3600L, sessionTokenService.getTokenTtlSeconds());
     }
+
+    @Test
+    void validateReturnsEmptyWhenTokenNotFound() {
+        assertTrue(sessionTokenService.validateAndGetUserId("unknown").isEmpty());
+    }
+
+    @Test
+    void validateReturnsEmptyWhenTokenIsBlank() {
+        assertTrue(sessionTokenService.validateAndGetUserId("").isEmpty());
+        assertTrue(sessionTokenService.validateAndGetUserId(null).isEmpty());
+    }
+
+    @Test
+    void revokeDoesNotThrowWhenTokenNotFound() {
+        sessionTokenService.revokeToken("unknown");
+    }
+
+    @Test
+    void revokeDoesNotThrowWhenTokenIsBlank() {
+        sessionTokenService.revokeToken("");
+        sessionTokenService.revokeToken(null);
+    }
 }

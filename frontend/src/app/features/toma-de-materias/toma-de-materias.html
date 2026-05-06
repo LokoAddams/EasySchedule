@@ -95,7 +95,7 @@
     {{ 'tomaMaterias.messages.noScheduleToExport' | translate }}
   </div>
 
-  <div class="horario-grid-wrapper" *ngIf="!loading && !error && horario && horario.clases && horario.clases.length">
+  <div class="horario-grid-wrapper desktop-only" *ngIf="!loading && !error && horario && horario.clases && horario.clases.length">
     <table class="horario-grid">
       <thead>
         <tr>
@@ -120,6 +120,28 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="horario-mobile-list mobile-only" *ngIf="!loading && !error && horario && horario.clases && horario.clases.length">
+    <ng-container *ngFor="let dia of dias">
+      <ng-container *ngIf="getClasesPorDia(dia) as clasesDelDia">
+        <div class="horario-day-card" *ngIf="clasesDelDia.length > 0">
+          <h4 class="horario-day-title">{{ ('tomaMaterias.days.' + dia) | translate }}</h4>
+          <div class="horario-class-item" *ngFor="let clase of clasesDelDia">
+            <div class="class-time">{{ clase.horaInicio }} - {{ clase.horaFin }}</div>
+            <div class="class-details">
+              <div class="class-name">{{ clase.materia }}</div>
+              <div class="class-meta" *ngIf="clase.paralelo || clase.aula">
+                {{ clase.paralelo ? (('tomaMaterias.table.parallel' | translate) + ' ' + clase.paralelo) : '' }}
+                <span *ngIf="clase.paralelo && clase.aula"> | </span>
+                {{ clase.aula ?? '' }}
+              </div>
+              <div class="class-meta" *ngIf="clase.docente">{{ clase.docente }}</div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
   </div>
   <div class="malla-progress" *ngIf="!loading && !error && totalMateriasMalla > 0">
     <div class="horario-section-title">

@@ -8,6 +8,9 @@ import { UniversidadService } from '../../services/academico/universidad.service
 import { FeatureToggleService, FeatureFlags } from '../../services/feature-toggle.service';
 import { TomaSeleccionService } from '../../services/academico/toma-seleccion.service';
 import { TranslateService } from '@ngx-translate/core';
+import { AuthSessionService } from '../../core/services/auth-session.service';
+import { PerfilService } from '../perfil/perfil.service';
+import { ToastService } from '../../core/services/toast.service';
 
 describe('Malla component logic', () => {
   let component: Malla;
@@ -20,6 +23,9 @@ describe('Malla component logic', () => {
   let estadoMateriaServiceSpy: jasmine.SpyObj<any>;
   let tomaSeleccionServiceSpy: jasmine.SpyObj<TomaSeleccionService>;
   let translateServiceSpy: jasmine.SpyObj<TranslateService>;
+  let authSessionServiceSpy: jasmine.SpyObj<AuthSessionService>;
+  let perfilServiceSpy: jasmine.SpyObj<PerfilService>;
+  let toastServiceSpy: jasmine.SpyObj<ToastService>;
   let routerSpy: jasmine.SpyObj<any>;
   let activatedRouteStub: any;
 
@@ -39,6 +45,11 @@ describe('Malla component logic', () => {
     Object.defineProperty(tomaSeleccionServiceSpy, 'seleccion$', { value: of([]) });
     translateServiceSpy = jasmine.createSpyObj<TranslateService>('TranslateService', ['instant']);
     translateServiceSpy.instant.and.callFake((key: string) => key);
+    authSessionServiceSpy = jasmine.createSpyObj<AuthSessionService>('AuthSessionService', ['getCurrentUsername']);
+    authSessionServiceSpy.getCurrentUsername.and.returnValue('testuser');
+    perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername', 'completeTour']);
+    perfilServiceSpy.getPerfilByUsername.and.returnValue(of({ tourCompleted: true } as any));
+    toastServiceSpy = jasmine.createSpyObj<ToastService>('ToastService', ['success', 'error']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     activatedRouteStub = { snapshot: { queryParams: {} } };
 
@@ -53,6 +64,9 @@ describe('Malla component logic', () => {
       activatedRouteStub,
       tomaSeleccionServiceSpy,
       translateServiceSpy,
+      toastServiceSpy,
+      authSessionServiceSpy,
+      perfilServiceSpy,
     );
   });
 
@@ -181,6 +195,7 @@ describe('Malla component logic', () => {
         nombreMateria: 'Programacion I',
         semestreSugerido: 1,
         estado: 'aprobada',
+        prerequisitosIds: [],
       },
       {
         id: 2,
@@ -189,6 +204,7 @@ describe('Malla component logic', () => {
         nombreMateria: 'Programacion II',
         semestreSugerido: 2,
         estado: null,
+        prerequisitosIds: [],
       },
     ]));
 

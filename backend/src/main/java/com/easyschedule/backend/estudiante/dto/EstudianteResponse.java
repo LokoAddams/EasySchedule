@@ -16,6 +16,7 @@ public record EstudianteResponse(
     Long universidadId,
     Long carreraId,
     Long mallaId,
-    boolean profileCompleted
+    boolean profileCompleted,
+    boolean tourCompleted
 ) {
 }

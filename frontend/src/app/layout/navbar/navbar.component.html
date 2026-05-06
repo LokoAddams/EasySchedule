@@ -11,10 +11,22 @@
       <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'navbar.home' | translate }}</a>
     </li>
     <li *ngIf="isLoggedIn() && mallaEnabled">
-      <a routerLink="/malla" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'navbar.malla' | translate }}</a>
+      <a routerLink="/malla" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+         [ngbPopover]="('navbar.hints.chooseMalla' | translate)"
+         triggers="manual"
+         placement="bottom"
+         popoverClass="hint-popover hint-popover--malla"
+         #mallaPopover="ngbPopover"
+      >{{ 'navbar.malla' | translate }}</a>
     </li>
     <li *ngIf="isLoggedIn() && tomaMateriasEnabled">
-      <a routerLink="/toma-de-materias" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'navbar.tomaMaterias' | translate }}</a>
+      <a routerLink="/toma-de-materias" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+         [ngbPopover]="tourStep3Template"
+         triggers="manual"
+         placement="bottom"
+         popoverClass="hint-popover"
+         #tomaMateriasPopover="ngbPopover"
+      >{{ 'navbar.tomaMaterias' | translate }}</a>
     </li>
   </ul>
 
@@ -57,4 +69,16 @@
       </div>
     </details>
   </div>
+
+  <ng-template #tourStep3Template>
+    <div style="max-width: 280px;">
+      <p style="margin-bottom: 0.75rem; line-height: 1.5;">
+        ¡<strong>Armemos tu horario</strong>! Selecciona tus materias y construye tu horario del semestre.
+      </p>
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button type="button" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0; border: 1px solid rgba(34, 57, 90, 0.25); background-color: transparent; border-radius: 6px; color: #22395a; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; transition: background-color 0.2s ease;" (click)="closeTourPopover()">No volver a mostrar</button>
+        <button type="button" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0; border: none; background-color: var(--color-blue); color: white; border-radius: 6px; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; transition: background-color 0.2s ease;" (click)="closeTourPopover()">¡Entendido!</button>
+      </div>
+    </div>
+  </ng-template>
 </nav>

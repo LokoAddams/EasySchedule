@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,6 +9,9 @@ export class AuthSessionService {
   private readonly tokenStorageKey = 'easySchedule.token';
   private readonly tokenExpiresAtStorageKey = 'easySchedule.tokenExpiresAt';
   private readonly profileCompletedStorageKey = 'easySchedule.profileCompleted';
+
+  private readonly profileCompletedSubject = new Subject<boolean>();
+  public readonly profileCompleted$ = this.profileCompletedSubject.asObservable();
 
   setCurrentUsername(username: string): void {
     const trimmedUsername = username.trim();
@@ -63,7 +67,12 @@ export class AuthSessionService {
   }
 
   setProfileCompleted(profileCompleted: boolean): void {
+    const wasCompleted = this.isProfileCompleted();
     localStorage.setItem(this.profileCompletedStorageKey, String(profileCompleted));
+    
+    if (!wasCompleted && profileCompleted) {
+      this.profileCompletedSubject.next(true);
+    }
   }
 
   isProfileCompleted(): boolean {

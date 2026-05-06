@@ -27,4 +27,9 @@ export class PerfilService {
 	changePassword(payload: ChangePasswordRequest): Observable<{ message: string }> {
 		return this.apiService.post<{ message: string }, ChangePasswordRequest>('/api/change-password', payload);
 	}
+
+	completeTour(username: string): Observable<PerfilResponse> {
+		const encodedUsername = encodeURIComponent(username);
+		return this.apiService.post<PerfilResponse, object>(`/api/estudiantes/perfil/${encodedUsername}/tour`, {});
+	}
 }

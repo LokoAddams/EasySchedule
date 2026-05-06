@@ -105,4 +105,16 @@ describe('Registro Component', () => {
 
   });
 
+  it('debería cambiar la visibilidad del password', () => {
+    expect(component.showPassword).toBeFalse();
+    component.togglePasswordVisibility();
+    expect(component.showPassword).toBeTrue();
+  });
+
+  it('debería cambiar la visibilidad de la confirmación de password', () => {
+    expect(component.showConfirmPassword).toBeFalse();
+    component.toggleConfirmPasswordVisibility();
+    expect(component.showConfirmPassword).toBeTrue();
+  });
+
 });

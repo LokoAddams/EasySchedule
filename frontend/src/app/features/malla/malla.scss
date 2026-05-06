@@ -245,14 +245,13 @@
 }
 
 .malla-board {
-  display: flex;
-  gap: 0.8rem;
-  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.2rem;
+  align-items: start;
 }
 
 .malla-board__column {
-  flex: 1 1 0;
-  min-width: 0;
   background: #fbfbfd;
   border: 1px solid rgba(47, 79, 115, 0.12);
   border-radius: 12px;
@@ -260,6 +259,17 @@
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+}
+
+.malla-board__column-title {
+  margin: 0 0 0.4rem 0;
+  color: #2c4f73;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: center;
+  border-bottom: 2px solid rgba(47, 79, 115, 0.15);
+  padding-bottom: 0.4rem;
 }
 
 .malla-board__column--actual {
@@ -350,6 +360,80 @@
   hyphens: auto;
 }
 
+.malla-subject--highlighted {
+  box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.4) !important;
+  transform: scale(1.02) !important;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.malla-lines-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.malla-subject {
+  position: relative;
+  z-index: 1; /* Keep above the SVG lines */
+}
+
+.malla-subject__prereqs {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.malla-subject__prereq-label {
+  font-size: 0.75rem;
+  color: #666;
+  font-family: 'Poppins', sans-serif;
+}
+
+.malla-subject__prereq-btn {
+  border: 1px solid rgba(47, 79, 115, 0.3);
+  background: #f0f4f8;
+  border-radius: 4px;
+  color: #2c4f73;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.4rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.malla-mobile-tip {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: #eef2f6;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #2c4f73;
+  font-style: italic;
+  text-align: center;
+  border: 1px solid rgba(47, 79, 115, 0.15);
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .mobile-only {
+    display: block;
+  }
+  .malla-subject__prereqs {
+    display: flex;
+  }
+}
+
+
 .malla-board__empty {
   padding: 2rem;
   text-align: center;
@@ -395,6 +479,10 @@
     radial-gradient(circle at 92% 12%, rgba(111, 137, 173, 0.18), transparent 30%),
     #f7f3e7;
   box-shadow: 0 20px 48px rgba(11, 20, 33, 0.34);
+}
+
+.malla-modal--small {
+  width: min(420px, 96vw);
 }
 
 .malla-modal__header {
