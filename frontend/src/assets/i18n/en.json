@@ -122,7 +122,36 @@
       "changeMalla": "Change Curriculum",
       "changeUniversidad": "Change University",
       "cancelChange": "Cancel",
-      "changeStatus": "Update course status"
+      "changeStatus": "Update course status",
+      "uploadMalla": "Upload new curriculum",
+      "changeStatusSingle": "Update course status"
+    },
+    "import": {
+      "eyebrow": "Curriculum import",
+      "title": "Import new curriculum",
+      "nameLabel": "Curriculum name",
+      "namePlaceholder": "Ex: 2024 Curriculum",
+      "formatHelpTitle": "How to generate the file?",
+      "formatHelpText": "Use the following prompt with your favorite AI (ChatGPT, Copilot, etc.) to generate the CSV file. Then copy it and upload it here.",
+      "copyPrompt": "Copy prompt",
+      "promptCopied": "Prompt copied to clipboard. Paste it into your AI!",
+      "copyPromptManually": "Copy this prompt manually:",
+      "fileLabel": "Curriculum file",
+      "selectFile": "Select file",
+      "noFile": "No file selected",
+      "formatHelp": "Supported formats: CSV or JSON",
+      "csvFormat": "CSV format",
+      "csvExample": "Example: MAT101,Calculus I,1,4,MAT100;MAT102",
+      "jsonFormat": "JSON format",
+      "errorFormat": "Unsupported format. Use CSV or JSON",
+      "errorNoFile": "You must select a file",
+      "errorNameRequired": "Curriculum name is required",
+      "errorCarreraRequired": "You must select a career first",
+      "errorGeneric": "Error importing curriculum",
+      "importing": "Importing...",
+      "import": "Import curriculum",
+      "cancel": "Cancel",
+      "success": "Curriculum imported successfully. Imported {{count}} subjects and {{prerequisitos}} prerequisites."
     },
     "error": {
       "loadUniversidades": "Could not load available universities.",
@@ -139,8 +168,6 @@
       "carreraRequired": "You must select a career.",
       "mallaRequired": "You must select a curriculum."
     },
-    "loadingCarreras": "Loading careers...",
-    "loadingMallas": "Loading curricula...",
     "steps": {
       "universidad": "University",
       "carrera": "Career",

@@ -49,24 +49,24 @@
       "connectionError": "Error de conexión: {{message}}"
     },
     "subtitle": "Diseña tu camino académico sin complicaciones",
-    "description":"Nuestra plataforma analiza tus requisitos y objetivos en tiempo real para ofrecerte la combinación perfecta de materias para tu próximo semestre. No solo creamos un horario, te mostramos exactamente cómo cada elección de hoy acelera tu graduación de mañana. ¡Toma el control de tu camino académico y deja de adivinar!",
-    "button":{
-    "start": "Comenzar"
+    "description": "Nuestra plataforma analiza tus requisitos y objetivos en tiempo real para ofrecerte la combinación perfecta de materias para tu próximo semestre. No solo creamos un horario, te mostramos exactamente cómo cada elección de hoy acelera tu graduación de mañana. ¡Toma el control de tu camino académico y deja de adivinar!",
+    "button": {
+      "start": "Comenzar"
     },
-    "aboutUs":{
+    "aboutUs": {
       "title": "Sobre Nosotros",
-    "pharagraph1": "En Easy Schedule, entendemos que la vida universitaria es lo suficientemente compleja sin que la planificación de cursos se convierta en un obstáculo adicional. Nacimos de la visión de Lucas Alcoba y Adrián Claros, con el objetivo de empoderar a los estudiantes de pregrado y posgrado a través de la tecnología inteligente.",
-    "pharagraph2": "A diferencia de las herramientas tradicionales de consulta de mallas curriculares, ofrecemos una solución integral: una plataforma web interactiva que procesa tus requisitos específicos y genera sugerencias personalizadas. Creemos que cada estudiante merece un camino académico claro, eficiente y libre de errores administrativos.",
-    "pharagraph3": "Nuestra plataforma está diseñada específicamente para integrarse con las realidades académicas de instituciones líderes, como la Universidad Católica Boliviana campus Cochabamba, la Universidad Mayor de San Simón y la Universidad Mayor de San Andrés."
+      "pharagraph1": "En Easy Schedule, entendemos que la vida universitaria es lo suficientemente compleja sin que la planificación de cursos se convierta en un obstáculo adicional. Nacimos de la visión de Lucas Alcoba y Adrián Claros, con el objetivo de empoderar a los estudiantes de pregrado y posgrado a través de la tecnología inteligente.",
+      "pharagraph2": "A diferencia de las herramientas tradicionales de consulta de mallas curriculares, ofrecemos una solución integral: una plataforma web interactiva que procesa tus requisitos específicos y genera sugerencias personalizadas. Creemos que cada estudiante merece un camino académico claro, eficiente y libre de errores administrativos.",
+      "pharagraph3": "Nuestra plataforma está diseñada específicamente para integrarse con las realidades académicas de instituciones líderes, como la Universidad Católica Boliviana campus Cochabamba, la Universidad Mayor de San Simón y la Universidad Mayor de San Andrés."
     },
-    "questions":{
+    "questions": {
       "title": "Preguntas Frecuentes",
       "question1": "¿Cómo funciona EasySchedule?",
       "answer1": "EasySchedule utiliza un algoritmo inteligente para analizar tus requisitos académicos y objetivos. Procesa esta información en tiempo real para generar sugerencias personalizadas de cursos para tu próximo semestre, ayudándote a diseñar un camino académico eficiente.",
       "question2": "¿Es EasySchedule gratuito?",
       "answer2": "Sí, EasySchedule es completamente gratuito para los estudiantes. Creemos que cada estudiante debería tener acceso a herramientas que los ayuden a tener éxito académico sin ningún costo."
     },
-    "footer":{
+    "footer": {
       "subtitle1": "Términos y Políticas de Privacidad",
       "subtitle2": "Contáctanos",
       "subtitle3": "Ubicación",
@@ -75,41 +75,41 @@
       "contact": "Para cualquier pregunta o soporte, por favor contáctanos en ",
       "email": "support@easyschedule.com",
       "phone": "+591 64363462",
-      "address": "Av. America Nª9832",
-       "copyright": "Derechos de autor @ 2026 EasyScheduleCompany. Todos los derechos reservados"
+      "address": "Av. America Nº9832",
+      "copyright": "Derechos de autor @ 2026 EasyScheduleCompany. Todos los derechos reservados"
     }
   },
-"login": {
-  "title": "Iniciar sesión",
-  "label": {
-    "identifier": "Correo o usuario",
-    "password": "Contraseña"
+  "login": {
+    "title": "Iniciar sesión",
+    "label": {
+      "identifier": "Correo o usuario",
+      "password": "Contraseña"
+    },
+    "placeholder": {
+      "identifier": "Ingresa tu correo o usuario",
+      "password": "Ingresa tu contraseña"
+    },
+    "button": {
+      "submit": "Ingresar",
+      "gotoRegister": "Crear cuenta",
+      "backHome": "Volver al inicio"
+    },
+    "validation": {
+      "required": "Este campo es obligatorio"
+    },
+    "loading": "Iniciando sesión...",
+    "success": {
+      "loggedIn": "Inicio de sesión exitoso.",
+      "completeProfile": "Sesión iniciada. Completa tu perfil para continuar."
+    },
+    "error": {
+      "invalidCredentials": "Credenciales inválidas",
+      "generic": "Error inesperado"
+    }
   },
-  "placeholder": {
-    "identifier": "Ingresa tu correo o usuario",
-    "password": "Ingresa tu contraseña"
-  },
-  "button": {
-    "submit": "Ingresar",
-    "gotoRegister": "Crear cuenta",
-    "backHome": "Volver al inicio"
-  },
-  "validation": {
-    "required": "Este campo es obligatorio"
-  },
-  "loading": "Iniciando sesión...",
-  "success": {
-    "loggedIn": "Inicio de sesión exitoso.",
-    "completeProfile": "Sesión iniciada. Completa tu perfil para continuar."
-  },
-  "error": {
-    "invalidCredentials": "Credenciales inválidas",
-    "generic": "Error inesperado"
-  }
-},
   "malla": {
-    "title": "Configuracion academica",
-    "description": "Selecciona tu universidad para iniciar la configuracion de tu malla curricular.",
+    "title": "Configuración academica",
+    "description": "Selecciona tu universidad para iniciar la configuración de tu malla curricular.",
     "loadingUniversidades": "Cargando universidades...",
     "loadingCarreras": "Cargando carreras...",
     "loadingMallas": "Cargando mallas...",
@@ -128,7 +128,36 @@
       "changeUniversidad": "Cambiar Universidad",
       "cancelChange": "Cancelar",
       "changeStatus": "Actualizar estado de materias",
+      "uploadMalla": "Subir nueva malla",
       "changeStatusSingle": "Actualizar estado de materia"
+
+    },
+    "import": {
+      "eyebrow": "Importación de malla",
+      "title": "Importar nueva malla curricular",
+      "nameLabel": "Nombre de la malla",
+      "namePlaceholder": "Ej: Malla 2024",
+      "formatHelpTitle": "¿Cómo generar el archivo?",
+      "formatHelpText": "Usa el siguiente prompt con tu IA favorita (ChatGPT, Copilot, etc.) para generar el archivo CSV. Luego cópialo y súbelo aquí.",
+      "copyPrompt": "Copiar prompt",
+      "promptCopied": "Prompt copiado al portapapeles. ¡Pégalo en tu IA!",
+      "copyPromptManually": "Copia este prompt manualmente:",
+      "fileLabel": "Archivo de malla",
+      "selectFile": "Seleccionar archivo",
+      "noFile": "Ningún archivo seleccionado",
+      "formatHelp": "Formatos soportados: CSV o JSON",
+      "csvFormat": "Formato CSV",
+      "csvExample": "Ejemplo: MAT101,Cálculo I,1,4,MAT100;MAT102",
+      "jsonFormat": "Formato JSON",
+      "errorFormat": "Formato no soportado. Use CSV o JSON",
+      "errorNoFile": "Debe seleccionar un archivo",
+      "errorNameRequired": "El nombre de la malla es requerido",
+      "errorCarreraRequired": "Debe seleccionar una carrera primero",
+      "errorGeneric": "Error al importar la malla",
+      "importing": "Importando...",
+      "import": "Importar malla",
+      "cancel": "Cancelar",
+      "success": "Malla importada exitosamente. Se importaron {{count}} materias y {{prerequisitos}} prerrequisitos."
     },
     "error": {
       "loadUniversidades": "No se pudieron cargar las universidades disponibles.",
@@ -153,14 +182,14 @@
     },
     "warning": {
       "title": "Advertencia",
-      "progressReset": "El progreso de la malla anterior no se transferira al confirmar este cambio."
+      "progressReset": "El progreso de la malla anterior no se transferirá al confirmar este cambio."
     },
     "modal": {
-      "confirmChangeMalla": "Cambiar de malla reiniciara tu progreso en la malla anterior. ¿Deseas continuar?",
+      "confirmChangeMalla": "Cambiar de malla reiniciará tu progreso en la malla anterior. ¿Deseas continuar?",
       "detailLoadError": "Error al cargar detalles",
       "loadingSubjects": "Cargando materias...",
       "subjectsLoadError": "Error al cargar las materias de la malla.",
-      "semesterLabel": "{{semester}}o semestre",
+      "semesterLabel": "{{semester}}º semestre",
       "noSubjectsForCurriculum": "No hay materias registradas para esta malla.",
       "subjectSelectionEyebrow": "Seleccion de materias",
       "subjectDetailTitle": "Detalle de materia",
@@ -236,8 +265,7 @@
       "totalSubjects": "Total de materias en la malla",
       "approved": "Aprobadas",
       "inProgress": "En curso",
-      "remaining": "Faltantes"
-    ,
+      "remaining": "Faltantes",
       "legend": {
         "approved": "Aprobadas",
         "remaining": "Faltantes"
@@ -311,7 +339,7 @@
       "save": "Guardar",
       "cancel": "Cancelar",
       "saving": "Guardando...",
-    "changePassword": "Cambiar contraseña"
+      "changePassword": "Cambiar contraseña"
     },
     "validation": {
       "required": "Este campo es obligatorio.",
@@ -418,9 +446,9 @@
       "server": "Error del servidor. Intenta nuevamente"
     }
   },
-    "Toma de materias":{
-      "Materias disponibles": "Materias disponibles",
-      "Materias Agregadas": "Materias Agregadas",
-      "Materias en curso": "Materias en curso"
+  "Toma de materias": {
+    "Materias disponibles": "Materias disponibles",
+    "Materias Agregadas": "Materias Agregadas",
+    "Materias en curso": "Materias en curso"
   }
 }

@@ -1,6 +1,7 @@
 import { NgFor, NgIf, NgClass } from '@angular/common';
 import { Component, OnDestroy, OnInit, HostListener, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter, firstValueFrom, Subscription } from 'rxjs';
@@ -87,6 +88,41 @@ export class Malla implements OnInit, OnDestroy {
   protected selectedOfertaId: number | null = null;
   protected materiasSeleccionadas: Set<number> = new Set();
 
+  public showImportModal = false;
+  public importFile: File | null = null;
+  public importFileName = '';
+  public importLoading = false;
+  public importError: string | null = null;
+  public importSuccess: string | null = null;
+  public importMallaName = '';
+  public showTutorial = false;
+  public fullPrompt = `Necesito que generes un archivo en formato CSV con las materias de una malla curricular distribuidas en semestres.
+
+El CSV debe tener exactamente estos encabezados, en este orden:
+
+codigo,nombre,semestre,creditos,prerequisitos
+
+Reglas obligatorias:
+
+- codigo: código único de la materia. Si la malla original no incluye código, genera códigos coherentes usando el prefijo de la carrera y el semestre, por ejemplo: SIS101, SIS102, SIS201, SIS202.
+- nombre: nombre completo de la materia, respetando el nombre original de la malla.
+- semestre: número entero del semestre al que pertenece la materia. Debe estar entre 1 y N, donde N es la cantidad total de semestres de la carrera.
+- creditos: número entero entre 3 y 6. Si la malla original no indica créditos, asigna un valor razonable según la importancia de la materia.
+- prerequisitos: códigos de materias separados por punto y coma ;. Si no tiene prerequisitos, dejar el campo vacío.
+- Los códigos usados en prerequisitos deben existir previamente en la columna codigo.
+- Una materia solo puede tener como prerequisito materias de semestres anteriores.
+- No colocar espacios antes ni después del punto y coma en prerequisitos.
+- No agregar columnas adicionales.
+- No agregar explicaciones, comentarios ni texto fuera del CSV.
+- La salida debe ser unicamente el contenido CSV válido.`;
+
+  public get displayPrompt(): string {
+    const maxLength = 180;
+    if (this.fullPrompt.length > maxLength) {
+      return this.fullPrompt.substring(0, maxLength) + '...';
+    }
+    return this.fullPrompt;
+  }
   @ViewChild('popoverStep1') popoverStep1?: NgbPopover;
   @ViewChild('popoverStep2') popoverStep2?: NgbPopover;
   @ViewChild('popoverStep4') popoverStep4?: NgbPopover;
@@ -108,6 +144,7 @@ export class Malla implements OnInit, OnDestroy {
     private readonly authSessionService: AuthSessionService,
     private readonly perfilService: PerfilService,
     private readonly tourHintsService: TourHintsService,
+    private readonly http: HttpClient,
   ) {}
 
   ngOnInit(): void {
@@ -740,6 +777,110 @@ export class Malla implements OnInit, OnDestroy {
     this.persistirTourCompletado();
   }
 
+  public openImportModal(): void {
+    this.showImportModal = true;
+    this.importFile = null;
+    this.importFileName = '';
+    this.importError = null;
+    this.importSuccess = null;
+    this.importMallaName = '';
+  }
+
+  public closeImportModal(): void {
+    this.showImportModal = false;
+    this.importFile = null;
+    this.importFileName = '';
+    this.importError = null;
+    this.importSuccess = null;
+  }
+
+  public onImportFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const validExtensions = ['.csv', '.json'];
+      const ext = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+      if (!validExtensions.includes(ext)) {
+        this.importError = this.translateService.instant('malla.import.errorFormat');
+        this.importFile = null;
+        this.importFileName = '';
+        return;
+      }
+      this.importFile = file;
+      this.importFileName = file.name;
+      this.importError = null;
+    }
+  }
+
+  public async importMalla(): Promise<void> {
+    if (!this.importFile) {
+      this.importError = this.translateService.instant('malla.import.errorNoFile');
+      return;
+    }
+    if (!this.importMallaName.trim()) {
+      this.importError = this.translateService.instant('malla.import.errorNameRequired');
+      return;
+    }
+    if (this.selectedCarreraId === null) {
+      this.importError = this.translateService.instant('malla.import.errorCarreraRequired');
+      return;
+    }
+
+    this.importLoading = true;
+    this.importError = null;
+    this.importSuccess = null;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', this.importFile!);
+      formData.append('carreraId', this.selectedCarreraId!.toString());
+      formData.append('nombre', this.importMallaName);
+
+      const result: any = await firstValueFrom(
+        this.http.post('/api/academico/mallas/importar', formData, {
+          withCredentials: true
+        })
+      );
+
+      this.importSuccess = this.translateService.instant('malla.import.success', {
+        count: result.materiasImportadas,
+        prerequisitos: result.prerequisitosImportados
+      });
+
+      setTimeout(() => {
+        this.closeImportModal();
+        void this.loadMallas(this.selectedCarreraId!);
+      }, 2000);
+
+    } catch (error: any) {
+      console.error('Error importando malla:', error);
+      let errorMsg = this.translateService.instant('malla.import.errorGeneric');
+      if (error.error) {
+        if (typeof error.error === 'string') {
+          errorMsg = error.error;
+        } else if (error.error.message) {
+          errorMsg = error.error.message;
+        }
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+      this.importError = errorMsg;
+    } finally {
+      this.importLoading = false;
+    }
+  }
+
+  public copyPrompt(): void {
+    navigator.clipboard.writeText(this.fullPrompt).then(() => {
+      alert(this.translateService.instant('malla.import.promptCopied'));
+    }).catch(() => {
+      prompt(this.translateService.instant('malla.import.copyPromptManually'), this.fullPrompt);
+    });
+  }
+
+  public toggleTutorial(): void {
+    this.showTutorial = !this.showTutorial;
+  }
   protected irATomaYCerrarTour(): void {
     this.cerrarTodosLosPopovers();
     localStorage.setItem(this.getTourStorageKey(), 'true');

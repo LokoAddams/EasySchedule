@@ -138,6 +138,7 @@
           <option *ngFor="let malla of mallas" [ngValue]="malla.id">
             {{ malla.nombre }}
           </option>
+
         </select>
 
         <p *ngIf="loadingMallas" class="malla-field-help">{{ 'malla.loadingMallas' | translate }}</p>
@@ -157,6 +158,10 @@
         <button type="button" class="malla-button malla-button--ghost" *ngIf="editMode !== null" (click)="onCancelChangeClick()">
           {{ 'malla.actions.cancelChange' | translate }}
         </button>
+                                 <button type="button" class="malla-button malla-button--ghost" (click)="openImportModal()">
+          {{ 'malla.actions.uploadMalla' | translate }}
+        </button>
+
       </div>
     </div>
 
@@ -363,6 +368,95 @@
                 [disabled]="!selectedOfertaId || !materiaDetalle || materiaDetalle.gruposDisponibles.length === 0"
                 (click)="confirmarSeleccionModal()">
           {{ 'malla.modal.addToSelection' | translate }}
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="malla-modal-overlay" *ngIf="showImportModal">
+    <div class="malla-modal malla-modal--import">
+      <header class="malla-modal__header">
+        <div>
+          <p class="malla-modal__eyebrow">{{ 'malla.import.eyebrow' | translate }}</p>
+          <h3>{{ 'malla.import.title' | translate }}</h3>
+        </div>
+        <button type="button" class="malla-modal__close" (click)="closeImportModal()" [attr.aria-label]="'malla.modal.closeAria' | translate">×</button>
+      </header>
+
+      <div class="malla-modal__body">
+        <div class="malla-form-group">
+          <label class="malla-label" for="import-nombre">{{ 'malla.import.nameLabel' | translate }}</label>
+          <input type="text" id="import-nombre" class="malla-input" [(ngModel)]="importMallaName" 
+                 placeholder="{{ 'malla.import.namePlaceholder' | translate }}">
+        </div>
+
+        <div class="malla-form-group">
+          <label class="malla-label">
+            {{ 'malla.import.formatHelpTitle' | translate }}
+            <span class="malla-help-icon" (click)="toggleTutorial()" 
+                  [attr.aria-label]="'malla.import.formatHelpTitle' | translate">
+              ?
+            </span>
+          </label>
+          <div class="malla-tutorial-box" *ngIf="showTutorial">
+            <p>{{ 'malla.import.formatHelpText' | translate }}</p>
+            <div class="malla-prompt-container">
+              <code class="malla-prompt-text">{{ displayPrompt }}</code>
+              <button type="button" class="malla-button malla-button--small" (click)="copyPrompt()" 
+                      [attr.aria-label]="'malla.import.copyPrompt' | translate">
+                {{ 'malla.import.copyPrompt' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="malla-form-group">
+          <label class="malla-label">{{ 'malla.import.fileLabel' | translate }}</label>
+          <div class="malla-file-upload">
+            <input type="file" id="import-file" style="display: none" accept=".csv,.json" 
+                   (change)="onImportFileSelected($event)">
+            <button type="button" class="malla-button malla-button--outline" 
+                    onclick="document.getElementById('import-file').click()">
+              {{ 'malla.import.selectFile' | translate }}
+            </button>
+            <span class="malla-file-name" *ngIf="importFileName">{{ importFileName }}</span>
+            <span class="malla-file-name malla-file-name--empty" *ngIf="!importFileName">
+              {{ 'malla.import.noFile' | translate }}
+            </span>
+          </div>
+          <p class="malla-field-help">{{ 'malla.import.formatHelp' | translate }}</p>
+        </div>
+
+        <div class="malla-import-format" *ngIf="importFileName.toLowerCase().endsWith('.csv')">
+          <strong>{{ 'malla.import.csvFormat' | translate }}:</strong>
+          <code>codigo,nombre,semestre,creditos,prerequisitos</code>
+          <p class="malla-field-help">{{ 'malla.import.csvExample' | translate }}</p>
+        </div>
+
+        <div class="malla-import-format" *ngIf="importFileName.toLowerCase().endsWith('.json')">
+          <strong>{{ 'malla.import.jsonFormat' | translate }}:</strong>
+          <code>{{ '{' }}"nombre":"...", "version":"...", "carreraId":1, "materias":[...]{{ '}' }}</code>
+        </div>
+
+        <div class="malla-card malla-card--error" *ngIf="importError">
+          <p>{{ importError }}</p>
+        </div>
+
+        <div class="malla-card malla-card--success" *ngIf="importSuccess">
+          <p>{{ importSuccess }}</p>
+        </div>
+      </div>
+
+      <footer class="malla-modal__footer">
+        <button class="malla-button malla-button--ghost" (click)="closeImportModal()" 
+                [disabled]="importLoading">
+          {{ 'malla.import.cancel' | translate }}
+        </button>
+        <button class="malla-button malla-button--save" 
+                (click)="importMalla()" 
+                [disabled]="!importFile || importLoading || !importMallaName">
+          <span *ngIf="importLoading">{{ 'malla.import.importing' | translate }}</span>
+          <span *ngIf="!importLoading">{{ 'malla.import.import' | translate }}</span>
         </button>
       </footer>
     </div>

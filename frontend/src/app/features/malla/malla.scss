@@ -686,3 +686,161 @@
   }
 }
 
+.malla-modal--import {
+  width: min(600px, 96vw);
+}
+
+.malla-form-group {
+  margin-top: 1rem;
+
+  .malla-label {
+    margin-top: 0;
+  }
+}
+
+.malla-input {
+  width: 100%;
+  min-height: 40px;
+  border-radius: 8px;
+  border: 1px solid rgba(47, 79, 115, 0.28);
+  padding: 0.45rem 0.65rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+
+  &:focus {
+    outline: none;
+    border-color: rgba(47, 79, 115, 0.6);
+    box-shadow: 0 0 0 2px rgba(47, 79, 115, 0.15);
+  }
+}
+
+.malla-file-upload {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.malla-file-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  color: #2c4f73;
+  font-weight: 600;
+
+  &--empty {
+    color: rgba(17, 17, 17, 0.5);
+    font-style: italic;
+    font-weight: 400;
+  }
+}
+
+.malla-import-format {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: rgba(47, 79, 115, 0.06);
+  border: 1px solid rgba(47, 79, 115, 0.15);
+
+  strong {
+    display: block;
+    color: #1d2d40;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    margin-bottom: 0.35rem;
+  }
+
+  code {
+    display: block;
+    padding: 0.45rem 0.6rem;
+    background: #fff;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    color: #273a51;
+    margin-bottom: 0.4rem;
+    overflow-x: auto;
+  }
+}
+
+.malla-card--success {
+  background: #f0f9f0;
+  border-color: rgba(76, 175, 80, 0.3);
+  color: #2e7d32;
+}
+
+.malla-tutorial-box {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  
+  p {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.9rem;
+    color: #495057;
+  }
+}
+
+.malla-prompt-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin-top: 0.5rem;
+}
+
+.malla-prompt-text {
+  flex: 1;
+  background: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  max-height: 100px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: 'Courier New', monospace;
+  color: #333;
+}
+
+.malla-button--small {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.malla-help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background: #e9ecef;
+  color: #0d6efd;
+  font-weight: bold;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-left: 0.3rem;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: #0d6efd;
+    color: white;
+  }
+}
+
+.malla-tutorial-box {
+  margin-top: 0.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
