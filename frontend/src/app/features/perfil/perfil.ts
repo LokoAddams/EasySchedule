@@ -11,6 +11,7 @@ import { ToastService } from '../../core/services/toast.service';
 import { SeleccionAcademicaService } from '../../services/academico/seleccion-academica.service';
 import { ChangePasswordRequest, PerfilResponse, PerfilUpdateRequest } from './perfil.model';
 import { PerfilService } from './perfil.service';
+import { carnetIdentidadValidator, nombreValidator, usernameValidator, emailValidator } from './perfil-validators';
 
 type PerfilEditForm = FormGroup<{
   username: FormControl<string>;
@@ -76,11 +77,11 @@ export class Perfil implements OnInit {
     };
 
     this.editForm = this.fb.group({
-      username: this.fb.nonNullable.control('', [Validators.required]),
-      nombre: this.fb.nonNullable.control('', [Validators.required]),
-      apellido: this.fb.nonNullable.control('', [Validators.required]),
-      email: this.fb.nonNullable.control('', [Validators.required, Validators.email]),
-      carnetIdentidad: this.fb.nonNullable.control('', [Validators.required]),
+      username: this.fb.nonNullable.control('', [Validators.required, usernameValidator()]),
+      nombre: this.fb.nonNullable.control('', [Validators.required, nombreValidator()]),
+      apellido: this.fb.nonNullable.control('', [Validators.required, nombreValidator()]),
+      email: this.fb.nonNullable.control('', [Validators.required, Validators.email, emailValidator()]),
+      carnetIdentidad: this.fb.nonNullable.control('', [Validators.required, carnetIdentidadValidator()]),
       fechaNacimiento: this.fb.control<NgbDateStruct | null>(null, [Validators.required]),
       carrera: this.fb.nonNullable.control(''),
       universidad: this.fb.nonNullable.control(''),
@@ -525,6 +526,106 @@ export class Perfil implements OnInit {
     const month = String(dateStruct.month).padStart(2, '0');
     const day = String(dateStruct.day).padStart(2, '0');
     return `${dateStruct.year}-${month}-${day}`;
+  }
+
+  protected getErrorMessageCarnet(): string {
+    const control = this.editForm.controls.carnetIdentidad;
+    
+    if (!control.touched || !control.errors) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return 'perfil.validation.required';
+    }
+
+    if (control.errors['carnetMaxLength']) {
+      return 'perfil.validation.carnet.maxLength';
+    }
+
+    if (control.errors['carnetInvalidChars']) {
+      return 'perfil.validation.carnet.invalidChars';
+    }
+
+    return '';
+  }
+
+  protected getErrorMessageNombre(): string {
+    const control = this.editForm.controls.nombre;
+    
+    if (!control.touched || !control.errors) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return 'perfil.validation.required';
+    }
+
+    if (control.errors['nombreMinLength']) {
+      return 'perfil.validation.nombre.minLength';
+    }
+
+    if (control.errors['nombreMaxLength']) {
+      return 'perfil.validation.nombre.maxLength';
+    }
+
+    if (control.errors['nombreInvalidChars']) {
+      return 'perfil.validation.nombre.invalidChars';
+    }
+
+    return '';
+  }
+
+  protected getErrorMessageApellido(): string {
+    return this.getErrorMessageNombre(); // Usa las mismas reglas que nombre
+  }
+
+  protected getErrorMessageUsername(): string {
+    const control = this.editForm.controls.username;
+    
+    if (!control.touched || !control.errors) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return 'perfil.validation.required';
+    }
+
+    if (control.errors['usernameMinLength']) {
+      return 'perfil.validation.username.minLength';
+    }
+
+    if (control.errors['usernameMaxLength']) {
+      return 'perfil.validation.username.maxLength';
+    }
+
+    if (control.errors['usernameInvalidChars']) {
+      return 'perfil.validation.username.invalidChars';
+    }
+
+    return '';
+  }
+
+  protected getErrorMessageEmail(): string {
+    const control = this.editForm.controls.email;
+    
+    if (!control.touched || !control.errors) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return 'perfil.validation.required';
+    }
+
+    if (control.errors['email']) {
+      return 'perfil.validation.emailInvalid';
+    }
+
+    if (control.errors['emailMaxLength']) {
+      return 'perfil.validation.email.maxLength';
+    }
+
+    return '';
   }
 
   private passwordsMatchValidator = (form: FormGroup): ValidationErrors | null => {

@@ -83,18 +83,15 @@
 					<span>{{ 'perfil.fields.username' | translate }}</span>
 					<input type="text" formControlName="username" />
 					<small class="form-error" *ngIf="editForm.controls.username.touched && editForm.controls.username.invalid">
-						{{ 'perfil.validation.required' | translate }}
+						{{ getErrorMessageUsername() | translate }}
 					</small>
 				</label>
 
 				<label class="perfil-field">
 					<span>{{ 'perfil.fields.email' | translate }}</span>
 					<input type="email" formControlName="email" />
-					<small class="form-error" *ngIf="editForm.controls.email.touched && editForm.controls.email.errors?.['required']">
-						{{ 'perfil.validation.required' | translate }}
-					</small>
-					<small class="form-error" *ngIf="editForm.controls.email.touched && editForm.controls.email.errors?.['email']">
-						{{ 'perfil.validation.emailInvalid' | translate }}
+					<small class="form-error" *ngIf="editForm.controls.email.touched && editForm.controls.email.invalid">
+						{{ getErrorMessageEmail() | translate }}
 					</small>
 				</label>
 
@@ -108,7 +105,7 @@
 						#nombrePopover="ngbPopover"
 					/>
 					<small class="form-error" *ngIf="editForm.controls.nombre.touched && editForm.controls.nombre.invalid">
-						{{ 'perfil.validation.required' | translate }}
+						{{ getErrorMessageNombre() | translate }}
 					</small>
 				</label>
 
@@ -128,7 +125,7 @@
 						#apellidoPopover="ngbPopover"
 					/>
 					<small class="form-error" *ngIf="editForm.controls.apellido.touched && editForm.controls.apellido.invalid">
-						{{ 'perfil.validation.required' | translate }}
+						{{ getErrorMessageApellido() | translate }}
 					</small>
 				</label>
 
@@ -148,7 +145,7 @@
 						#carnetPopover="ngbPopover"
 					/>
 					<small class="form-error" *ngIf="editForm.controls.carnetIdentidad.touched && editForm.controls.carnetIdentidad.invalid">
-						{{ 'perfil.validation.required' | translate }}
+						{{ getErrorMessageCarnet() | translate }}
 					</small>
 				</label>
 

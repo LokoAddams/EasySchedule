@@ -315,7 +315,24 @@
     },
     "validation": {
       "required": "Este campo es obligatorio.",
-      "emailInvalid": "Formato de correo electrónico inválido."
+      "emailInvalid": "Formato de correo electrónico inválido.",
+      "carnet": {
+        "maxLength": "El carnet de identidad no puede exceder 8 caracteres.",
+        "invalidChars": "El carnet de identidad solo puede contener letras y números."
+      },
+      "nombre": {
+        "minLength": "El nombre debe tener al menos 2 caracteres.",
+        "maxLength": "El nombre no puede exceder 50 caracteres.",
+        "invalidChars": "El nombre solo puede contener letras, espacios y acentos."
+      },
+      "username": {
+        "minLength": "El nombre de usuario debe tener al menos 3 caracteres.",
+        "maxLength": "El nombre de usuario no puede exceder 30 caracteres.",
+        "invalidChars": "El nombre de usuario solo puede contener letras, números, puntos y guiones."
+      },
+      "email": {
+        "maxLength": "El correo electrónico no puede exceder 100 caracteres."
+      }
     },
     "success": {
       "updated": "Perfil actualizado correctamente."
