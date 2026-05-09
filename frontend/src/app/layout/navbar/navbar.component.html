@@ -45,7 +45,7 @@
   {{ 'navbar.logout' | translate }}
 </a>
 
-    <a *ngIf="isLoggedIn()" class="navbar__profile" routerLink="/perfil" [attr.aria-label]="'navbar.aria.profile' | translate">
+    <a *ngIf="isLoggedIn()" class="navbar__profile" routerLink="/perfil" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" [attr.aria-label]="'navbar.aria.profile' | translate">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path
           d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm0 3.2A3.4 3.4 0 1 1 8.6 8.6 3.41 3.41 0 0 1 12 5.2Zm0 13.8a7 7 0 0 1-5.2-2.32 6.2 6.2 0 0 1 10.4 0A7 7 0 0 1 12 19Z"

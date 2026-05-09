@@ -59,8 +59,11 @@
     cursor: pointer;
     text-decoration: none;
 
-    &:hover {
-      background-color: rgba(111, 137, 172, 0.12);
+    &:hover,
+    &.active {
+      background-color: var(--color-blue);
+      border-color: var(--color-blue);
+      color: #ffffff;
     }
 
     svg {
