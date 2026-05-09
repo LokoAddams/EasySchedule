@@ -216,11 +216,11 @@
       "warningsTitle": "Advertencias",
       "previewTitle": "Previsualización",
       "offersDetected": "ofertas detectadas",
-      "successTitle": "Importación simulada completada",
+      "successTitle": "Importación completada",
       "cancel": "Cancelar",
       "confirm": "Confirmar importación",
       "processing": "Procesando...",
-      "importSuccessToast": "Importación de ofertas simulada correctamente."
+      "importSuccessToast": "Importación de ofertas completada correctamente."
     }
   },
   "tomaMaterias": {

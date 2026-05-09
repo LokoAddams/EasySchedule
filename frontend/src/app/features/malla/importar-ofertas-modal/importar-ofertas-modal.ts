@@ -1,5 +1,12 @@
 import { NgClass, NgFor, NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 interface OfertaArchivoRow {
@@ -54,6 +61,8 @@ interface ImportSummary {
   styleUrl: './importar-ofertas-modal.scss',
 })
 export class ImportarOfertasModal {
+  @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
+
   @Input() mallaNombre = '';
   @Input() materiasMalla: Array<{ codigoMateria: string; nombreMateria: string }> = [];
 
@@ -67,6 +76,7 @@ export class ImportarOfertasModal {
   protected summary: ImportSummary | null = null;
   protected processing = false;
   protected completed = false;
+  protected totalRowsRead = 0;
 
   protected requiredColumns = [
     'codigo_materia',
@@ -78,6 +88,14 @@ export class ImportarOfertasModal {
     'docente',
     'aula',
   ];
+
+  protected get hasCriticalErrors(): boolean {
+    return this.errors.some((error) => error.critical);
+  }
+
+  protected get scheduleBlocksCount(): number {
+    return this.preview.reduce((total, offer) => total + offer.horarios.length, 0);
+  }
 
   protected async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -107,15 +125,17 @@ export class ImportarOfertasModal {
 
   protected clearFile(): void {
     this.selectedFileName = '';
-    this.preview = [];
-    this.errors = [];
-    this.warnings = [];
-    this.summary = null;
-    this.completed = false;
+    this.resetImportState();
+    this.clearNativeFileInput();
+  }
+
+  protected cancel(): void {
+    this.clearFile();
+    this.closeModal.emit();
   }
 
   protected confirmImport(): void {
-    if (this.hasCriticalErrors || this.preview.length === 0) {
+    if (this.hasCriticalErrors || this.preview.length === 0 || this.processing) {
       return;
     }
 
@@ -123,13 +143,10 @@ export class ImportarOfertasModal {
     this.completed = false;
 
     setTimeout(() => {
-      const scheduleBlocks = this.preview.reduce(
-        (total, offer) => total + offer.horarios.length,
-        0,
-      );
+      const scheduleBlocks = this.scheduleBlocksCount;
 
       this.summary = {
-        totalRows: scheduleBlocks + this.errors.length + this.warnings.length,
+        totalRows: this.totalRowsRead,
         offersCreated: Math.max(1, this.preview.length - 1),
         offersUpdated: this.preview.length > 1 ? 1 : 0,
         scheduleBlocks,
@@ -139,12 +156,11 @@ export class ImportarOfertasModal {
 
       this.processing = false;
       this.completed = true;
-      this.importFinished.emit(this.summary);
-    }, 900);
-  }
 
-  protected get hasCriticalErrors(): boolean {
-    return this.errors.some((error) => error.critical);
+      this.importFinished.emit(this.summary);
+      this.clearNativeFileInput();
+      this.closeModal.emit();
+    }, 900);
   }
 
   private processCsv(content: string): void {
@@ -183,7 +199,10 @@ export class ImportarOfertasModal {
       return this.mapRow(headers, values, index + 2);
     });
 
+    this.totalRowsRead = rows.length;
+
     rows.forEach((row) => this.validateRow(row));
+
     this.preview = this.groupRows(rows.filter((row) => this.isRowImportable(row)));
   }
 
@@ -261,7 +280,7 @@ export class ImportarOfertasModal {
       this.warnings.push({
         rowNumber: row.rowNumber,
         field: 'docente',
-        reason: 'Docente vacío. Se permitirá continuar en modo simulación.',
+        reason: 'Docente vacío. El registro podrá procesarse si el backend acepta este campo como opcional.',
         critical: false,
       });
     }
@@ -270,7 +289,7 @@ export class ImportarOfertasModal {
       this.warnings.push({
         rowNumber: row.rowNumber,
         field: 'aula',
-        reason: 'Aula vacía. Se permitirá continuar en modo simulación.',
+        reason: 'Aula vacía. El registro podrá procesarse si el backend acepta este campo como opcional.',
         critical: false,
       });
     }
@@ -356,5 +375,12 @@ export class ImportarOfertasModal {
     this.warnings = [];
     this.summary = null;
     this.completed = false;
+    this.totalRowsRead = 0;
+  }
+
+  private clearNativeFileInput(): void {
+    if (this.fileInput?.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
   }
 }

@@ -217,11 +217,11 @@
       "warningsTitle": "Warnings",
       "previewTitle": "Preview",
       "offersDetected": "offers detected",
-      "successTitle": "Simulated import completed",
+      "successTitle": "Import completed",
       "cancel": "Cancel",
       "confirm": "Confirm import",
       "processing": "Processing...",
-      "importSuccessToast": "Academic offers import simulated successfully."
+      "importSuccessToast": "Academic offers import completed successfully."
     }
   },
   "tomaMaterias": {
