@@ -20,7 +20,7 @@ export class FeatureToggleService {
   private flags: FeatureFlags = {
     malla: false,
     tomaMaterias: false,
-    ofertasImport: false,
+    ofertasImport: true,
   };
   private readonly flagsSubject = new BehaviorSubject<FeatureFlags>(this.flags);
   readonly flags$ = this.flagsSubject.asObservable();
@@ -36,7 +36,7 @@ export class FeatureToggleService {
           ...this.flags,
           ...flags,
         };
-        this.flagsSubject.next(flags);
+        this.flagsSubject.next(this.flags);
       })
       .catch((error) => {
         console.error('Failed to load feature flags from backend:', error);

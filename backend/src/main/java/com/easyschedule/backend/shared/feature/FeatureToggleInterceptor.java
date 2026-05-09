@@ -18,8 +18,11 @@ public class FeatureToggleInterceptor implements HandlerInterceptor {
         "/api/academico/carreras",
         "/api/academico/mallas",
         "/api/academico/seleccion",
-        "/api/academico/ofertas",
         "/api/academico/estados-materia"
+    );
+
+    private static final List<String> OFERTAS_IMPORT_PATH_PREFIXES = List.of(
+        "/api/academico/ofertas/importar"
     );
 
     private static final List<String> TOMA_MATERIAS_PATH_PREFIXES = List.of(
@@ -39,6 +42,10 @@ public class FeatureToggleInterceptor implements HandlerInterceptor {
 
         if (!featureFlagsConfig.isMalla() && matchesAny(requestPath, MALLA_PATH_PREFIXES)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La funcionalidad de malla esta deshabilitada");
+        }
+
+        if (!featureFlagsConfig.isOfertasImport() && matchesAny(requestPath, OFERTAS_IMPORT_PATH_PREFIXES)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La importacion de ofertas esta deshabilitada");
         }
 
         if (!featureFlagsConfig.isTomaMaterias() && matchesAny(requestPath, TOMA_MATERIAS_PATH_PREFIXES)) {
