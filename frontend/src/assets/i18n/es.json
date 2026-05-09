@@ -173,7 +173,18 @@
       "parallelLabel": "Paralelo",
       "noGroupsAvailable": "Esta materia no tiene grupos disponibles actualmente.",
       "cancel": "Cancelar",
-      "addToSelection": "Agregar a seleccion"
+      "addToSelection": "Agregar a seleccion",
+      "added": "Materia agregada a tu seleccion temporal"
+    },
+    "selection": {
+      "added": "Materia agregada correctamente",
+      "errorAdd": "No se pudo agregar la materia",
+      "confirmClear": "¿Estás seguro de que deseas limpiar tu selección temporal?",
+      "cleared": "Selección temporal limpiada",
+      "errorClear": "Error al limpiar la selección",
+      "panelTitle": "Selección temporal",
+      "cancel": "Cancelar",
+      "goToToma": "Ir a Toma de materias"
     },
     "validation": {
       "universidadRequired": "Debes seleccionar una universidad.",

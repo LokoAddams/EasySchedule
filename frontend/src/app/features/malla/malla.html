@@ -218,7 +218,7 @@
         </svg>
 
         <div class="malla-board">
-          <div class="malla-board__column" *ngFor="let sem of semestres; let isFirstSem = first" [ngClass]="{'malla-board__column--actual': sem === semestreActual}">
+          <div class="malla-board__column" *ngFor="let sem of semestres; let isFirstSem = first" [ngClass]="{'malla-board__column--actual': sem === semestreActual}" [attr.data-semester]="sem">
             <h4 class="malla-board__column-title">{{ 'malla.modal.semesterLabel' | translate: { semester: sem } }}</h4>
             <div class="malla-subject" *ngFor="let materia of materiasPorSemestre.get(sem); let isFirstMat = first"
                  [attr.id]="'subject-' + materia.id"
@@ -365,6 +365,41 @@
           {{ 'malla.modal.addToSelection' | translate }}
         </button>
       </footer>
+    </div>
+  </div>
+  <div class="malla-floating-panel" *ngIf="showFloatingPanel" [class.malla-floating-panel--collapsed]="!panelExpanded">
+    <div class="malla-floating-panel__header" (click)="togglePanel()">
+      <div class="malla-floating-panel__title">
+        <i class="malla-icon-cart"></i>
+        <span>{{ 'malla.selection.panelTitle' | translate }} ({{ seleccionesTemporales.length }})</span>
+      </div>
+      <button class="malla-floating-panel__toggle">
+        {{ panelExpanded ? '−' : '+' }}
+      </button>
+    </div>
+
+    <div class="malla-floating-panel__content" *ngIf="panelExpanded">
+      <div class="malla-selection-list">
+        <div class="malla-selection-item" *ngFor="let item of seleccionesTemporales">
+          <div class="malla-selection-item__info">
+            <span class="malla-selection-item__name">{{ item.materiaNombre }}</span>
+            <span class="malla-selection-item__parallel">{{ 'malla.modal.parallelLabel' | translate }} {{ item.paralelo }}</span>
+          </div>
+          <div class="malla-selection-item__details">
+            <span *ngIf="item.docente">{{ item.docente }}</span>
+            <span *ngIf="item.aula">{{ item.aula }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="malla-floating-panel__actions">
+        <button class="malla-button malla-button--ghost malla-button--small" (click)="cancelarSeleccion()">
+          {{ 'malla.selection.cancel' | translate }}
+        </button>
+        <button class="malla-button malla-button--save malla-button--small" (click)="irATomaDeMaterias()">
+          {{ 'malla.selection.goToToma' | translate }}
+        </button>
+      </div>
     </div>
   </div>
 </ng-container>
