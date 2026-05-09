@@ -8,6 +8,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
+
+import {
+  OfertaImportErrorResponse,
+  OfertaImportResultResponse,
+  OfertaImportService,
+  OfertaImportSummaryResponse,
+  OfertaImportWarningResponse,
+} from '../../../services/academico/oferta-import.service';
 
 interface OfertaArchivoRow {
   rowNumber: number;
@@ -38,20 +47,17 @@ interface OfertaPreview {
   }>;
 }
 
-interface ImportError {
+interface LocalImportError {
   rowNumber: number;
   field: string;
   reason: string;
   critical: boolean;
 }
 
-interface ImportSummary {
-  totalRows: number;
-  offersCreated: number;
-  offersUpdated: number;
-  scheduleBlocks: number;
-  skippedRows: number;
-  errors: number;
+interface LocalImportWarning {
+  rowNumber: number;
+  field: string;
+  reason: string;
 }
 
 @Component({
@@ -63,17 +69,19 @@ interface ImportSummary {
 export class ImportarOfertasModal {
   @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
 
+  @Input() mallaId: number | null = null;
   @Input() mallaNombre = '';
   @Input() materiasMalla: Array<{ codigoMateria: string; nombreMateria: string }> = [];
 
   @Output() closeModal = new EventEmitter<void>();
-  @Output() importFinished = new EventEmitter<ImportSummary>();
+  @Output() importFinished = new EventEmitter<OfertaImportSummaryResponse>();
 
   protected selectedFileName = '';
+  protected selectedFile: File | null = null;
   protected preview: OfertaPreview[] = [];
-  protected errors: ImportError[] = [];
-  protected warnings: ImportError[] = [];
-  protected summary: ImportSummary | null = null;
+  protected errors: LocalImportError[] = [];
+  protected warnings: LocalImportWarning[] = [];
+  protected summary: OfertaImportSummaryResponse | null = null;
   protected processing = false;
   protected completed = false;
   protected totalRowsRead = 0;
@@ -85,9 +93,9 @@ export class ImportarOfertasModal {
     'dia',
     'hora_inicio',
     'hora_fin',
-    'docente',
-    'aula',
   ];
+
+  constructor(private readonly ofertaImportService: OfertaImportService) {}
 
   protected get hasCriticalErrors(): boolean {
     return this.errors.some((error) => error.critical);
@@ -107,6 +115,7 @@ export class ImportarOfertasModal {
       return;
     }
 
+    this.selectedFile = file;
     this.selectedFileName = file.name;
 
     if (!file.name.toLowerCase().endsWith('.csv')) {
@@ -125,6 +134,7 @@ export class ImportarOfertasModal {
 
   protected clearFile(): void {
     this.selectedFileName = '';
+    this.selectedFile = null;
     this.resetImportState();
     this.clearNativeFileInput();
   }
@@ -134,33 +144,65 @@ export class ImportarOfertasModal {
     this.closeModal.emit();
   }
 
-  protected confirmImport(): void {
-    if (this.hasCriticalErrors || this.preview.length === 0 || this.processing) {
+  protected async confirmImport(): Promise<void> {
+    if (
+      this.mallaId === null ||
+      this.selectedFile === null ||
+      this.hasCriticalErrors ||
+      this.preview.length === 0 ||
+      this.processing
+    ) {
       return;
     }
 
     this.processing = true;
     this.completed = false;
 
-    setTimeout(() => {
-      const scheduleBlocks = this.scheduleBlocksCount;
+    try {
+      const result = await firstValueFrom(
+        this.ofertaImportService.importarOfertas(this.mallaId, this.selectedFile),
+      );
 
-      this.summary = {
-        totalRows: this.totalRowsRead,
-        offersCreated: Math.max(1, this.preview.length - 1),
-        offersUpdated: this.preview.length > 1 ? 1 : 0,
-        scheduleBlocks,
-        skippedRows: this.errors.filter((error) => error.critical).length,
-        errors: this.errors.length,
-      };
+      this.applyBackendResult(result);
+
+      if (this.hasCriticalErrors) {
+        this.processing = false;
+        return;
+      }
 
       this.processing = false;
       this.completed = true;
-
-      this.importFinished.emit(this.summary);
+      this.importFinished.emit(result.summary);
       this.clearNativeFileInput();
       this.closeModal.emit();
-    }, 900);
+    } catch {
+      this.errors = [
+        {
+          rowNumber: 0,
+          field: 'archivo',
+          reason: 'No se pudo completar la importación. Verifica el archivo e inténtalo nuevamente.',
+          critical: true,
+        },
+      ];
+
+      this.processing = false;
+    }
+  }
+
+  private applyBackendResult(result: OfertaImportResultResponse): void {
+    this.summary = result.summary;
+    this.errors = result.errors.map((error: OfertaImportErrorResponse) => ({
+      rowNumber: error.rowNumber,
+      field: error.field,
+      reason: error.reason,
+      critical: error.critical,
+    }));
+
+    this.warnings = result.warnings.map((warning: OfertaImportWarningResponse) => ({
+      rowNumber: warning.rowNumber,
+      field: warning.field,
+      reason: warning.reason,
+    }));
   }
 
   private processCsv(content: string): void {
@@ -280,8 +322,7 @@ export class ImportarOfertasModal {
       this.warnings.push({
         rowNumber: row.rowNumber,
         field: 'docente',
-        reason: 'Docente vacío. El registro podrá procesarse si el backend acepta este campo como opcional.',
-        critical: false,
+        reason: 'Docente vacío. El registro se procesará como campo opcional.',
       });
     }
 
@@ -289,8 +330,7 @@ export class ImportarOfertasModal {
       this.warnings.push({
         rowNumber: row.rowNumber,
         field: 'aula',
-        reason: 'Aula vacía. El registro podrá procesarse si el backend acepta este campo como opcional.',
-        critical: false,
+        reason: 'Aula vacía. El registro se procesará como campo opcional.',
       });
     }
   }

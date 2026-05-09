@@ -372,10 +372,11 @@
     </div>
   </div>
   <app-importar-ofertas-modal
-      *ngIf="showImportarOfertasModal"
-      [mallaNombre]="getResumenMalla()"
-      [materiasMalla]="materias"
-      (closeModal)="closeImportarOfertasModal()"
-      (importFinished)="onOfertasImportFinished()"
+    *ngIf="showImportarOfertasModal"
+    [mallaId]="selectedMallaId"
+    [mallaNombre]="getResumenMalla()"
+    [materiasMalla]="materias"
+    (closeModal)="closeImportarOfertasModal()"
+    (importFinished)="onOfertasImportFinished()"
   ></app-importar-ofertas-modal>
 </ng-container>
