@@ -30,7 +30,7 @@ describe('Malla component logic', () => {
   let activatedRouteStub: any;
 
   beforeEach(() => {
-    flagsSubject = new BehaviorSubject<FeatureFlags>({ malla: true, tomaMaterias: false });
+    flagsSubject = new BehaviorSubject<FeatureFlags>({ malla: true, tomaMaterias: false, ofertasImport: true });
 
     featureServiceMock = jasmine.createSpyObj<FeatureToggleService>('FeatureToggleService', ['loadFlags']) as any;
     featureServiceMock.flags$ = flagsSubject;

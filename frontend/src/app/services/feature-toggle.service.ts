@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 export interface FeatureFlags {
   malla: boolean;
   tomaMaterias: boolean;
-  ofertasimport: boolean;
+  ofertasImport: boolean;
 }
 
 export type FeatureName = keyof FeatureFlags;
@@ -20,7 +20,7 @@ export class FeatureToggleService {
   private flags: FeatureFlags = {
     malla: false,
     tomaMaterias: false,
-    ofertasimport: false,
+    ofertasImport: false,
   };
   private readonly flagsSubject = new BehaviorSubject<FeatureFlags>(this.flags);
   readonly flags$ = this.flagsSubject.asObservable();

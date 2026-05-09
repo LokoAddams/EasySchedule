@@ -118,7 +118,7 @@ export class Malla implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.flagsSubscription = this.featureService.flags$.subscribe((flags) => {
       this.mallaEnabled = flags.malla;
-      this.ofertasImportEnabled = flags.ofertasimport ?? true;
+      this.ofertasImportEnabled = flags.ofertasImport ?? true;
     });
 
     this.routerEventsSubscription = this.router.events
