@@ -22,6 +22,8 @@ import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
 import { TourHintsService } from '../../services/tour-hints.service';
 
+import { ImportarOfertasModal } from './importar-ofertas-modal/importar-ofertas-modal';
+
 type SeleccionStep = 'universidad' | 'carrera' | 'malla' | 'resumen';
 type EditMode = 'universidad' | 'malla' | null;
 
@@ -33,7 +35,7 @@ interface SeleccionSnapshot {
 
 @Component({
   selector: 'app-malla',
-  imports: [FormsModule, NgFor, NgIf, NgClass, TranslatePipe, NgbPopoverModule],
+  imports: [FormsModule, NgFor, NgIf, NgClass, TranslatePipe, NgbPopoverModule, ImportarOfertasModal],
   templateUrl: './malla.html',
   styleUrl: './malla.scss',
 })
@@ -87,6 +89,9 @@ export class Malla implements OnInit, OnDestroy {
   protected selectedOfertaId: number | null = null;
   protected materiasSeleccionadas: Set<number> = new Set();
 
+  protected ofertasImportEnabled = true;
+  protected showImportarOfertasModal = false;
+
   @ViewChild('popoverStep1') popoverStep1?: NgbPopover;
   @ViewChild('popoverStep2') popoverStep2?: NgbPopover;
   @ViewChild('popoverStep4') popoverStep4?: NgbPopover;
@@ -113,6 +118,7 @@ export class Malla implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.flagsSubscription = this.featureService.flags$.subscribe((flags) => {
       this.mallaEnabled = flags.malla;
+      this.ofertasImportEnabled = flags.ofertasimport;
     });
 
     this.routerEventsSubscription = this.router.events
@@ -767,6 +773,22 @@ export class Malla implements OnInit, OnDestroy {
       next: () => {},
       error: () => {}
     });
+  }
+
+  protected onImportarOfertasClick(): void {
+    if (this.selectedMallaId === null || this.materias.length === 0) {
+      return;
+    }
+
+    this.showImportarOfertasModal = true;
+  }
+
+  protected closeImportarOfertasModal(): void {
+    this.showImportarOfertasModal = false;
+  }
+
+  protected onOfertasImportFinished(): void {
+    this.toastService.success('malla.offers.importSuccessToast');
   }
 
 }
