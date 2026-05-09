@@ -10,12 +10,17 @@ import com.easyschedule.backend.academico.oferta_materia.dto.Importacion.OfertaI
 import com.easyschedule.backend.academico.oferta_materia.dto.Importacion.OfertaImportResultResponse;
 import com.easyschedule.backend.academico.oferta_materia.dto.Importacion.OfertaImportSummaryResponse;
 import com.easyschedule.backend.academico.oferta_materia.dto.Importacion.OfertaImportWarningResponse;
+import com.easyschedule.backend.academico.oferta_materia.model.OfertaMateria;
+import com.easyschedule.backend.academico.oferta_materia.repository.OfertaMateriaRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -53,15 +59,50 @@ public class OfertaMateriaImportService {
 
     private final MateriaRepository materiaRepository;
     private final MallaMateriaRepository mallaMateriaRepository;
+    private final OfertaMateriaRepository ofertaMateriaRepository;
+    private final ObjectMapper objectMapper;
 
     public OfertaMateriaImportService(
         MateriaRepository materiaRepository,
-        MallaMateriaRepository mallaMateriaRepository
+        MallaMateriaRepository mallaMateriaRepository,
+        OfertaMateriaRepository ofertaMateriaRepository,
+        ObjectMapper objectMapper
     ) {
         this.materiaRepository = materiaRepository;
         this.mallaMateriaRepository = mallaMateriaRepository;
+        this.ofertaMateriaRepository = ofertaMateriaRepository;
+        this.objectMapper = objectMapper;
     }
 
+    @Transactional
+    public OfertaImportResultResponse importCsv(Long mallaId, MultipartFile file) {
+        OfertaImportResultResponse validationResult = validateCsv(mallaId, file);
+
+        if (hasCriticalErrors(validationResult)) {
+            return validationResult;
+        }
+
+        ImportCounters counters = persistOffers(validationResult.offers());
+
+        OfertaImportSummaryResponse summary = new OfertaImportSummaryResponse(
+            validationResult.summary().totalRows(),
+            counters.created(),
+            counters.updated(),
+            validationResult.summary().scheduleBlocks(),
+            validationResult.summary().skippedRows(),
+            validationResult.summary().errorsCount(),
+            validationResult.summary().warningsCount()
+        );
+
+        return new OfertaImportResultResponse(
+            summary,
+            validationResult.offers(),
+            validationResult.errors(),
+            validationResult.warnings()
+        );
+    }
+
+    @Transactional(readOnly = true)
     public OfertaImportResultResponse validateCsv(Long mallaId, MultipartFile file) {
         List<OfertaImportErrorResponse> errors = new ArrayList<>();
         List<OfertaImportWarningResponse> warnings = new ArrayList<>();
@@ -159,6 +200,88 @@ public class OfertaMateriaImportService {
         }
 
         return buildResponse(dataLines.size(), groupedOffers, errors, warnings);
+    }
+
+    private boolean hasCriticalErrors(OfertaImportResultResponse result) {
+        return result.errors()
+            .stream()
+            .anyMatch(OfertaImportErrorResponse::critical);
+    }
+
+    private ImportCounters persistOffers(List<OfertaImportPreviewResponse> offers) {
+        int created = 0;
+        int updated = 0;
+
+        for (OfertaImportPreviewResponse offer : offers) {
+            Optional<OfertaMateria> existingOffer =
+                ofertaMateriaRepository.findByMallaMateriaIdAndSemestreAndParalelo(
+                    offer.mallaMateriaId(),
+                    offer.semestreAcademico(),
+                    offer.paralelo()
+                );
+
+            if (existingOffer.isPresent()) {
+                updateExistingOffer(existingOffer.get(), offer);
+                updated++;
+            } else {
+                createNewOffer(offer);
+                created++;
+            }
+        }
+
+        return new ImportCounters(created, updated);
+    }
+
+    private void updateExistingOffer(
+        OfertaMateria ofertaMateria,
+        OfertaImportPreviewResponse offer
+    ) {
+        ofertaMateria.setHorarioJson(buildHorarioJson(offer.horarios()));
+        ofertaMateria.setDocente(toNullableValue(offer.docente()));
+        ofertaMateria.setAula(toNullableValue(offer.aula()));
+        ofertaMateria.setFechaActualizacion(OffsetDateTime.now());
+
+        ofertaMateriaRepository.save(ofertaMateria);
+    }
+
+    private void createNewOffer(OfertaImportPreviewResponse offer) {
+        OffsetDateTime now = OffsetDateTime.now();
+
+        OfertaMateria ofertaMateria = new OfertaMateria();
+        ofertaMateria.setMallaMateriaId(offer.mallaMateriaId());
+        ofertaMateria.setSemestre(offer.semestreAcademico());
+        ofertaMateria.setParalelo(offer.paralelo());
+        ofertaMateria.setHorarioJson(buildHorarioJson(offer.horarios()));
+        ofertaMateria.setDocente(toNullableValue(offer.docente()));
+        ofertaMateria.setAula(toNullableValue(offer.aula()));
+        ofertaMateria.setFechaCreacion(now);
+        ofertaMateria.setFechaActualizacion(now);
+
+        ofertaMateriaRepository.save(ofertaMateria);
+    }
+
+    private String buildHorarioJson(List<OfertaImportHorarioResponse> horarios) {
+        List<HorarioJsonBlock> horarioJson = horarios.stream()
+            .map(horario -> new HorarioJsonBlock(
+                horario.dia(),
+                horario.horaInicio(),
+                horario.horaFin()
+            ))
+            .toList();
+
+        try {
+            return objectMapper.writeValueAsString(horarioJson);
+        } catch (JsonProcessingException exception) {
+            throw new IllegalStateException("No se pudo construir el horario_json.", exception);
+        }
+    }
+
+    private String toNullableValue(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        return value.trim();
     }
 
     private boolean hasCsvExtension(MultipartFile file) {
@@ -594,6 +717,19 @@ public class OfertaMateriaImportService {
     private record ResolvedMallaMateria(
         Materia materia,
         MallaMateria mallaMateria
+    ) {
+    }
+
+    private record ImportCounters(
+        int created,
+        int updated
+    ) {
+    }
+
+    private record HorarioJsonBlock(
+        String dia,
+        String inicio,
+        String fin
     ) {
     }
 
