@@ -128,7 +128,8 @@
       "changeUniversidad": "Cambiar Universidad",
       "cancelChange": "Cancelar",
       "changeStatus": "Actualizar estado de materias",
-      "changeStatusSingle": "Actualizar estado de materia"
+      "changeStatusSingle": "Actualizar estado de materia",
+      "importOffers": "Importar Ofertas"
     },
     "error": {
       "loadUniversidades": "No se pudieron cargar las universidades disponibles.",
@@ -200,6 +201,26 @@
       "volver": "Volver",
       "save": "Actualizar Materia",
       "saving": "Actualizando..."
+    },
+    "offers": {
+      "eyebrow": "Ofertas académicas",
+      "title": "Importar ofertas académicas",
+      "subtitle": "Carga ofertas para la malla {{malla}}.",
+      "expectedFormatTitle": "Formato esperado",
+      "expectedFormatDescription": "Carga un archivo CSV con las columnas necesarias para crear o actualizar ofertas académicas.",
+      "codeExplanation": "El código de materia se usa para encontrar la materia correspondiente dentro de la malla seleccionada.",
+      "selectFile": "Seleccionar archivo CSV",
+      "selectedFile": "Archivo seleccionado",
+      "clearFile": "Limpiar archivo",
+      "errorsTitle": "Errores detectados",
+      "warningsTitle": "Advertencias",
+      "previewTitle": "Previsualización",
+      "offersDetected": "ofertas detectadas",
+      "successTitle": "Importación simulada completada",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar importación",
+      "processing": "Procesando...",
+      "importSuccessToast": "Importación de ofertas simulada correctamente."
     }
   },
   "tomaMaterias": {

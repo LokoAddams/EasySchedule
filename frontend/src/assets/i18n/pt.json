@@ -121,7 +121,8 @@
       "changeMalla": "Alterar grade curricular",
       "changeUniversidad": "Alterar universidade",
       "cancelChange": "Cancelar",
-      "changeStatus": "Atualizar estado de matérias"
+      "changeStatus": "Atualizar estado de matérias",
+      "importOffers": "Importar Ofertas"
     },
     "error": {
       "loadUniversidades": "Não foi possível carregar as universidades disponíveis.",
@@ -200,6 +201,26 @@
       "noGroupsAvailable": "Esta matéria não possui grupos disponíveis no momento.",
       "cancel": "Cancelar",
       "addToSelection": "Adicionar à seleção"
+    },
+    "offers": {
+      "eyebrow": "Ofertas acadêmicas",
+      "title": "Importar ofertas acadêmicas",
+      "subtitle": "Carregue ofertas para a grade {{malla}}.",
+      "expectedFormatTitle": "Formato esperado",
+      "expectedFormatDescription": "Carregue um arquivo CSV com as colunas necessárias para criar ou atualizar ofertas acadêmicas.",
+      "codeExplanation": "O código da matéria é usado para encontrar a matéria correspondente dentro da grade selecionada.",
+      "selectFile": "Selecionar arquivo CSV",
+      "selectedFile": "Arquivo selecionado",
+      "clearFile": "Limpar arquivo",
+      "errorsTitle": "Erros detectados",
+      "warningsTitle": "Avisos",
+      "previewTitle": "Pré-visualização",
+      "offersDetected": "ofertas detectadas",
+      "successTitle": "Importação simulada concluída",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar importação",
+      "processing": "Processando...",
+      "importSuccessToast": "Importação de ofertas simulada corretamente."
     }
   },
   "tomaMaterias": {
