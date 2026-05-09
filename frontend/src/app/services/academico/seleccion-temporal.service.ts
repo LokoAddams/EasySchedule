@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { ApiService } from '../api.service';
 
 export interface SeleccionTemporalResponse {
   id: number;
@@ -22,23 +21,23 @@ export interface SeleccionTemporalRequest {
   providedIn: 'root'
 })
 export class SeleccionTemporalService {
-  private readonly apiUrl = `${environment.apiUrl}/api/academico/seleccion-temporal`;
+  private readonly path = '/api/academico/seleccion-temporal';
 
-  constructor(private http: HttpClient) {}
+  constructor(private apiService: ApiService) {}
 
   listarSelecciones(): Observable<SeleccionTemporalResponse[]> {
-    return this.http.get<SeleccionTemporalResponse[]>(this.apiUrl);
+    return this.apiService.get<SeleccionTemporalResponse[]>(this.path);
   }
 
   agregarSeleccion(request: SeleccionTemporalRequest): Observable<SeleccionTemporalResponse> {
-    return this.http.post<SeleccionTemporalResponse>(this.apiUrl, request);
+    return this.apiService.post<SeleccionTemporalResponse, SeleccionTemporalRequest>(this.path, request);
   }
 
   removerSeleccion(ofertaMateriaId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${ofertaMateriaId}`);
+    return this.apiService.delete<void>(`${this.path}/${ofertaMateriaId}`);
   }
 
   limpiarSelecciones(): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/clear`);
+    return this.apiService.delete<void>(`${this.path}/clear`);
   }
 }

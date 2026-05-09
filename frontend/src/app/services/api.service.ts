@@ -24,6 +24,10 @@ export class ApiService {
     return this.http.put<TResponse>(this.buildUrl(path), body);
   }
 
+  delete<T>(path: string): Observable<T> {
+    return this.http.delete<T>(this.buildUrl(path));
+  }
+
   getBlob(path: string): Observable<HttpResponse<Blob>> {
     return this.http.get(this.buildUrl(path), {
       observe: 'response',
