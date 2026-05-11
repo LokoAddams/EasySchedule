@@ -1,13 +1,14 @@
 import { NgFor, NgIf, NgClass } from '@angular/common';
 import { Component, OnDestroy, OnInit, HostListener, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter, firstValueFrom, Subscription } from 'rxjs';
 import { NgbPopover, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { CarreraCatalogoItem, CarreraService } from '../../services/academico/carrera.service';
-import { EstadoMateriaService, EstadoMateriaItem, EstadoMateriaRequest } from '../../services/academico/estado-materia.service';
+import { EstadoMateriaService, EstadoMateriaRequest } from '../../services/academico/estado-materia.service';
 import { FeatureToggleService } from '../../services/feature-toggle.service';
 import { MallaCatalogoItem, MallaCatalogoService, MallaMateria } from '../../services/academico/malla-catalogo.service';
 import {
@@ -16,11 +17,13 @@ import {
 } from '../../services/academico/seleccion-academica.service';
 import { UniversidadCatalogoItem, UniversidadService } from '../../services/academico/universidad.service';
 import { TomaSeleccionService } from '../../services/academico/toma-seleccion.service';
-import { OfertaDetalleResponse, OfertaMateriaSimple } from '../../services/academico/malla-catalogo.service';
+import { OfertaDetalleResponse } from '../../services/academico/malla-catalogo.service';
 import { ToastService } from '../../core/services/toast.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
 import { TourHintsService } from '../../services/tour-hints.service';
+
+import { ImportarOfertasModal } from './importar-ofertas-modal/importar-ofertas-modal';
 
 type SeleccionStep = 'universidad' | 'carrera' | 'malla' | 'resumen';
 type EditMode = 'universidad' | 'malla' | null;
@@ -33,7 +36,15 @@ interface SeleccionSnapshot {
 
 @Component({
   selector: 'app-malla',
-  imports: [FormsModule, NgFor, NgIf, NgClass, TranslatePipe, NgbPopoverModule],
+  imports: [
+    FormsModule,
+    NgFor,
+    NgIf,
+    NgClass,
+    TranslatePipe,
+    NgbPopoverModule,
+    ImportarOfertasModal,
+  ],
   templateUrl: './malla.html',
   styleUrl: './malla.scss',
 })
@@ -54,7 +65,7 @@ export class Malla implements OnInit, OnDestroy {
   protected materias: MallaMateria[] = [];
   protected materiasPorSemestre: Map<number, MallaMateria[]> = new Map();
   protected semestres: number[] = [];
-  protected semestreActual: number = 1;
+  protected semestreActual = 1;
   protected loadingMaterias = false;
   protected loadMateriasError = false;
 
@@ -87,11 +98,57 @@ export class Malla implements OnInit, OnDestroy {
   protected selectedOfertaId: number | null = null;
   protected materiasSeleccionadas: Set<number> = new Set();
 
+  protected ofertasImportEnabled = true;
+  protected showImportarOfertasModal = false;
+
+  protected showActualizarModal = false;
+  protected selectedMateriaIdActualizar: number | null = null;
+  protected selectedEstadoActualizar: 'APROBADA' | 'CURSANDO' | 'PENDIENTE' = 'PENDIENTE';
+  protected savingEstado = false;
+
+  protected hoveredMateriaId: number | null = null;
+  protected prereqLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
+
+  protected tourStep = 0;
+
+  public showImportModal = false;
+  public importFile: File | null = null;
+  public importFileName = '';
+  public importLoading = false;
+  public importError: string | null = null;
+  public importSuccess: string | null = null;
+  public importMallaName = '';
+  public showTutorial = false;
+  public fullPrompt = `Necesito que generes un archivo en formato CSV con las materias de una malla curricular distribuidas en semestres.
+
+El CSV debe tener exactamente estos encabezados, en este orden:
+
+codigo,nombre,semestre,creditos,prerequisitos
+
+Reglas obligatorias:
+
+- codigo: código único de la materia. Si la malla original no incluye código, genera códigos coherentes usando el prefijo de la carrera y el semestre, por ejemplo: SIS101, SIS102, SIS201, SIS202.
+- nombre: nombre completo de la materia, respetando el nombre original de la malla.
+- semestre: número entero del semestre al que pertenece la materia. Debe estar entre 1 y N, donde N es la cantidad total de semestres de la carrera.
+- creditos: número entero entre 3 y 6. Si la malla original no indica créditos, asigna un valor razonable según la importancia de la materia.
+- prerequisitos: códigos de materias separados por punto y coma ;. Si no tiene prerequisitos, dejar el campo vacío.
+- Los códigos usados en prerequisitos deben existir previamente en la columna codigo.
+- Una materia solo puede tener como prerequisito materias de semestres anteriores.
+- No colocar espacios antes ni después del punto y coma en prerequisitos.
+- No agregar columnas adicionales.
+- No agregar explicaciones, comentarios ni texto fuera del CSV.
+- La salida debe ser unicamente el contenido CSV válido.`;
+
+  public get displayPrompt(): string {
+    const maxLength = 180;
+    if (this.fullPrompt.length > maxLength) {
+      return this.fullPrompt.substring(0, maxLength) + '...';
+    }
+    return this.fullPrompt;
+  }
   @ViewChild('popoverStep1') popoverStep1?: NgbPopover;
   @ViewChild('popoverStep2') popoverStep2?: NgbPopover;
   @ViewChild('popoverStep4') popoverStep4?: NgbPopover;
-
-  protected tourStep = 0;
 
   constructor(
     private readonly featureService: FeatureToggleService,
@@ -104,6 +161,7 @@ export class Malla implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly tomaSeleccionService: TomaSeleccionService,
     private readonly translateService: TranslateService,
+    private readonly http: HttpClient,
     private readonly toastService: ToastService,
     private readonly authSessionService: AuthSessionService,
     private readonly perfilService: PerfilService,
@@ -113,6 +171,7 @@ export class Malla implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.flagsSubscription = this.featureService.flags$.subscribe((flags) => {
       this.mallaEnabled = flags.malla;
+      this.ofertasImportEnabled = flags.ofertasImport ?? true;
     });
 
     this.routerEventsSubscription = this.router.events
@@ -127,7 +186,7 @@ export class Malla implements OnInit, OnDestroy {
       });
 
     this.tomaSeleccionSubscription = this.tomaSeleccionService.seleccion$.subscribe((materias) => {
-      this.materiasSeleccionadas = new Set(materias.map(m => m.id));
+      this.materiasSeleccionadas = new Set(materias.map((materia) => materia.id));
     });
 
     void this.featureService.loadFlags();
@@ -161,17 +220,13 @@ export class Malla implements OnInit, OnDestroy {
     void this.prepareMallaEditMode();
   }
 
-  protected showActualizarModal = false;
-  protected selectedMateriaIdActualizar: number | null = null;
-  protected selectedEstadoActualizar: 'APROBADA' | 'CURSANDO' | 'PENDIENTE' = 'PENDIENTE';
-  protected savingEstado = false;
-
   protected onActualizarMallaClick(): void {
     if (this.selectedMallaId === null) {
       return;
     }
 
     this.showActualizarModal = true;
+
     if (this.showAccionesModal) {
       const materiaId = this.selectedMateriaParaAccion?.id ?? null;
       this.closeAccionesModal();
@@ -179,6 +234,7 @@ export class Malla implements OnInit, OnDestroy {
     } else {
       this.selectedMateriaIdActualizar = this.materias.length > 0 ? this.materias[0].id : null;
     }
+
     this.onMateriaActualizarChange();
   }
 
@@ -187,21 +243,25 @@ export class Malla implements OnInit, OnDestroy {
   }
 
   protected onMateriaActualizarChange(): void {
-    const materia = this.materias.find(m => m.id === this.selectedMateriaIdActualizar);
+    const materia = this.materias.find((item) => item.id === this.selectedMateriaIdActualizar);
+
     if (materia) {
       this.selectedEstadoActualizar = this.mapEstadoBDToUI(materia.estado);
     }
   }
 
   protected async actualizarMateriaSeleccionada(): Promise<void> {
-    if (this.selectedMateriaIdActualizar === null) return;
-    
+    if (this.selectedMateriaIdActualizar === null) {
+      return;
+    }
+
     if (this.selectedEstadoActualizar === 'CURSANDO') {
       this.toastService.error('malla.UpdateCourse.cursandoAutoAssigned');
       return;
     }
 
     this.savingEstado = true;
+
     try {
       const request: EstadoMateriaRequest = {
         mallaMateriaId: this.selectedMateriaIdActualizar,
@@ -210,14 +270,15 @@ export class Malla implements OnInit, OnDestroy {
 
       await firstValueFrom(this.estadoMateriaService.guardarEstado(request));
 
-      const materia = this.materias.find(m => m.id === this.selectedMateriaIdActualizar);
+      const materia = this.materias.find((item) => item.id === this.selectedMateriaIdActualizar);
+
       if (materia) {
         materia.estado = request.estado;
       }
 
       this.toastService.success('malla.UpdateCourse.success');
       this.closeActualizarModal();
-    } catch (error) {
+    } catch {
       this.toastService.error('malla.UpdateCourse.errorUpdate');
     } finally {
       this.savingEstado = false;
@@ -226,26 +287,27 @@ export class Malla implements OnInit, OnDestroy {
 
   protected getEstadoLabelKey(estado: 'APROBADA' | 'CURSANDO' | 'PENDIENTE'): string {
     const labelMap = {
-      'APROBADA': 'malla.UpdateCourse.aprobada',
-      'CURSANDO': 'malla.UpdateCourse.cursando',
-      'PENDIENTE': 'malla.UpdateCourse.pendiente',
+      APROBADA: 'malla.UpdateCourse.aprobada',
+      CURSANDO: 'malla.UpdateCourse.cursando',
+      PENDIENTE: 'malla.UpdateCourse.pendiente',
     };
+
     return labelMap[estado];
   }
 
-  private mapEstadoUIToBD(estado: 'APROBADA' | 'CURSANDO' | 'PENDIENTE'): 'aprobada' | 'pendiente' | 'cursando' {
-    const map = {
-      'APROBADA': 'aprobada' as const,
-      'CURSANDO': 'cursando' as const,
-      'PENDIENTE': 'pendiente' as const,
-    };
-    return map[estado];
-  }
-
   protected mapEstadoBDToUI(estado: string | null | undefined): 'APROBADA' | 'CURSANDO' | 'PENDIENTE' {
-    if (!estado) return 'PENDIENTE';
-    if (estado === 'aprobada') return 'APROBADA';
-    if (estado === 'cursando') return 'CURSANDO';
+    if (!estado) {
+      return 'PENDIENTE';
+    }
+
+    if (estado === 'aprobada') {
+      return 'APROBADA';
+    }
+
+    if (estado === 'cursando') {
+      return 'CURSANDO';
+    }
+
     return 'PENDIENTE';
   }
 
@@ -287,6 +349,7 @@ export class Malla implements OnInit, OnDestroy {
     if (this.selectedMallaId !== selectedMallaId) {
       this.materiasLoadedForMallaId = null;
     }
+
     this.selectedMallaId = selectedMallaId;
     this.mallaRequiredError = false;
     this.saveSeleccionError = false;
@@ -316,7 +379,11 @@ export class Malla implements OnInit, OnDestroy {
   }
 
   protected onGuardarMallaClick(): void {
-    if (this.selectedUniversidadId === null || this.selectedCarreraId === null || this.selectedMallaId === null) {
+    if (
+      this.selectedUniversidadId === null ||
+      this.selectedCarreraId === null ||
+      this.selectedMallaId === null
+    ) {
       this.mallaRequiredError = this.selectedMallaId === null;
       return;
     }
@@ -324,8 +391,10 @@ export class Malla implements OnInit, OnDestroy {
     if (this.editMode === 'malla' && this.previousSelectionSnapshot !== null) {
       const mallaAnteriorId = this.previousSelectionSnapshot.mallaId;
       const isChangingMalla = mallaAnteriorId !== null && this.selectedMallaId !== mallaAnteriorId;
+
       if (isChangingMalla) {
         const confirmed = window.confirm(this.translateService.instant('malla.modal.confirmChangeMalla'));
+
         if (!confirmed) {
           return;
         }
@@ -340,13 +409,12 @@ export class Malla implements OnInit, OnDestroy {
     this.showAccionesModal = true;
   }
 
-  protected hoveredMateriaId: number | null = null;
-  protected prereqLines: { x1: number, y1: number, x2: number, y2: number }[] = [];
-
   protected onMateriaHover(materiaId: number | null): void {
-    if (window.innerWidth < 768) return;
+    if (window.innerWidth < 768) {
+      return;
+    }
+
     this.hoveredMateriaId = materiaId;
-    // Delay to ensure rendering is complete if needed, but synchronous is fine since DOM exists
     this.updatePrereqLines();
   }
 
@@ -356,9 +424,10 @@ export class Malla implements OnInit, OnDestroy {
       this.prereqLines = [];
       return;
     }
-    const lines: { x1: number, y1: number, x2: number, y2: number }[] = [];
-    const target = this.materias.find(m => m.id === this.hoveredMateriaId);
-    
+
+    const lines: { x1: number; y1: number; x2: number; y2: number }[] = [];
+    const target = this.materias.find((materia) => materia.id === this.hoveredMateriaId);
+
     if (!target || !target.prerequisitosIds || target.prerequisitosIds.length === 0) {
       this.prereqLines = [];
       return;
@@ -366,39 +435,47 @@ export class Malla implements OnInit, OnDestroy {
 
     const boardWrapper = document.querySelector('.malla-board-wrapper') as HTMLElement;
     const wrapperRect = boardWrapper?.getBoundingClientRect();
-    if (!wrapperRect) return;
+
+    if (!wrapperRect) {
+      return;
+    }
 
     const targetEl = document.getElementById(`subject-${target.id}`);
-    if (targetEl) {
-      const tRect = targetEl.getBoundingClientRect();
-      const scrollLeft = boardWrapper.scrollLeft || 0;
-      const x2 = tRect.left - wrapperRect.left + scrollLeft;
-      const y2 = tRect.top - wrapperRect.top + (tRect.height / 2);
 
-      for (const pid of target.prerequisitosIds) {
-        const pEl = document.getElementById(`subject-${pid}`);
-        if (pEl) {
-          const pRect = pEl.getBoundingClientRect();
-          const x1 = pRect.right - wrapperRect.left + scrollLeft;
-          const y1 = pRect.top - wrapperRect.top + (pRect.height / 2);
+    if (targetEl) {
+      const targetRect = targetEl.getBoundingClientRect();
+      const scrollLeft = boardWrapper.scrollLeft || 0;
+      const x2 = targetRect.left - wrapperRect.left + scrollLeft;
+      const y2 = targetRect.top - wrapperRect.top + targetRect.height / 2;
+
+      for (const prerequisiteId of target.prerequisitosIds) {
+        const prerequisiteEl = document.getElementById(`subject-${prerequisiteId}`);
+
+        if (prerequisiteEl) {
+          const prerequisiteRect = prerequisiteEl.getBoundingClientRect();
+          const x1 = prerequisiteRect.right - wrapperRect.left + scrollLeft;
+          const y1 = prerequisiteRect.top - wrapperRect.top + prerequisiteRect.height / 2;
           lines.push({ x1, y1, x2, y2 });
         }
       }
     }
+
     this.prereqLines = lines;
   }
 
   protected getMateriaCodigo(id: number): string {
-    return this.materias.find(m => m.id === id)?.codigoMateria ?? '???';
+    return this.materias.find((materia) => materia.id === id)?.codigoMateria ?? '???';
   }
 
   protected enfocarMateria(id: number, event: Event): void {
     event.stopPropagation();
-    const el = document.getElementById(`subject-${id}`);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      el.classList.add('malla-subject--highlighted');
-      setTimeout(() => el.classList.remove('malla-subject--highlighted'), 2000);
+
+    const element = document.getElementById(`subject-${id}`);
+
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.classList.add('malla-subject--highlighted');
+      setTimeout(() => element.classList.remove('malla-subject--highlighted'), 2000);
     }
   }
 
@@ -409,8 +486,11 @@ export class Malla implements OnInit, OnDestroy {
 
   protected onTomarMateriaClick(): void {
     const materia = this.selectedMateriaParaAccion;
-    if (!materia) return;
-    
+
+    if (!materia) {
+      return;
+    }
+
     if (materia.estado === 'aprobada' || materia.estado === 'cursando') {
       return;
     }
@@ -428,30 +508,30 @@ export class Malla implements OnInit, OnDestroy {
       error: () => {
         alert(this.translateService.instant('malla.modal.detailLoadError'));
         this.closeModal();
-      }
+      },
     });
   }
 
   protected confirmarSeleccionModal(): void {
-    if (!this.materiaDetalle || !this.selectedOfertaId) return;
+    if (!this.materiaDetalle || !this.selectedOfertaId) {
+      return;
+    }
 
     this.tomaSeleccionService.agregarMateria({
       id: this.materiaDetalle.mallaMateriaId,
       nombre: this.materiaDetalle.nombreMateria,
       creditos: this.materiaDetalle.creditos,
-      ofertaId: this.selectedOfertaId
+      ofertaId: this.selectedOfertaId,
     });
 
     this.closeModal();
-    this.router.navigate(['/toma-de-materias']);
-
+    void this.router.navigate(['/toma-de-materias']);
   }
 
   protected closeModal(): void {
     this.showModal = false;
     this.materiaDetalle = null;
   }
-
 
   protected getResumenUniversidad(): string {
     const nombre = this.selectedResumen?.universidad;
@@ -472,6 +552,37 @@ export class Malla implements OnInit, OnDestroy {
     this.semestreActual = semestre;
   }
 
+  protected onImportarOfertasClick(): void {
+    if (this.selectedMallaId === null || this.materias.length === 0) {
+      return;
+    }
+
+    this.showImportarOfertasModal = true;
+  }
+
+  protected closeImportarOfertasModal(): void {
+    this.showImportarOfertasModal = false;
+  }
+
+  protected onOfertasImportFinished(): void {
+    this.toastService.success('malla.offers.importSuccessToast');
+
+    if (this.selectedMallaId !== null) {
+      this.materiasLoadedForMallaId = null;
+      void this.loadMaterias(this.selectedMallaId);
+    }
+  }
+
+  private mapEstadoUIToBD(estado: 'APROBADA' | 'CURSANDO' | 'PENDIENTE'): 'aprobada' | 'pendiente' | 'cursando' {
+    const map = {
+      APROBADA: 'aprobada' as const,
+      CURSANDO: 'cursando' as const,
+      PENDIENTE: 'pendiente' as const,
+    };
+
+    return map[estado];
+  }
+
   private async loadUniversidades(): Promise<void> {
     this.loadingUniversidades = true;
     this.loadUniversidadesError = false;
@@ -490,6 +601,7 @@ export class Malla implements OnInit, OnDestroy {
   private async loadSeleccionActual(): Promise<void> {
     try {
       const seleccion = await firstValueFrom(this.seleccionAcademicaService.getSeleccionActual());
+
       if (seleccion.universidadId === null || seleccion.carreraId === null || seleccion.mallaId === null) {
         return;
       }
@@ -501,17 +613,19 @@ export class Malla implements OnInit, OnDestroy {
 
       await this.loadCarreras(seleccion.universidadId, false);
       await this.loadMallas(seleccion.carreraId, false);
+
       this.step = 'resumen';
       this.editMode = null;
       this.mallaChangeWarningVisible = false;
       this.previousSelectionSnapshot = null;
+
       void this.loadMaterias(this.selectedMallaId);
     } catch {
     }
   }
 
   private async prepareMallaEditMode(): Promise<void> {
-    if (this.selectedUniversidadId === null || this.selectedMallaId === null) {
+    if (this.selectedUniversidadId === null || this.selectedCarreraId === null || this.selectedMallaId === null) {
       return;
     }
 
@@ -525,14 +639,21 @@ export class Malla implements OnInit, OnDestroy {
     this.loadMallasError = false;
 
     try {
-      const carreras = await firstValueFrom(this.carreraService.getCarrerasActivasPorUniversidad(this.selectedUniversidadId));
+      const carreras = await firstValueFrom(
+        this.carreraService.getCarrerasActivasPorUniversidad(this.selectedUniversidadId),
+      );
+
       this.carreras = carreras;
+
       const mallasPorCarrera = await Promise.all(
         carreras.map((carrera) => firstValueFrom(this.mallaCatalogoService.getMallasActivasPorCarrera(carrera.id))),
       );
 
       const mallasPlanas = mallasPorCarrera.flat();
-      this.mallas = mallasPlanas.filter((malla, index, source) => source.findIndex((candidate) => candidate.id === malla.id) === index);
+
+      this.mallas = mallasPlanas.filter(
+        (malla, index, source) => source.findIndex((candidate) => candidate.id === malla.id) === index,
+      );
 
       if (!this.mallas.some((malla) => malla.id === this.selectedMallaId)) {
         this.selectedMallaId = null;
@@ -551,6 +672,7 @@ export class Malla implements OnInit, OnDestroy {
 
     try {
       this.carreras = await firstValueFrom(this.carreraService.getCarrerasActivasPorUniversidad(universidadId));
+
       if (avanzarStep) {
         this.step = 'carrera';
       }
@@ -568,6 +690,7 @@ export class Malla implements OnInit, OnDestroy {
 
     try {
       this.mallas = await firstValueFrom(this.mallaCatalogoService.getMallasActivasPorCarrera(carreraId));
+
       if (avanzarStep) {
         this.step = 'malla';
       }
@@ -595,10 +718,12 @@ export class Malla implements OnInit, OnDestroy {
           mallaId: this.selectedMallaId,
         }),
       );
+
       await this.loadSeleccionActual();
       this.step = 'resumen';
     } catch {
       this.saveSeleccionError = true;
+
       if (this.editMode === 'malla') {
         this.restoreSelectionSnapshot();
         this.editMode = null;
@@ -651,20 +776,23 @@ export class Malla implements OnInit, OnDestroy {
     try {
       this.materias = await firstValueFrom(this.mallaCatalogoService.getMateriasPorMalla(mallaId));
 
-      this.materias.forEach(materia => {
-        const sem = materia.semestreSugerido;
-        if (!this.materiasPorSemestre.has(sem)) {
-          this.materiasPorSemestre.set(sem, []);
-          this.semestres.push(sem);
-        }
-        this.materiasPorSemestre.get(sem)!.push(materia);
-      });
-      this.semestres.sort((a, b) => a - b);
+      this.materias.forEach((materia) => {
+        const semestre = materia.semestreSugerido;
 
+        if (!this.materiasPorSemestre.has(semestre)) {
+          this.materiasPorSemestre.set(semestre, []);
+          this.semestres.push(semestre);
+        }
+
+        this.materiasPorSemestre.get(semestre)!.push(materia);
+      });
+
+      this.semestres.sort((a, b) => a - b);
     } catch {
       this.loadMateriasError = true;
     } finally {
       this.loadingMaterias = false;
+
       if (!this.loadMateriasError) {
         this.materiasLoadedForMallaId = mallaId;
         this.iniciarTour();
@@ -679,21 +807,18 @@ export class Malla implements OnInit, OnDestroy {
 
   protected iniciarTour(): void {
     const storageKey = this.getTourStorageKey();
-
-    // Migrar clave global antigua a clave por usuario (si existe)
     const legacyKey = 'malla.tourCompleted';
+
     if (localStorage.getItem(legacyKey) === 'true') {
-      // La clave vieja se elimina para no bloquear a otros usuarios
       localStorage.removeItem(legacyKey);
     }
 
-    // Verificar primero en localStorage (clave por usuario) para evitar flash
     if (localStorage.getItem(storageKey) === 'true') {
       return;
     }
 
-    // Verificar en el backend (fuente de verdad, persiste entre dispositivos)
     const username = this.authSessionService.getCurrentUsername();
+
     if (username) {
       this.perfilService.getPerfilByUsername(username).subscribe({
         next: (perfil) => {
@@ -701,12 +826,12 @@ export class Malla implements OnInit, OnDestroy {
             localStorage.setItem(storageKey, 'true');
             return;
           }
+
           this.lanzarTourConRetraso();
         },
         error: () => {
-          // Si falla la consulta, mostramos el tour de todas formas
           this.lanzarTourConRetraso();
-        }
+        },
       });
     } else {
       this.lanzarTourConRetraso();
@@ -714,7 +839,6 @@ export class Malla implements OnInit, OnDestroy {
   }
 
   private lanzarTourConRetraso(): void {
-    // Pequeno retraso para asegurar que los elementos del DOM esten listos
     setTimeout(() => {
       this.siguienteTour(1);
     }, 800);
@@ -727,10 +851,21 @@ export class Malla implements OnInit, OnDestroy {
     this.tourHintsService.closeTomaMateriasPopover();
 
     setTimeout(() => {
-      if (step === 1) this.popoverStep1?.open();
-      if (step === 2) this.popoverStep2?.open();
-      if (step === 3) this.tourHintsService.openTomaMateriasPopover();
-      if (step === 4) this.popoverStep4?.open();
+      if (step === 1) {
+        this.popoverStep1?.open();
+      }
+
+      if (step === 2) {
+        this.popoverStep2?.open();
+      }
+
+      if (step === 3) {
+        this.tourHintsService.openTomaMateriasPopover();
+      }
+
+      if (step === 4) {
+        this.popoverStep4?.open();
+      }
     }, 100);
   }
 
@@ -740,6 +875,110 @@ export class Malla implements OnInit, OnDestroy {
     this.persistirTourCompletado();
   }
 
+  public openImportModal(): void {
+    this.showImportModal = true;
+    this.importFile = null;
+    this.importFileName = '';
+    this.importError = null;
+    this.importSuccess = null;
+    this.importMallaName = '';
+  }
+
+  public closeImportModal(): void {
+    this.showImportModal = false;
+    this.importFile = null;
+    this.importFileName = '';
+    this.importError = null;
+    this.importSuccess = null;
+  }
+
+  public onImportFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const validExtensions = ['.csv', '.json'];
+      const ext = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+      if (!validExtensions.includes(ext)) {
+        this.importError = this.translateService.instant('malla.import.errorFormat');
+        this.importFile = null;
+        this.importFileName = '';
+        return;
+      }
+      this.importFile = file;
+      this.importFileName = file.name;
+      this.importError = null;
+    }
+  }
+
+  public async importMalla(): Promise<void> {
+    if (!this.importFile) {
+      this.importError = this.translateService.instant('malla.import.errorNoFile');
+      return;
+    }
+    if (!this.importMallaName.trim()) {
+      this.importError = this.translateService.instant('malla.import.errorNameRequired');
+      return;
+    }
+    if (this.selectedCarreraId === null) {
+      this.importError = this.translateService.instant('malla.import.errorCarreraRequired');
+      return;
+    }
+
+    this.importLoading = true;
+    this.importError = null;
+    this.importSuccess = null;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', this.importFile!);
+      formData.append('carreraId', this.selectedCarreraId!.toString());
+      formData.append('nombre', this.importMallaName);
+
+      const result: any = await firstValueFrom(
+        this.http.post('/api/academico/mallas/importar', formData, {
+          withCredentials: true
+        })
+      );
+
+      this.importSuccess = this.translateService.instant('malla.import.success', {
+        count: result.materiasImportadas,
+        prerequisitos: result.prerequisitosImportados
+      });
+
+      setTimeout(() => {
+        this.closeImportModal();
+        void this.loadMallas(this.selectedCarreraId!);
+      }, 2000);
+
+    } catch (error: any) {
+      console.error('Error importando malla:', error);
+      let errorMsg = this.translateService.instant('malla.import.errorGeneric');
+      if (error.error) {
+        if (typeof error.error === 'string') {
+          errorMsg = error.error;
+        } else if (error.error.message) {
+          errorMsg = error.error.message;
+        }
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+      this.importError = errorMsg;
+    } finally {
+      this.importLoading = false;
+    }
+  }
+
+  public copyPrompt(): void {
+    navigator.clipboard.writeText(this.fullPrompt).then(() => {
+      alert(this.translateService.instant('malla.import.promptCopied'));
+    }).catch(() => {
+      prompt(this.translateService.instant('malla.import.copyPromptManually'), this.fullPrompt);
+    });
+  }
+
+  public toggleTutorial(): void {
+    this.showTutorial = !this.showTutorial;
+  }
   protected irATomaYCerrarTour(): void {
     this.cerrarTodosLosPopovers();
     localStorage.setItem(this.getTourStorageKey(), 'true');
@@ -762,11 +1001,14 @@ export class Malla implements OnInit, OnDestroy {
 
   private persistirTourCompletado(): void {
     const username = this.authSessionService.getCurrentUsername();
-    if (!username) return;
+
+    if (!username) {
+      return;
+    }
+
     this.perfilService.completeTour(username).subscribe({
       next: () => {},
-      error: () => {}
+      error: () => {},
     });
   }
-
 }

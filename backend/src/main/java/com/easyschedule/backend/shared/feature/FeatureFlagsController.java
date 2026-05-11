@@ -16,6 +16,10 @@ public class FeatureFlagsController {
 
     @GetMapping
     public FeatureFlagsDTO getFeatureFlags() {
-        return new FeatureFlagsDTO(featureFlagsConfig.isMalla(), featureFlagsConfig.isTomaMaterias());
+        return new FeatureFlagsDTO(
+            featureFlagsConfig.isMalla(),
+            featureFlagsConfig.isTomaMaterias(),
+            featureFlagsConfig.isOfertasImport()
+        );
     }
 }

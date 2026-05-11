@@ -1,0 +1,182 @@
+<div class="offers-modal-backdrop" (click)="cancel()"></div>
+
+<section class="offers-modal" role="dialog" aria-modal="true">
+  <header class="offers-modal__header">
+    <div>
+      <p class="offers-modal__eyebrow">
+        {{ 'malla.offers.eyebrow' | translate }}
+      </p>
+
+      <h2>
+        {{ 'malla.offers.title' | translate }}
+      </h2>
+
+      <p>
+        {{ 'malla.offers.subtitle' | translate: { malla: mallaNombre } }}
+      </p>
+    </div>
+
+    <button type="button" class="offers-modal__close" (click)="cancel()">
+      ×
+    </button>
+  </header>
+
+  <div class="offers-modal__body">
+    <section class="offers-panel">
+      <h3>
+        {{ 'malla.offers.expectedFormatTitle' | translate }}
+      </h3>
+
+      <p>
+        {{ 'malla.offers.expectedFormatDescription' | translate }}
+      </p>
+
+      <div class="offers-format">
+        codigo_materia, nombre_materia, paralelo, semestre_academico, dia, hora_inicio, hora_fin,
+        docente, aula
+      </div>
+
+      <p class="offers-help">
+        {{ 'malla.offers.codeExplanation' | translate }}
+      </p>
+    </section>
+
+    <section class="offers-panel">
+      <label class="offers-upload">
+        <span>
+          {{ 'malla.offers.selectFile' | translate }}
+        </span>
+
+        <input
+          #fileInput
+          type="file"
+          accept=".csv"
+          (change)="onFileSelected($event)"
+        />
+      </label>
+
+      <p *ngIf="selectedFileName" class="offers-file">
+        {{ 'malla.offers.selectedFile' | translate }}:
+        <strong>{{ selectedFileName }}</strong>
+      </p>
+
+      <button
+        *ngIf="selectedFileName"
+        type="button"
+        class="offers-button offers-button--ghost"
+        (click)="clearFile()"
+      >
+        {{ 'malla.offers.clearFile' | translate }}
+      </button>
+    </section>
+
+    <section class="offers-panel" *ngIf="errors.length > 0">
+      <h3>
+        {{ 'malla.offers.errorsTitle' | translate }}
+      </h3>
+
+      <div
+        class="offers-message"
+        *ngFor="let error of errors"
+        [ngClass]="{
+          'offers-message--error': error.critical,
+          'offers-message--warning': !error.critical
+        }"
+      >
+        Fila {{ error.rowNumber }} — {{ error.field }}: {{ error.reason }}
+      </div>
+    </section>
+
+    <section class="offers-panel" *ngIf="warnings.length > 0">
+      <h3>
+        {{ 'malla.offers.warningsTitle' | translate }}
+      </h3>
+
+      <div class="offers-message offers-message--warning" *ngFor="let warning of warnings">
+        Fila {{ warning.rowNumber }} — {{ warning.field }}: {{ warning.reason }}
+      </div>
+    </section>
+
+    <section class="offers-panel" *ngIf="preview.length > 0">
+      <div class="offers-preview-header">
+        <h3>
+          {{ 'malla.offers.previewTitle' | translate }}
+        </h3>
+
+        <span>
+          {{ preview.length }} {{ 'malla.offers.offersDetected' | translate }}
+        </span>
+      </div>
+
+      <p class="offers-help">
+        Se procesarán {{ preview.length }} ofertas y {{ scheduleBlocksCount }} bloques de horario.
+      </p>
+
+      <article class="offers-preview-card" *ngFor="let offer of preview">
+        <div class="offers-preview-card__main">
+          <strong>{{ offer.codigoMateria }}</strong>
+
+          <span *ngIf="offer.nombreMateria">
+            {{ offer.nombreMateria }}
+          </span>
+        </div>
+
+        <div class="offers-preview-card__meta">
+          <span>Paralelo {{ offer.paralelo }}</span>
+          <span>{{ offer.semestreAcademico }}</span>
+
+          <span *ngIf="offer.docente">
+            {{ offer.docente }}
+          </span>
+
+          <span *ngIf="offer.aula">
+            {{ offer.aula }}
+          </span>
+        </div>
+
+        <ul class="offers-schedule-list">
+          <li *ngFor="let horario of offer.horarios">
+            {{ horario.dia }} — {{ horario.horaInicio }} a {{ horario.horaFin }}
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="offers-panel offers-summary" *ngIf="summary">
+      <h3>
+        {{ 'malla.offers.successTitle' | translate }}
+      </h3>
+
+      <div class="offers-summary__grid">
+        <span>Filas leídas: {{ summary.totalRows }}</span>
+        <span>Ofertas creadas: {{ summary.offersCreated }}</span>
+        <span>Ofertas actualizadas: {{ summary.offersUpdated }}</span>
+        <span>Bloques de horario: {{ summary.scheduleBlocks }}</span>
+        <span>Filas omitidas: {{ summary.skippedRows }}</span>
+        <span>Errores: {{ summary.errorsCount }}</span>
+        <span>Advertencias: {{ summary.warningsCount }}</span>
+      </div>
+    </section>
+  </div>
+
+  <footer class="offers-modal__footer">
+    <button type="button" class="offers-button offers-button--ghost" (click)="cancel()">
+      {{ 'malla.offers.cancel' | translate }}
+    </button>
+
+    <button
+      type="button"
+      class="offers-button"
+      [disabled]="hasCriticalErrors || preview.length === 0 || processing"
+      (click)="confirmImport()"
+    >
+      <span *ngIf="!processing">
+        {{ 'malla.offers.confirm' | translate }}
+      </span>
+
+      <span *ngIf="processing">
+        {{ 'malla.offers.processing' | translate }}
+      </span>
+    </button>
+  </footer>
+</section>
