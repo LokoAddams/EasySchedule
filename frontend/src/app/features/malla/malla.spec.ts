@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 
 import { Malla } from './malla';
@@ -11,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
 import { ToastService } from '../../core/services/toast.service';
+import { TourHintsService } from '../../services/tour-hints.service';
 
 describe('Malla component logic', () => {
   let component: Malla;
@@ -23,9 +25,11 @@ describe('Malla component logic', () => {
   let estadoMateriaServiceSpy: jasmine.SpyObj<any>;
   let tomaSeleccionServiceSpy: jasmine.SpyObj<TomaSeleccionService>;
   let translateServiceSpy: jasmine.SpyObj<TranslateService>;
+  let httpClientSpy: jasmine.SpyObj<HttpClient>;
   let authSessionServiceSpy: jasmine.SpyObj<AuthSessionService>;
   let perfilServiceSpy: jasmine.SpyObj<PerfilService>;
   let toastServiceSpy: jasmine.SpyObj<ToastService>;
+  let tourHintsServiceSpy: jasmine.SpyObj<TourHintsService>;
   let routerSpy: jasmine.SpyObj<any>;
   let activatedRouteStub: any;
 
@@ -40,16 +44,22 @@ describe('Malla component logic', () => {
     carreraServiceSpy = jasmine.createSpyObj<CarreraService>('CarreraService', ['getCarrerasActivasPorUniversidad']);
     mallaCatalogoServiceSpy = jasmine.createSpyObj<MallaCatalogoService>('MallaCatalogoService', ['getMallasActivasPorCarrera', 'getMateriasPorMalla']);
     seleccionAcademicaServiceSpy = jasmine.createSpyObj<SeleccionAcademicaService>('SeleccionAcademicaService', ['getSeleccionActual', 'guardarSeleccion']);
-    estadoMateriaServiceSpy = jasmine.createSpyObj('EstadoMateriaService', ['getEstadosMateria']);
+    estadoMateriaServiceSpy = jasmine.createSpyObj('EstadoMateriaService', ['getEstadosMateria', 'guardarEstado']);
     tomaSeleccionServiceSpy = jasmine.createSpyObj<TomaSeleccionService>('TomaSeleccionService', ['agregarMateria']);
     Object.defineProperty(tomaSeleccionServiceSpy, 'seleccion$', { value: of([]) });
     translateServiceSpy = jasmine.createSpyObj<TranslateService>('TranslateService', ['instant']);
     translateServiceSpy.instant.and.callFake((key: string) => key);
+    httpClientSpy = jasmine.createSpyObj<HttpClient>('HttpClient', ['get', 'post']);
     authSessionServiceSpy = jasmine.createSpyObj<AuthSessionService>('AuthSessionService', ['getCurrentUsername']);
     authSessionServiceSpy.getCurrentUsername.and.returnValue('testuser');
     perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername', 'completeTour']);
     perfilServiceSpy.getPerfilByUsername.and.returnValue(of({ tourCompleted: true } as any));
+    perfilServiceSpy.completeTour.and.returnValue(of({}) as any);
     toastServiceSpy = jasmine.createSpyObj<ToastService>('ToastService', ['success', 'error']);
+    tourHintsServiceSpy = jasmine.createSpyObj<TourHintsService>('TourHintsService', [
+      'openTomaMateriasPopover',
+      'closeTomaMateriasPopover',
+    ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     activatedRouteStub = { snapshot: { queryParams: {} } };
 
@@ -64,9 +74,11 @@ describe('Malla component logic', () => {
       activatedRouteStub,
       tomaSeleccionServiceSpy,
       translateServiceSpy,
+      httpClientSpy,
       toastServiceSpy,
       authSessionServiceSpy,
       perfilServiceSpy,
+      tourHintsServiceSpy,
     );
   });
 
