@@ -511,7 +511,7 @@ export class Malla implements OnInit, OnDestroy {
   }
 
   private async prepareMallaEditMode(): Promise<void> {
-    if (this.selectedUniversidadId === null || this.selectedMallaId === null) {
+    if (this.selectedUniversidadId === null || this.selectedCarreraId === null || this.selectedMallaId === null) {
       return;
     }
 
@@ -525,14 +525,7 @@ export class Malla implements OnInit, OnDestroy {
     this.loadMallasError = false;
 
     try {
-      const carreras = await firstValueFrom(this.carreraService.getCarrerasActivasPorUniversidad(this.selectedUniversidadId));
-      this.carreras = carreras;
-      const mallasPorCarrera = await Promise.all(
-        carreras.map((carrera) => firstValueFrom(this.mallaCatalogoService.getMallasActivasPorCarrera(carrera.id))),
-      );
-
-      const mallasPlanas = mallasPorCarrera.flat();
-      this.mallas = mallasPlanas.filter((malla, index, source) => source.findIndex((candidate) => candidate.id === malla.id) === index);
+      this.mallas = await firstValueFrom(this.mallaCatalogoService.getMallasActivasPorCarrera(this.selectedCarreraId));
 
       if (!this.mallas.some((malla) => malla.id === this.selectedMallaId)) {
         this.selectedMallaId = null;
