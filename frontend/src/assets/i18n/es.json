@@ -155,7 +155,7 @@
       "importing": "Importando...",
       "import": "Importar malla",
       "cancel": "Cancelar",
-      "success": "Malla importada exitosamente. Se importaron {{count}} materias y {{prerequisitos}} prerrequisitos."
+      "success": "Malla importada exitosamente. Se importaron {{count}} materias y {{prerequisitos}} prerrequisitos.",
       "changeStatusSingle": "Actualizar estado de materia"
     },
     "error": {
