@@ -1,9 +1,12 @@
 {
   "common": {
     "language": {
-      "es": "ES",
-      "en": "EN",
-      "pt": "PT"
+      "es": "Espanhol",
+      "en": "Inglês",
+      "pt": "Português",
+      "codeES": "ES",
+      "codeEN": "EN",
+      "codePT": "PT"
     }
   },
   "toast": {

@@ -59,8 +59,11 @@
     cursor: pointer;
     text-decoration: none;
 
-    &:hover {
-      background-color: rgba(111, 137, 172, 0.12);
+    &:hover,
+    &.active {
+      background-color: var(--color-blue);
+      border-color: var(--color-blue);
+      color: #ffffff;
     }
 
     svg {
@@ -87,19 +90,21 @@
   }
 
   &__language-trigger {
-    width: 38px;
+    width: auto;
+    min-width: 38px;
     height: 38px;
     border: 1px solid rgba(34, 57, 90, 0.22);
-    border-radius: 50%;
+    border-radius: 999px;
     color: #22395a;
     background-color: transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
+    gap: 0.25rem;
+    padding: 0 0.6rem;
     cursor: pointer;
     list-style: none;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
     &:hover {
       transform: translateY(-1px);
@@ -111,10 +116,19 @@
     }
 
     svg {
-      width: 18px;
-      height: 18px;
-      fill: #22395a;
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
     }
+  }
+
+  &__language-indicator {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    color: currentColor;
   }
 
   &__menu-panel {
@@ -143,20 +157,46 @@
   }
 
   &__language-btn {
-    border: 1px solid rgba(34, 57, 90, 0.25);
+    width: 100%;
+    border: 1px solid transparent;
     background-color: transparent;
     border-radius: 8px;
     color: #22395a;
     font-family: 'Poppins', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 700;
-    padding: 0.32rem 0.52rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem 0.7rem;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
 
     &:hover {
       background-color: rgba(111, 137, 172, 0.16);
     }
+
+    &.active {
+      background-color: var(--color-blue);
+      color: #ffffff;
+      border-color: var(--color-blue);
+    }
+
+    &.active:hover {
+      background-color: var(--color-blue);
+    }
+  }
+
+  &__language-btn-text {
+    text-align: left;
+  }
+
+  &__language-check {
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
   }
 
   &__auth-link,

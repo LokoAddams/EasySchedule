@@ -56,10 +56,10 @@ public class Estudiante {
     @JoinColumn(name = "malla_id", nullable = true)
     private Malla malla;
 
-    @Column(name = "profile_completed", nullable = false)
+    @Column(name = "profile_completed", nullable = false, columnDefinition = "BOOLEAN NOT NULL DEFAULT FALSE")
     private boolean profileCompleted;
 
-    @Column(name = "tour_completed", nullable = false)
+    @Column(name = "tour_completed", nullable = false, columnDefinition = "BOOLEAN NOT NULL DEFAULT FALSE")
     private boolean tourCompleted;
 
     @MapsId

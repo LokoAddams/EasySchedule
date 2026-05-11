@@ -195,17 +195,41 @@
 }
 
 .perfil-date-picker {
-	display: block;
+	display: flex;
+	align-items: center;
+	position: relative;
+	width: 100%;
 }
 
 .perfil-datepicker-input {
 	min-width: 0;
-	padding-right: 2.5rem !important;
-	background-image: url('/assets/img/calendar.webp');
-	background-repeat: no-repeat;
-	background-position: right 0.75rem center;
-	background-size: 0.95rem 0.95rem;
+	padding-right: 2.8rem !important;
 	cursor: pointer;
+}
+
+.perfil-datepicker-btn {
+	position: absolute;
+	right: 0.5rem;
+	background: none;
+	border: none;
+	padding: 0.2rem;
+	margin: 0;
+	cursor: pointer;
+	color: #6f89ac;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.perfil-datepicker-btn:hover {
+	color: #1f3658;
+	transform: scale(1.05);
+}
+
+.perfil-datepicker-btn svg {
+	width: 1.15rem;
+	height: 1.15rem;
 }
 
 :host ::ng-deep .ngb-dp-months {
