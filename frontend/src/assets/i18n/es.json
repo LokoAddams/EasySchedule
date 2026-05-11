@@ -128,6 +128,7 @@
       "changeUniversidad": "Cambiar Universidad",
       "cancelChange": "Cancelar",
       "changeStatus": "Actualizar estado de materias",
+      "importOffers": "Importar Ofertas",
       "uploadMalla": "Subir nueva malla"
     },
     "import": {
@@ -156,8 +157,7 @@
       "import": "Importar malla",
       "cancel": "Cancelar",
       "success": "Malla importada exitosamente. Se importaron {{count}} materias y {{prerequisitos}} prerrequisitos.",
-      "changeStatusSingle": "Actualizar estado de materia",
-      "importOffers": "Importar Ofertas"
+      "changeStatusSingle": "Actualizar estado de materia"
     },
     "error": {
       "loadUniversidades": "No se pudieron cargar las universidades disponibles.",
