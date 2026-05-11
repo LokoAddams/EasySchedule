@@ -43,6 +43,10 @@
 
       <div class="malla-page__actions" *ngIf="step === 'resumen'"
            [ngbPopover]="tourStep4" triggers="manual" placement="bottom" popoverClass="hint-popover" #popoverStep4="ngbPopover">
+
+        <button type="button" class="malla-button malla-button--outline" *ngIf="ofertasImportEnabled" [disabled]="materias.length === 0" (click)="onImportarOfertasClick()">
+        {{ 'malla.actions.importOffers' | translate }}
+        </button>   
         <button type="button" class="malla-button malla-button--outline" (click)="onCambiarMallaClick()">
           {{ 'malla.actions.changeMalla' | translate }}
         </button>
@@ -461,4 +465,12 @@
       </footer>
     </div>
   </div>
+  <app-importar-ofertas-modal
+    *ngIf="showImportarOfertasModal"
+    [mallaId]="selectedMallaId"
+    [mallaNombre]="getResumenMalla()"
+    [materiasMalla]="materias"
+    (closeModal)="closeImportarOfertasModal()"
+    (importFinished)="onOfertasImportFinished()"
+  ></app-importar-ofertas-modal>
 </ng-container>

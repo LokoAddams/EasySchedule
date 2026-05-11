@@ -111,8 +111,6 @@
     "title": "Academic setup",
     "description": "Select your university to start your curriculum setup.",
     "loadingUniversidades": "Loading universities...",
-    "loadingCarreras": "Loading careers...",
-    "loadingMallas": "Loading curricula...",
     "retry": "Retry",
     "actions": {
       "saveUniversidad": "Save university",
@@ -123,6 +121,7 @@
       "changeUniversidad": "Change University",
       "cancelChange": "Cancel",
       "changeStatus": "Update course status",
+      "importOffers": "Import Offers",
       "uploadMalla": "Upload new curriculum"
     },
     "import": {
@@ -229,6 +228,26 @@
       "volver": "Back",
       "save": "Update Subject",
       "saving": "Updating..."
+    },
+    "offers": {
+      "eyebrow": "Academic offers",
+      "title": "Import academic offers",
+      "subtitle": "Upload offers for the {{malla}} curriculum.",
+      "expectedFormatTitle": "Expected format",
+      "expectedFormatDescription": "Upload a CSV file with the required columns to create or update academic offers.",
+      "codeExplanation": "The subject code is used to find the corresponding subject in the selected curriculum.",
+      "selectFile": "Select CSV file",
+      "selectedFile": "Selected file",
+      "clearFile": "Clear file",
+      "errorsTitle": "Detected errors",
+      "warningsTitle": "Warnings",
+      "previewTitle": "Preview",
+      "offersDetected": "offers detected",
+      "successTitle": "Import completed",
+      "cancel": "Cancel",
+      "confirm": "Confirm import",
+      "processing": "Processing...",
+      "importSuccessToast": "Academic offers import completed successfully."
     }
   },
   "tomaMaterias": {

@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 export interface FeatureFlags {
   malla: boolean;
   tomaMaterias: boolean;
+  ofertasImport: boolean;
 }
 
 export type FeatureName = keyof FeatureFlags;
@@ -19,6 +20,7 @@ export class FeatureToggleService {
   private flags: FeatureFlags = {
     malla: false,
     tomaMaterias: false,
+    ofertasImport: true,
   };
   private readonly flagsSubject = new BehaviorSubject<FeatureFlags>(this.flags);
   readonly flags$ = this.flagsSubject.asObservable();
@@ -30,8 +32,11 @@ export class FeatureToggleService {
       this.http.get<FeatureFlags>(`${environment.backendUrl}/api/features`),
     )
       .then((flags) => {
-        this.flags = flags;
-        this.flagsSubject.next(flags);
+        this.flags = {
+          ...this.flags,
+          ...flags,
+        };
+        this.flagsSubject.next(this.flags);
       })
       .catch((error) => {
         console.error('Failed to load feature flags from backend:', error);
