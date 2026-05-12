@@ -1,121 +1,109 @@
 package com.easyschedule.backend.academico.seleccion.service;
 
-import com.easyschedule.backend.academico.carrera.model.Carrera;
-import com.easyschedule.backend.academico.carrera.repository.CarreraRepository;
-import com.easyschedule.backend.academico.malla.model.Malla;
-import com.easyschedule.backend.academico.malla.repository.MallaRepository;
+import com.easyschedule.backend.academico.malla.model.MallaMateria;
+import com.easyschedule.backend.academico.malla.repository.MallaMateriaRepository;
+import com.easyschedule.backend.academico.oferta_materia.model.OfertaMateria;
+import com.easyschedule.backend.academico.oferta_materia.repository.OfertaMateriaRepository;
 import com.easyschedule.backend.academico.seleccion.dto.SeleccionRequest;
 import com.easyschedule.backend.academico.seleccion.dto.SeleccionResponse;
-import com.easyschedule.backend.academico.universidad.model.Universidad;
-import com.easyschedule.backend.academico.universidad.repository.UniversidadRepository;
+import com.easyschedule.backend.academico.seleccion.model.Seleccion;
+import com.easyschedule.backend.academico.seleccion.repository.SeleccionRepository;
 import com.easyschedule.backend.estudiante.model.Estudiante;
 import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
-import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Objects;
-
 @Service
 public class SeleccionService {
 
+    private final SeleccionRepository seleccionRepository;
+    private final OfertaMateriaRepository ofertaMateriaRepository;
     private final EstudianteRepository estudianteRepository;
-    private final UniversidadRepository universidadRepository;
-    private final CarreraRepository carreraRepository;
-    private final MallaRepository mallaRepository;
+    private final MallaMateriaRepository mallaMateriaRepository;
 
     public SeleccionService(
-        EstudianteRepository estudianteRepository,
-        UniversidadRepository universidadRepository,
-        CarreraRepository carreraRepository,
-        MallaRepository mallaRepository
-    ) {
+            SeleccionRepository seleccionRepository,
+            OfertaMateriaRepository ofertaMateriaRepository,
+            EstudianteRepository estudianteRepository,
+            MallaMateriaRepository mallaMateriaRepository) {
+        this.seleccionRepository = seleccionRepository;
+        this.ofertaMateriaRepository = ofertaMateriaRepository;
         this.estudianteRepository = estudianteRepository;
-        this.universidadRepository = universidadRepository;
-        this.carreraRepository = carreraRepository;
-        this.mallaRepository = mallaRepository;
+        this.mallaMateriaRepository = mallaMateriaRepository;
     }
 
-    public SeleccionResponse getSeleccionByUserId(Long userId) {
-        Estudiante estudiante = getEstudianteOrThrow(userId);
-        if (estudiante.getUniversidadId() == null || estudiante.getCarreraId() == null || estudiante.getMalla() == null) {
-            return new SeleccionResponse(null, null, null, null, null, null);
-        }
-
-        Universidad universidad = universidadRepository.findByIdAndActiveTrue(estudiante.getUniversidadId())
-            .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada"));
-        Carrera carrera = carreraRepository.findByIdAndActiveTrue(estudiante.getCarreraId())
-            .orElseThrow(() -> new ResourceNotFoundException("Carrera no encontrada"));
-        Malla malla = mallaRepository.findByIdAndActiveTrue(estudiante.getMalla().getId())
-            .orElseThrow(() -> new ResourceNotFoundException("Malla no encontrada"));
-
-        return new SeleccionResponse(
-            universidad.getId(),
-            universidad.getNombre(),
-            carrera.getId(),
-            carrera.getNombre(),
-            malla.getId(),
-            buildMallaLabel(malla)
-        );
+    public List<SeleccionResponse> listByUserId(Long userId) {
+        return seleccionRepository.findByEstudianteId(userId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Transactional
-    public SeleccionResponse saveSeleccionByUserId(Long userId, SeleccionRequest request) {
-        Universidad universidad = universidadRepository.findByIdAndActiveTrue(request.universidadId())
-            .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada"));
-        Malla malla = mallaRepository.findByIdAndActiveTrue(request.mallaId())
-            .orElseThrow(() -> new ResourceNotFoundException("Malla no encontrada"));
-        Carrera carreraDeMalla = carreraRepository.findByIdAndActiveTrue(malla.getCarreraId())
-            .orElseThrow(() -> new ResourceNotFoundException("Carrera no encontrada"));
-        Carrera carreraSolicitada = request.carreraId() == null ? null : carreraRepository.findByIdAndActiveTrue(request.carreraId())
-            .orElseThrow(() -> new ResourceNotFoundException("Carrera no encontrada"));
+    public SeleccionResponse addSelection(Long userId, SeleccionRequest request) {
+        Estudiante estudiante = estudianteRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estudiante no encontrado"));
 
-        if (!carreraDeMalla.getUniversidadId().equals(universidad.getId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La malla no pertenece a la universidad seleccionada");
-        }
+        OfertaMateria oferta = ofertaMateriaRepository.findById(request.getOfertaMateriaId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Oferta de materia no encontrada"));
 
-        if (carreraSolicitada != null) {
-            if (!carreraSolicitada.getUniversidadId().equals(universidad.getId())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La carrera no pertenece a la universidad seleccionada");
+        // Check if the subject (MallaMateria) is already selected with a different parallel
+        Optional<Seleccion> existingSelection = seleccionRepository.findByEstudianteIdAndMallaMateriaId(userId, oferta.getMallaMateriaId());
+
+        if (existingSelection.isPresent()) {
+            Seleccion s = existingSelection.get();
+            if (s.getOfertaMateria().getId().equals(oferta.getId())) {
+                // Same parallel, no change needed (idempotent)
+                return toResponse(s);
+            } else {
+                // Different parallel, replace it
+                s.setOfertaMateria(oferta);
+                s.setFechaSeleccion(OffsetDateTime.now());
+                return toResponse(seleccionRepository.save(s));
             }
-
-            if (!Objects.equals(carreraSolicitada.getId(), carreraDeMalla.getId())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La malla no pertenece a la carrera seleccionada");
-            }
         }
 
-        Estudiante estudiante = getEstudianteOrThrow(userId);
-        boolean cambioMalla = estudiante.getMalla() == null || !Objects.equals(estudiante.getMalla().getId(), malla.getId());
-        estudiante.setUniversidadId(universidad.getId());
-        estudiante.setCarreraId(carreraDeMalla.getId());
-        estudiante.setMalla(malla);
-        if (cambioMalla) {
-            estudiante.setSemestreActual((short) 1);
-        }
-        estudianteRepository.save(estudiante);
+        Seleccion nuevaSeleccion = new Seleccion();
+        nuevaSeleccion.setEstudiante(estudiante);
+        nuevaSeleccion.setOfertaMateria(oferta);
+        nuevaSeleccion.setFechaSeleccion(OffsetDateTime.now());
 
-        return new SeleccionResponse(
-            universidad.getId(),
-            universidad.getNombre(),
-            carreraDeMalla.getId(),
-            carreraDeMalla.getNombre(),
-            malla.getId(),
-            buildMallaLabel(malla)
-        );
+        return toResponse(seleccionRepository.save(nuevaSeleccion));
     }
 
-    private Estudiante getEstudianteOrThrow(Long userId) {
-        return estudianteRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado para el usuario autenticado"));
+    @Transactional
+    public void removeSelection(Long userId, Long ofertaMateriaId) {
+        seleccionRepository.findByEstudianteIdAndOfertaMateriaId(userId, ofertaMateriaId)
+                .ifPresent(seleccionRepository::delete);
     }
 
-    private String buildMallaLabel(Malla malla) {
-        String nombre = malla.getNombre() == null ? "" : malla.getNombre().trim();
-        if (!nombre.isEmpty()) {
-            return nombre;
-        }
-        return "Malla " + malla.getVersion();
+    @Transactional
+    public void clearSelections(Long userId) {
+        seleccionRepository.deleteByEstudianteId(userId);
+    }
+
+    private SeleccionResponse toResponse(Seleccion seleccion) {
+        SeleccionResponse res = new SeleccionResponse();
+        res.setId(seleccion.getId());
+        
+        OfertaMateria oferta = seleccion.getOfertaMateria();
+        res.setOfertaMateriaId(oferta.getId());
+        res.setParalelo(oferta.getParalelo());
+        res.setDocente(oferta.getDocente());
+        res.setHorarioJson(oferta.getHorarioJson());
+        res.setAula(oferta.getAula());
+
+        MallaMateria mm = mallaMateriaRepository.findById(oferta.getMallaMateriaId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Datos de malla inconsistentes"));
+        
+        res.setMateriaId(mm.getMateria().getId());
+        res.setMateriaNombre(mm.getMateria().getNombre());
+        
+        return res;
     }
 }
