@@ -7,6 +7,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter, firstValueFrom, Subscription } from 'rxjs';
 import { NgbPopover, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { environment } from '../../../environments/environment';
 import { CarreraCatalogoItem, CarreraService } from '../../services/academico/carrera.service';
 import { EstadoMateriaService, EstadoMateriaRequest } from '../../services/academico/estado-materia.service';
 import { FeatureToggleService } from '../../services/feature-toggle.service';
@@ -935,7 +936,7 @@ Reglas obligatorias:
       formData.append('nombre', this.importMallaName);
 
       const result: any = await firstValueFrom(
-        this.http.post('/api/academico/mallas/importar', formData, {
+        this.http.post(`${environment.backendUrl}/api/academico/mallas/importar`, formData, {
           withCredentials: true
         })
       );
