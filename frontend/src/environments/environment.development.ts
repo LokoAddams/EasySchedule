@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  backendUrl: 'https://easyschedule-hjzc.onrender.com'
+  backendUrl: 'http://localhost:8080',
 };
