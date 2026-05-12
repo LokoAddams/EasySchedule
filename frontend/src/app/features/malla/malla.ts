@@ -119,6 +119,7 @@ export class Malla implements OnInit, OnDestroy {
   public importError: string | null = null;
   public importSuccess: string | null = null;
   public importMallaName = '';
+  public importMallaVersion = '';
   public showTutorial = false;
   public fullPrompt = `Necesito que generes un archivo en formato CSV con las materias de una malla curricular distribuidas en semestres.
 
@@ -883,6 +884,7 @@ Reglas obligatorias:
     this.importError = null;
     this.importSuccess = null;
     this.importMallaName = '';
+    this.importMallaVersion = String(new Date().getFullYear());
   }
 
   public closeImportModal(): void {
@@ -891,6 +893,11 @@ Reglas obligatorias:
     this.importFileName = '';
     this.importError = null;
     this.importSuccess = null;
+    this.importMallaVersion = '';
+  }
+
+  public isValidImportVersion(): boolean {
+    return /^\d{4}$/.test(this.importMallaVersion.trim());
   }
 
   public onImportFileSelected(event: Event): void {
@@ -924,6 +931,10 @@ Reglas obligatorias:
       this.importError = this.translateService.instant('malla.import.errorCarreraRequired');
       return;
     }
+    if (!this.isValidImportVersion()) {
+      this.importError = this.translateService.instant('malla.import.errorVersionInvalid');
+      return;
+    }
 
     this.importLoading = true;
     this.importError = null;
@@ -934,6 +945,7 @@ Reglas obligatorias:
       formData.append('file', this.importFile!);
       formData.append('carreraId', this.selectedCarreraId!.toString());
       formData.append('nombre', this.importMallaName);
+      formData.append('version', this.importMallaVersion.trim());
 
       const result: any = await firstValueFrom(
         this.http.post(`${environment.backendUrl}/api/academico/mallas/importar`, formData, {

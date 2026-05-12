@@ -124,6 +124,7 @@
       "changeUniversidad": "Change University",
       "cancelChange": "Cancel",
       "changeStatus": "Update course status",
+      "changeStatusSingle": "Update course status",
       "importOffers": "Import Offers",
       "uploadMalla": "Upload new curriculum"
     },
@@ -132,6 +133,9 @@
       "title": "Import new curriculum",
       "nameLabel": "Curriculum name",
       "namePlaceholder": "Ex: 2024 Curriculum",
+      "versionLabel": "Version",
+      "versionPlaceholder": "Ex: 2024",
+      "versionHelp": "It must be a 4-digit year (YYYY)",
       "formatHelpTitle": "How to generate the file?",
       "formatHelpText": "Use the following prompt with your favorite AI (ChatGPT, Copilot, etc.) to generate the CSV file. Then copy it and upload it here.",
       "copyPrompt": "Copy prompt",
@@ -147,6 +151,7 @@
       "errorFormat": "Unsupported format. Use CSV or JSON",
       "errorNoFile": "You must select a file",
       "errorNameRequired": "Curriculum name is required",
+      "errorVersionInvalid": "Version must be a valid 4-digit year (for example, 2024)",
       "errorCarreraRequired": "You must select a career first",
       "errorGeneric": "Error importing curriculum",
       "importing": "Importing...",
@@ -208,6 +213,7 @@
       "selectParallelPlaceholder": "Select a section",
       "parallelLabel": "Section",
       "noGroupsAvailable": "This subject currently has no available groups.",
+      "takeSubject": "Take subject",
       "cancel": "Cancel",
       "addToSelection": "Add to selection"
     },

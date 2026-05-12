@@ -125,6 +125,7 @@
       "changeUniversidad": "Alterar universidade",
       "cancelChange": "Cancelar",
       "changeStatus": "Atualizar estado de matérias",
+      "changeStatusSingle": "Atualizar estado de matéria",
       "importOffers": "Importar Ofertas",
       "uploadMalla": "Enviar nova grade curricular"
     },
@@ -133,6 +134,9 @@
       "title": "Importar nova grade curricular",
       "nameLabel": "Nome da grade",
       "namePlaceholder": "Ex: Grade 2024",
+      "versionLabel": "Versao",
+      "versionPlaceholder": "Ex: 2024",
+      "versionHelp": "Deve ser um ano com 4 digitos (YYYY)",
       "formatHelpTitle": "Como gerar o arquivo?",
       "formatHelpText": "Use o seguinte prompt com sua IA favorita (ChatGPT, Copilot, etc.) para gerar o arquivo CSV. Depois copie e envie aqui.",
       "copyPrompt": "Copiar prompt",
@@ -148,6 +152,7 @@
       "errorFormat": "Formato não suportado. Use CSV ou JSON",
       "errorNoFile": "Você deve selecionar um arquivo",
       "errorNameRequired": "O nome da grade é obrigatório",
+      "errorVersionInvalid": "A versao deve ser um ano valido com 4 digitos (por exemplo, 2024)",
       "errorCarreraRequired": "Você deve selecionar uma carreira primeiro",
       "errorGeneric": "Erro ao importar a grade",
       "importing": "Importando...",
@@ -230,6 +235,7 @@
       "selectParallelPlaceholder": "Selecione uma turma",
       "parallelLabel": "Turma",
       "noGroupsAvailable": "Esta matéria não possui grupos disponíveis no momento.",
+      "takeSubject": "Tomar matéria",
       "cancel": "Cancelar",
       "addToSelection": "Adicionar à seleção"
     },

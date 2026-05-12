@@ -131,6 +131,7 @@
       "changeUniversidad": "Cambiar Universidad",
       "cancelChange": "Cancelar",
       "changeStatus": "Actualizar estado de materias",
+      "changeStatusSingle": "Actualizar estado de materia",
       "importOffers": "Importar Ofertas",
       "uploadMalla": "Subir nueva malla"
     },
@@ -139,6 +140,9 @@
       "title": "Importar nueva malla curricular",
       "nameLabel": "Nombre de la malla",
       "namePlaceholder": "Ej: Malla 2024",
+      "versionLabel": "Version",
+      "versionPlaceholder": "Ej: 2024",
+      "versionHelp": "Debe ser un anio de 4 digitos (YYYY)",
       "formatHelpTitle": "¿Cómo generar el archivo?",
       "formatHelpText": "Usa el siguiente prompt con tu IA favorita (ChatGPT, Copilot, etc.) para generar el archivo CSV. Luego cópialo y súbelo aquí.",
       "copyPrompt": "Copiar prompt",
@@ -154,13 +158,13 @@
       "errorFormat": "Formato no soportado. Use CSV o JSON",
       "errorNoFile": "Debe seleccionar un archivo",
       "errorNameRequired": "El nombre de la malla es requerido",
+      "errorVersionInvalid": "La version debe ser un anio valido de 4 digitos (por ejemplo, 2024)",
       "errorCarreraRequired": "Debe seleccionar una carrera primero",
       "errorGeneric": "Error al importar la malla",
       "importing": "Importando...",
       "import": "Importar malla",
       "cancel": "Cancelar",
-      "success": "Malla importada exitosamente. Se importaron {{count}} materias y {{prerequisitos}} prerrequisitos.",
-      "changeStatusSingle": "Actualizar estado de materia"
+      "success": "Malla importada exitosamente. Se importaron {{count}} materias y {{prerequisitos}} prerrequisitos."
     },
     "error": {
       "loadUniversidades": "No se pudieron cargar las universidades disponibles.",
@@ -204,6 +208,7 @@
       "selectParallelPlaceholder": "Selecciona un paralelo",
       "parallelLabel": "Paralelo",
       "noGroupsAvailable": "Esta materia no tiene grupos disponibles actualmente.",
+      "takeSubject": "Tomar materia",
       "cancel": "Cancelar",
       "addToSelection": "Agregar a seleccion"
     },

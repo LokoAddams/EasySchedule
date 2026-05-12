@@ -280,7 +280,7 @@
 
       <div class="malla-modal__body" style="display: flex; flex-direction: column; gap: 0.8rem; padding-bottom: 1.5rem;">
         <button class="malla-button malla-button--save" style="margin-top: 0;" (click)="onTomarMateriaClick()" [disabled]="selectedMateriaParaAccion?.estado === 'aprobada' || selectedMateriaParaAccion?.estado === 'cursando'">
-          Tomar materia
+          {{ 'malla.modal.takeSubject' | translate }}
         </button>
         <button class="malla-button malla-button--outline" style="width: 100%; margin-top: 0;" (click)="onActualizarMallaClick()">
           {{ 'malla.actions.changeStatusSingle' | translate }}
@@ -395,6 +395,13 @@
         </div>
 
         <div class="malla-form-group">
+          <label class="malla-label" for="import-version">{{ 'malla.import.versionLabel' | translate }}</label>
+          <input type="text" id="import-version" class="malla-input" [(ngModel)]="importMallaVersion"
+                 inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="{{ 'malla.import.versionPlaceholder' | translate }}">
+          <p class="malla-field-help">{{ 'malla.import.versionHelp' | translate }}</p>
+        </div>
+
+        <div class="malla-form-group">
           <label class="malla-label">
             {{ 'malla.import.formatHelpTitle' | translate }}
             <span class="malla-help-icon" (click)="toggleTutorial()" 
@@ -458,7 +465,7 @@
         </button>
         <button class="malla-button malla-button--save" 
                 (click)="importMalla()" 
-                [disabled]="!importFile || importLoading || !importMallaName">
+                [disabled]="!importFile || importLoading || !importMallaName || !isValidImportVersion()">
           <span *ngIf="importLoading">{{ 'malla.import.importing' | translate }}</span>
           <span *ngIf="!importLoading">{{ 'malla.import.import' | translate }}</span>
         </button>
