@@ -1,18 +1,20 @@
 package com.easyschedule.backend.academico.seleccion.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import com.easyschedule.backend.academico.malla.model.MallaMateria;
-import com.easyschedule.backend.academico.malla.repository.MallaMateriaRepository;
-import com.easyschedule.backend.academico.materia.model.Materia;
-import com.easyschedule.backend.academico.oferta_materia.model.OfertaMateria;
-import com.easyschedule.backend.academico.oferta_materia.repository.OfertaMateriaRepository;
+import com.easyschedule.backend.academico.carrera.model.Carrera;
+import com.easyschedule.backend.academico.carrera.repository.CarreraRepository;
+import com.easyschedule.backend.academico.malla.model.Malla;
+import com.easyschedule.backend.academico.malla.repository.MallaRepository;
 import com.easyschedule.backend.academico.seleccion.dto.SeleccionRequest;
 import com.easyschedule.backend.academico.seleccion.dto.SeleccionResponse;
-import com.easyschedule.backend.academico.seleccion.model.Seleccion;
-import com.easyschedule.backend.academico.seleccion.repository.SeleccionRepository;
+import com.easyschedule.backend.academico.universidad.model.Universidad;
+import com.easyschedule.backend.academico.universidad.repository.UniversidadRepository;
 import com.easyschedule.backend.estudiante.model.Estudiante;
 import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
 import java.util.Optional;
@@ -22,92 +24,161 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
 class SeleccionServiceTest {
 
     @Mock
-    private SeleccionRepository seleccionRepository;
-    @Mock
-    private OfertaMateriaRepository ofertaMateriaRepository;
-    @Mock
     private EstudianteRepository estudianteRepository;
+
     @Mock
-    private MallaMateriaRepository mallaMateriaRepository;
+    private UniversidadRepository universidadRepository;
+
+    @Mock
+    private CarreraRepository carreraRepository;
+
+    @Mock
+    private MallaRepository mallaRepository;
 
     @InjectMocks
     private SeleccionService seleccionService;
 
     private Estudiante estudiante;
-    private OfertaMateria ofertaMateria;
-    private MallaMateria mallaMateria;
-    private Materia materia;
 
     @BeforeEach
     void setUp() {
         estudiante = new Estudiante();
-        estudiante.setId(1L);
-
-        materia = new Materia();
-        materia.setId(10L);
-        materia.setNombre("Matematica I");
-
-        mallaMateria = new MallaMateria();
-        mallaMateria.setId(100L);
-        mallaMateria.setMateria(materia);
-
-        ofertaMateria = new OfertaMateria();
-        ofertaMateria.setId(1000L);
-        ofertaMateria.setMallaMateriaId(100L);
-        ofertaMateria.setParalelo("A");
+        estudiante.setId(10L);
     }
 
     @Test
-    void addSelection_NewSelection_ShouldSave() {
-        SeleccionRequest request = new SeleccionRequest();
-        request.setOfertaMateriaId(1000L);
+    void getSeleccionByUserIdReturnsNullSelectionWhenProfileHasNoAcademicData() {
+        when(estudianteRepository.findById(10L)).thenReturn(Optional.of(estudiante));
 
-        when(estudianteRepository.findById(1L)).thenReturn(Optional.of(estudiante));
-        when(ofertaMateriaRepository.findById(1000L)).thenReturn(Optional.of(ofertaMateria));
-        when(seleccionRepository.findByEstudianteIdAndMallaMateriaId(1L, 100L)).thenReturn(Optional.empty());
-        when(mallaMateriaRepository.findById(100L)).thenReturn(Optional.of(mallaMateria));
-        when(seleccionRepository.save(any(Seleccion.class))).thenAnswer(i -> i.getArguments()[0]);
+        SeleccionResponse response = seleccionService.getSeleccionByUserId(10L);
 
-        SeleccionResponse response = seleccionService.addSelection(1L, request);
-
-        assertNotNull(response);
-        assertEquals(1000L, response.getOfertaMateriaId());
-        assertEquals("A", response.getParalelo());
-        assertEquals("Matematica I", response.getMateriaNombre());
-        verify(seleccionRepository).save(any(Seleccion.class));
+        assertNull(response.universidadId());
+        assertNull(response.carreraId());
+        assertNull(response.mallaId());
     }
 
     @Test
-    void addSelection_ReplaceParallel_ShouldUpdate() {
-        SeleccionRequest request = new SeleccionRequest();
-        request.setOfertaMateriaId(1001L); // New parallel
+    void saveSeleccionByUserIdPersistsSelectionWhenHierarchyIsValid() {
+        SeleccionRequest request = new SeleccionRequest(1L, 11L, 101L);
 
-        OfertaMateria newOferta = new OfertaMateria();
-        newOferta.setId(1001L);
-        newOferta.setMallaMateriaId(100L);
-        newOferta.setParalelo("B");
+        Universidad universidad = mock(Universidad.class);
+        when(universidad.getId()).thenReturn(1L);
+        when(universidad.getNombre()).thenReturn("Universidad Catolica Boliviana");
 
-        Seleccion existingSeleccion = new Seleccion();
-        existingSeleccion.setId(50L);
-        existingSeleccion.setEstudiante(estudiante);
-        existingSeleccion.setOfertaMateria(ofertaMateria); // Old parallel A
+        Carrera carrera = mock(Carrera.class);
+        when(carrera.getId()).thenReturn(11L);
+        when(carrera.getNombre()).thenReturn("Ingenieria de Sistemas");
+        when(carrera.getUniversidadId()).thenReturn(1L);
 
-        when(estudianteRepository.findById(1L)).thenReturn(Optional.of(estudiante));
-        when(ofertaMateriaRepository.findById(1001L)).thenReturn(Optional.of(newOferta));
-        when(seleccionRepository.findByEstudianteIdAndMallaMateriaId(1L, 100L)).thenReturn(Optional.of(existingSeleccion));
-        when(mallaMateriaRepository.findById(100L)).thenReturn(Optional.of(mallaMateria));
-        when(seleccionRepository.save(any(Seleccion.class))).thenAnswer(i -> i.getArguments()[0]);
+        Malla malla = mock(Malla.class);
+        when(malla.getId()).thenReturn(101L);
+        when(malla.getNombre()).thenReturn("Malla 2017");
+        when(malla.getCarreraId()).thenReturn(11L);
 
-        SeleccionResponse response = seleccionService.addSelection(1L, request);
+        when(universidadRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(universidad));
+        when(carreraRepository.findByIdAndActiveTrue(11L)).thenReturn(Optional.of(carrera));
+        when(mallaRepository.findByIdAndActiveTrue(101L)).thenReturn(Optional.of(malla));
+        when(estudianteRepository.findById(10L)).thenReturn(Optional.of(estudiante));
 
-        assertNotNull(response);
-        assertEquals(1001L, response.getOfertaMateriaId());
-        assertEquals("B", response.getParalelo());
-        verify(seleccionRepository).save(existingSeleccion);
+        SeleccionResponse response = seleccionService.saveSeleccionByUserId(10L, request);
+
+        assertEquals(1L, response.universidadId());
+        assertEquals("Ingenieria de Sistemas", response.carrera());
+        assertEquals("Malla 2017", response.malla());
+        verify(estudianteRepository).save(estudiante);
+    }
+
+    @Test
+    void saveSeleccionByUserIdResetsSemestreWhenMallaChanges() {
+        SeleccionRequest request = new SeleccionRequest(1L, null, 101L);
+
+        Universidad universidad = mock(Universidad.class);
+        when(universidad.getId()).thenReturn(1L);
+        when(universidad.getNombre()).thenReturn("Universidad Catolica Boliviana");
+
+        Carrera carrera = mock(Carrera.class);
+        when(carrera.getId()).thenReturn(11L);
+        when(carrera.getNombre()).thenReturn("Ingenieria de Sistemas");
+        when(carrera.getUniversidadId()).thenReturn(1L);
+
+        Malla malla = mock(Malla.class);
+        when(malla.getId()).thenReturn(101L);
+        when(malla.getNombre()).thenReturn("Malla 2017");
+        when(malla.getCarreraId()).thenReturn(11L);
+
+        Malla mallaAnterior = mock(Malla.class);
+        when(mallaAnterior.getId()).thenReturn(88L);
+
+        estudiante.setMalla(mallaAnterior);
+        estudiante.setSemestreActual((short) 5);
+
+        when(universidadRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(universidad));
+        when(carreraRepository.findByIdAndActiveTrue(11L)).thenReturn(Optional.of(carrera));
+        when(mallaRepository.findByIdAndActiveTrue(101L)).thenReturn(Optional.of(malla));
+        when(estudianteRepository.findById(10L)).thenReturn(Optional.of(estudiante));
+
+        seleccionService.saveSeleccionByUserId(10L, request);
+
+        assertEquals(Short.valueOf((short) 1), estudiante.getSemestreActual());
+        assertEquals(11L, estudiante.getCarreraId());
+        assertEquals(1L, estudiante.getUniversidadId());
+        verify(estudianteRepository).save(estudiante);
+    }
+
+    @Test
+    void saveSeleccionByUserIdThrowsWhenCarreraDoesNotBelongToUniversidad() {
+        SeleccionRequest request = new SeleccionRequest(1L, 11L, 101L);
+
+        Universidad universidad = mock(Universidad.class);
+        when(universidad.getId()).thenReturn(1L);
+
+        Carrera carrera = mock(Carrera.class);
+        when(carrera.getUniversidadId()).thenReturn(2L);
+
+        Malla malla = mock(Malla.class);
+        when(malla.getCarreraId()).thenReturn(11L);
+
+        when(universidadRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(universidad));
+        when(carreraRepository.findByIdAndActiveTrue(11L)).thenReturn(Optional.of(carrera));
+        when(mallaRepository.findByIdAndActiveTrue(101L)).thenReturn(Optional.of(malla));
+
+        ResponseStatusException ex = assertThrows(
+            ResponseStatusException.class,
+            () -> seleccionService.saveSeleccionByUserId(10L, request)
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
+    @Test
+    void saveSeleccionByUserIdThrowsWhenMallaDoesNotBelongToUniversidad() {
+        SeleccionRequest request = new SeleccionRequest(1L, null, 101L);
+
+        Universidad universidad = mock(Universidad.class);
+        when(universidad.getId()).thenReturn(1L);
+
+        Carrera carreraDeMalla = mock(Carrera.class);
+        when(carreraDeMalla.getUniversidadId()).thenReturn(2L);
+
+        Malla malla = mock(Malla.class);
+        when(malla.getCarreraId()).thenReturn(11L);
+
+        when(universidadRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(universidad));
+        when(mallaRepository.findByIdAndActiveTrue(101L)).thenReturn(Optional.of(malla));
+        when(carreraRepository.findByIdAndActiveTrue(11L)).thenReturn(Optional.of(carreraDeMalla));
+
+        ResponseStatusException ex = assertThrows(
+            ResponseStatusException.class,
+            () -> seleccionService.saveSeleccionByUserId(10L, request)
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
     }
 }

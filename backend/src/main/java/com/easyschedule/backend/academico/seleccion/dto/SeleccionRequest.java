@@ -1,13 +1,14 @@
 package com.easyschedule.backend.academico.seleccion.dto;
 
-public class SeleccionRequest {
-    private Long ofertaMateriaId;
+import jakarta.validation.constraints.NotNull;
 
-    public Long getOfertaMateriaId() {
-        return ofertaMateriaId;
-    }
+public record SeleccionRequest(
+    @NotNull(message = "universidadId es obligatorio")
+    Long universidadId,
 
-    public void setOfertaMateriaId(Long ofertaMateriaId) {
-        this.ofertaMateriaId = ofertaMateriaId;
-    }
+    Long carreraId,
+
+    @NotNull(message = "mallaId es obligatorio")
+    Long mallaId
+) {
 }
