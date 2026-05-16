@@ -191,4 +191,39 @@ describe('Perfil Component', () => {
     expect(toastServiceSpy.error).toHaveBeenCalledWith('perfil.password.error.currentIncorrect');
     expect((component as any).showChangePasswordModal).toBeTrue();
   });
+
+  it('rejects birth date when age is less than 16', () => {
+    fixture.detectChanges();
+
+    const now = new Date();
+    const underageDate = {
+      year: now.getFullYear() - 15,
+      month: now.getMonth() + 1,
+      day: now.getDate(),
+    };
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.fechaNacimiento.setValue(underageDate);
+    (component as any).editForm.controls.fechaNacimiento.markAsTouched();
+
+    expect((component as any).editForm.controls.fechaNacimiento.invalid).toBeTrue();
+    expect((component as any).getErrorMessageFechaNacimiento()).toBe('perfil.validation.fechaNacimiento.outOfRange');
+  });
+
+  it('accepts birth date when age is between 16 and 70', () => {
+    fixture.detectChanges();
+
+    const now = new Date();
+    const validDate = {
+      year: now.getFullYear() - 20,
+      month: now.getMonth() + 1,
+      day: now.getDate(),
+    };
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.fechaNacimiento.setValue(validDate);
+    (component as any).editForm.controls.fechaNacimiento.markAsTouched();
+
+    expect((component as any).editForm.controls.fechaNacimiento.valid).toBeTrue();
+  });
 });

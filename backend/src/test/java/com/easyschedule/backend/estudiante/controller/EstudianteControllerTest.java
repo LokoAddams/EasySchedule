@@ -104,6 +104,33 @@ class EstudianteControllerTest {
             .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void updateProfileReturnsBadRequestWhenBirthDateIsUnder16() throws Exception {
+        LocalDate under16 = LocalDate.now().minusYears(15);
+        String invalidBody = String.format(
+            """
+            {
+              \"username\": \"diego\",
+              \"nombre\": \"Diego\",
+              \"apellido\": \"Suarez\",
+              \"email\": \"diego@mail.com\",
+              \"carnetIdentidad\": \"123456\",
+              \"fechaNacimiento\": \"%s\",
+              \"carrera\": \"\",
+              \"universidad\": \"\"
+            }
+            """,
+            under16
+        );
+
+        mockMvc.perform(put("/api/estudiantes/perfil/diego")
+                .principal(() -> "1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidBody))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").value("La fecha de nacimiento debe corresponder a una edad entre 16 y 70 años"));
+    }
+
     private EstudianteResponse mockResponse(String username) {
         return new EstudianteResponse(
             1L,

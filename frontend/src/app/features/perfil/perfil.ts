@@ -11,7 +11,13 @@ import { ToastService } from '../../core/services/toast.service';
 import { SeleccionAcademicaService } from '../../services/academico/seleccion-academica.service';
 import { ChangePasswordRequest, PerfilResponse, PerfilUpdateRequest } from './perfil.model';
 import { PerfilService } from './perfil.service';
-import { carnetIdentidadValidator, nombreValidator, usernameValidator, emailValidator } from './perfil-validators';
+import {
+  carnetIdentidadValidator,
+  nombreValidator,
+  usernameValidator,
+  emailValidator,
+  fechaNacimientoEdadValidator,
+} from './perfil-validators';
 
 type PerfilEditForm = FormGroup<{
   username: FormControl<string>;
@@ -37,6 +43,9 @@ type PasswordChangeForm = FormGroup<{
   styleUrl: './perfil.scss',
 })
 export class Perfil implements OnInit {
+  private static readonly EDAD_MINIMA = 16;
+  private static readonly EDAD_MAXIMA = 70;
+
   protected perfil: PerfilResponse | null = null;
   protected editMode = false;
   protected loading = true;
@@ -48,7 +57,7 @@ export class Perfil implements OnInit {
   protected showCurrentPassword = false;
   protected showNewPassword = false;
   protected showConfirmNewPassword = false;
-  protected readonly fechaNacimientoMinDate: NgbDateStruct = { year: 1950, month: 1, day: 1 };
+  protected readonly fechaNacimientoMinDate: NgbDateStruct;
   protected readonly fechaNacimientoMaxDate: NgbDateStruct;
   protected readonly editForm: PerfilEditForm;
   protected readonly passwordForm: PasswordChangeForm;
@@ -70,11 +79,8 @@ export class Perfil implements OnInit {
     private readonly translateService: TranslateService,
   ) {
     const today = new Date();
-    this.fechaNacimientoMaxDate = {
-      year: today.getFullYear(),
-      month: today.getMonth() + 1,
-      day: today.getDate(),
-    };
+    this.fechaNacimientoMaxDate = this.getBirthDateBoundary(today, Perfil.EDAD_MINIMA);
+    this.fechaNacimientoMinDate = this.getBirthDateBoundary(today, Perfil.EDAD_MAXIMA);
 
     this.editForm = this.fb.group({
       username: this.fb.nonNullable.control('', [Validators.required, usernameValidator()]),
@@ -82,7 +88,7 @@ export class Perfil implements OnInit {
       apellido: this.fb.nonNullable.control('', [Validators.required, nombreValidator()]),
       email: this.fb.nonNullable.control('', [Validators.required, Validators.email, emailValidator()]),
       carnetIdentidad: this.fb.nonNullable.control('', [Validators.required, carnetIdentidadValidator()]),
-      fechaNacimiento: this.fb.control<NgbDateStruct | null>(null, [Validators.required]),
+      fechaNacimiento: this.fb.control<NgbDateStruct | null>(null, [Validators.required, fechaNacimientoEdadValidator(Perfil.EDAD_MINIMA, Perfil.EDAD_MAXIMA)]),
       carrera: this.fb.nonNullable.control(''),
       universidad: this.fb.nonNullable.control(''),
     }) as PerfilEditForm;
@@ -401,6 +407,14 @@ export class Perfil implements OnInit {
       .trim();
   }
 
+  private getBirthDateBoundary(referenceDate: Date, age: number): NgbDateStruct {
+    return {
+      year: referenceDate.getFullYear() - age,
+      month: referenceDate.getMonth() + 1,
+      day: referenceDate.getDate(),
+    };
+  }
+
   protected getNombreCompleto(): string {
     if (!this.perfil) {
       return '';
@@ -548,6 +562,28 @@ export class Perfil implements OnInit {
     }
 
     return '';
+  }
+
+  protected getErrorMessageFechaNacimiento(): string {
+    const control = this.editForm.controls.fechaNacimiento;
+
+    if (!control.touched || !control.errors) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return 'perfil.validation.required';
+    }
+
+    if (control.errors['fechaNacimientoFuture']) {
+      return 'perfil.validation.fechaNacimiento.future';
+    }
+
+    if (control.errors['fechaNacimientoOutOfRange']) {
+      return 'perfil.validation.fechaNacimiento.outOfRange';
+    }
+
+    return 'perfil.validation.fechaNacimiento.invalid';
   }
 
   protected getErrorMessageNombre(): string {

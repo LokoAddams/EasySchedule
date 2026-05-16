@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
+import com.easyschedule.backend.shared.validation.EdadRange;
 
 import java.time.LocalDate;
 
@@ -32,6 +33,7 @@ public record PerfilUpdateRequest(
 
     @NotNull(message = "La fecha de nacimiento es obligatoria")
     @Past(message = "La fecha de nacimiento debe estar en el pasado")
+    @EdadRange(min = 16, max = 70, message = "La fecha de nacimiento debe corresponder a una edad entre 16 y 70 años")
     LocalDate fechaNacimiento,
 
     @Size(max = 120, message = "La carrera no puede exceder 120 caracteres")

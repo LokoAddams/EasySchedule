@@ -389,6 +389,11 @@
       },
       "email": {
         "maxLength": "El correo electrónico no puede exceder 100 caracteres."
+      },
+      "fechaNacimiento": {
+        "future": "La fecha de nacimiento no puede estar en el futuro.",
+        "outOfRange": "La fecha de nacimiento debe corresponder a una edad entre 16 y 70 años.",
+        "invalid": "Ingresa una fecha de nacimiento válida."
       }
     },
     "success": {

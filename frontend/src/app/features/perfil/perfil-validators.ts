@@ -1,5 +1,11 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
+type DateStruct = {
+  year: number;
+  month: number;
+  day: number;
+};
+
 /**
  * Validador personalizado para el carnet de identidad
  * - Máximo 8 caracteres
@@ -109,6 +115,46 @@ export function emailValidator(): ValidatorFn {
     // Validar longitud máxima
     if (value.length > 100) {
       return { emailMaxLength: { requiredLength: 100, actualLength: value.length } };
+    }
+
+    return null;
+  };
+}
+
+/**
+ * Validador de fecha de nacimiento por rango de edad.
+ */
+export function fechaNacimientoEdadValidator(minAge: number, maxAge: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value as DateStruct | null;
+    if (!value) {
+      return null;
+    }
+
+    const birthDate = new Date(value.year, value.month - 1, value.day);
+    if (
+      !Number.isFinite(birthDate.getTime())
+      || birthDate.getFullYear() !== value.year
+      || birthDate.getMonth() !== value.month - 1
+      || birthDate.getDate() !== value.day
+    ) {
+      return { fechaNacimientoInvalid: true };
+    }
+
+    const today = new Date();
+    const normalizedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    if (birthDate > normalizedToday) {
+      return { fechaNacimientoFuture: true };
+    }
+
+    let age = normalizedToday.getFullYear() - birthDate.getFullYear();
+    const monthDiff = normalizedToday.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && normalizedToday.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    if (age < minAge || age > maxAge) {
+      return { fechaNacimientoOutOfRange: true };
     }
 
     return null;
