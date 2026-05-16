@@ -1,9 +1,12 @@
 {
   "common": {
     "language": {
-      "es": "ES",
-      "en": "EN",
-      "pt": "PT"
+      "es": "Español",
+      "en": "Inglés",
+      "pt": "Portugués",
+      "codeES": "ES",
+      "codeEN": "EN",
+      "codePT": "PT"
     }
   },
   "toast": {
@@ -128,7 +131,40 @@
       "changeUniversidad": "Cambiar Universidad",
       "cancelChange": "Cancelar",
       "changeStatus": "Actualizar estado de materias",
-      "changeStatusSingle": "Actualizar estado de materia"
+      "changeStatusSingle": "Actualizar estado de materia",
+      "importOffers": "Importar Ofertas",
+      "uploadMalla": "Subir nueva malla"
+    },
+    "import": {
+      "eyebrow": "Importación de malla",
+      "title": "Importar nueva malla curricular",
+      "nameLabel": "Nombre de la malla",
+      "namePlaceholder": "Ej: Malla 2024",
+      "versionLabel": "Version",
+      "versionPlaceholder": "Ej: 2024",
+      "versionHelp": "Debe ser un anio de 4 digitos (YYYY)",
+      "formatHelpTitle": "¿Cómo generar el archivo?",
+      "formatHelpText": "Usa el siguiente prompt con tu IA favorita (ChatGPT, Copilot, etc.) para generar el archivo CSV. Luego cópialo y súbelo aquí.",
+      "copyPrompt": "Copiar prompt",
+      "promptCopied": "Prompt copiado al portapapeles. ¡Pégalo en tu IA!",
+      "copyPromptManually": "Copia este prompt manualmente:",
+      "fileLabel": "Archivo de malla",
+      "selectFile": "Seleccionar archivo",
+      "noFile": "Ningún archivo seleccionado",
+      "formatHelp": "Formatos soportados: CSV o JSON",
+      "csvFormat": "Formato CSV",
+      "csvExample": "Ejemplo: MAT101,Cálculo I,1,4,MAT100;MAT102",
+      "jsonFormat": "Formato JSON",
+      "errorFormat": "Formato no soportado. Use CSV o JSON",
+      "errorNoFile": "Debe seleccionar un archivo",
+      "errorNameRequired": "El nombre de la malla es requerido",
+      "errorVersionInvalid": "La version debe ser un anio valido de 4 digitos (por ejemplo, 2024)",
+      "errorCarreraRequired": "Debe seleccionar una carrera primero",
+      "errorGeneric": "Error al importar la malla",
+      "importing": "Importando...",
+      "import": "Importar malla",
+      "cancel": "Cancelar",
+      "success": "Malla importada exitosamente. Se importaron {{count}} materias y {{prerequisitos}} prerrequisitos."
     },
     "error": {
       "loadUniversidades": "No se pudieron cargar las universidades disponibles.",
@@ -172,6 +208,7 @@
       "selectParallelPlaceholder": "Selecciona un paralelo",
       "parallelLabel": "Paralelo",
       "noGroupsAvailable": "Esta materia no tiene grupos disponibles actualmente.",
+      "takeSubject": "Tomar materia",
       "cancel": "Cancelar",
       "addToSelection": "Agregar a seleccion",
       "added": "Materia agregada a tu seleccion temporal"
@@ -211,6 +248,26 @@
       "volver": "Volver",
       "save": "Actualizar Materia",
       "saving": "Actualizando..."
+    },
+    "offers": {
+      "eyebrow": "Ofertas académicas",
+      "title": "Importar ofertas académicas",
+      "subtitle": "Carga ofertas para la malla {{malla}}.",
+      "expectedFormatTitle": "Formato esperado",
+      "expectedFormatDescription": "Carga un archivo CSV con las columnas necesarias para crear o actualizar ofertas académicas.",
+      "codeExplanation": "El código de materia se usa para encontrar la materia correspondiente dentro de la malla seleccionada.",
+      "selectFile": "Seleccionar archivo CSV",
+      "selectedFile": "Archivo seleccionado",
+      "clearFile": "Limpiar archivo",
+      "errorsTitle": "Errores detectados",
+      "warningsTitle": "Advertencias",
+      "previewTitle": "Previsualización",
+      "offersDetected": "ofertas detectadas",
+      "successTitle": "Importación completada",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar importación",
+      "processing": "Procesando...",
+      "importSuccessToast": "Importación de ofertas completada correctamente."
     }
   },
   "tomaMaterias": {

@@ -1,9 +1,12 @@
 {
   "common": {
     "language": {
-      "es": "ES",
-      "en": "EN",
-      "pt": "PT"
+      "es": "Spanish",
+      "en": "English",
+      "pt": "Portuguese",
+      "codeES": "ES",
+      "codeEN": "EN",
+      "codePT": "PT"
     }
   },
   "toast": {
@@ -111,8 +114,6 @@
     "title": "Academic setup",
     "description": "Select your university to start your curriculum setup.",
     "loadingUniversidades": "Loading universities...",
-    "loadingCarreras": "Loading careers...",
-    "loadingMallas": "Loading curricula...",
     "retry": "Retry",
     "actions": {
       "saveUniversidad": "Save university",
@@ -122,7 +123,41 @@
       "changeMalla": "Change Curriculum",
       "changeUniversidad": "Change University",
       "cancelChange": "Cancel",
-      "changeStatus": "Update course status"
+      "changeStatus": "Update course status",
+      "changeStatusSingle": "Update course status",
+      "importOffers": "Import Offers",
+      "uploadMalla": "Upload new curriculum"
+    },
+    "import": {
+      "eyebrow": "Curriculum import",
+      "title": "Import new curriculum",
+      "nameLabel": "Curriculum name",
+      "namePlaceholder": "Ex: 2024 Curriculum",
+      "versionLabel": "Version",
+      "versionPlaceholder": "Ex: 2024",
+      "versionHelp": "It must be a 4-digit year (YYYY)",
+      "formatHelpTitle": "How to generate the file?",
+      "formatHelpText": "Use the following prompt with your favorite AI (ChatGPT, Copilot, etc.) to generate the CSV file. Then copy it and upload it here.",
+      "copyPrompt": "Copy prompt",
+      "promptCopied": "Prompt copied to clipboard. Paste it into your AI!",
+      "copyPromptManually": "Copy this prompt manually:",
+      "fileLabel": "Curriculum file",
+      "selectFile": "Select file",
+      "noFile": "No file selected",
+      "formatHelp": "Supported formats: CSV or JSON",
+      "csvFormat": "CSV format",
+      "csvExample": "Example: MAT101,Calculus I,1,4,MAT100;MAT102",
+      "jsonFormat": "JSON format",
+      "errorFormat": "Unsupported format. Use CSV or JSON",
+      "errorNoFile": "You must select a file",
+      "errorNameRequired": "Curriculum name is required",
+      "errorVersionInvalid": "Version must be a valid 4-digit year (for example, 2024)",
+      "errorCarreraRequired": "You must select a career first",
+      "errorGeneric": "Error importing curriculum",
+      "importing": "Importing...",
+      "import": "Import curriculum",
+      "cancel": "Cancel",
+      "success": "Curriculum imported successfully. Imported {{count}} subjects and {{prerequisitos}} prerequisites."
     },
     "error": {
       "loadUniversidades": "Could not load available universities.",
@@ -178,6 +213,7 @@
       "selectParallelPlaceholder": "Select a section",
       "parallelLabel": "Section",
       "noGroupsAvailable": "This subject currently has no available groups.",
+      "takeSubject": "Take subject",
       "cancel": "Cancel",
       "addToSelection": "Add to selection"
     },
@@ -201,6 +237,26 @@
       "volver": "Back",
       "save": "Update Subject",
       "saving": "Updating..."
+    },
+    "offers": {
+      "eyebrow": "Academic offers",
+      "title": "Import academic offers",
+      "subtitle": "Upload offers for the {{malla}} curriculum.",
+      "expectedFormatTitle": "Expected format",
+      "expectedFormatDescription": "Upload a CSV file with the required columns to create or update academic offers.",
+      "codeExplanation": "The subject code is used to find the corresponding subject in the selected curriculum.",
+      "selectFile": "Select CSV file",
+      "selectedFile": "Selected file",
+      "clearFile": "Clear file",
+      "errorsTitle": "Detected errors",
+      "warningsTitle": "Warnings",
+      "previewTitle": "Preview",
+      "offersDetected": "offers detected",
+      "successTitle": "Import completed",
+      "cancel": "Cancel",
+      "confirm": "Confirm import",
+      "processing": "Processing...",
+      "importSuccessToast": "Academic offers import completed successfully."
     }
   },
   "tomaMaterias": {

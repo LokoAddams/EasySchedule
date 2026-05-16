@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.easyschedule.backend.academico.malla.dto.MallaMateriaResponse;
 import com.easyschedule.backend.academico.malla.dto.MallaResponse;
+import com.easyschedule.backend.academico.malla.service.MallaFileParserService;
+import com.easyschedule.backend.academico.malla.service.MallaImportService;
 import com.easyschedule.backend.academico.malla.service.MallaService;
 import com.easyschedule.backend.shared.config.BearerTokenAuthenticationFilter;
 import java.util.List;
@@ -27,6 +29,12 @@ class MallaControllerTest {
 
     @MockitoBean
     private MallaService mallaService;
+
+    @MockitoBean
+    private MallaFileParserService fileParserService;
+
+    @MockitoBean
+    private MallaImportService mallaImportService;
 
     @MockitoBean
     private BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter;

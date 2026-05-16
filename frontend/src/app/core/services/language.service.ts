@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, BehaviorSubject, Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
@@ -8,8 +8,11 @@ import { TranslateService } from '@ngx-translate/core';
 export class LanguageService {
   private readonly supportedLanguages = ['es', 'en', 'pt'];
   private currentLanguage = 'es';
+  private readonly currentLanguageSubject: BehaviorSubject<string>;
 
-  constructor(private readonly translate: TranslateService) {}
+  constructor(private readonly translate: TranslateService) {
+    this.currentLanguageSubject = new BehaviorSubject<string>(this.currentLanguage);
+  }
 
   initializeDefaultLanguage(): Promise<void> {
     const browserLanguage = this.translate.getBrowserLang();
@@ -20,6 +23,7 @@ export class LanguageService {
     this.translate.addLangs(this.supportedLanguages);
     this.translate.setDefaultLang('es');
     this.currentLanguage = initialLanguage;
+    this.currentLanguageSubject.next(initialLanguage);
     return firstValueFrom(this.translate.use(initialLanguage)).then(() => undefined);
   }
 
@@ -29,10 +33,15 @@ export class LanguageService {
     }
 
     this.currentLanguage = lang;
+    this.currentLanguageSubject.next(lang);
     this.translate.use(lang);
   }
 
   getCurrentLanguage(): string {
     return this.currentLanguage;
+  }
+
+  getCurrentLanguage$(): Observable<string> {
+    return this.currentLanguageSubject.asObservable();
   }
 }

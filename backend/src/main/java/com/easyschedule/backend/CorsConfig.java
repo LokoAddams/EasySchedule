@@ -34,7 +34,7 @@ public class CorsConfig implements WebMvcConfigurer {
             .allowedOriginPatterns(originPatterns.toArray(String[]::new))
             .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
             .allowedHeaders("*")
-            .allowCredentials(false);
+            .allowCredentials(true);
     }
 
     @Override

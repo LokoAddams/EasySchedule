@@ -2,6 +2,11 @@
   command = "npm run build"
   publish = "dist/frontend/browser"
 
+[[rewrites]]
+  from = "/api/*"
+  to = "https://easyschedule-hjzc.onrender.com/api/:splat"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
