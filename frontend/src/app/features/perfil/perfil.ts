@@ -30,6 +30,14 @@ type PasswordChangeForm = FormGroup<{
   confirmNewPassword: FormControl<string>;
 }>;
 
+type PasswordPolicyChecklist = {
+  minLength: boolean;
+  uppercase: boolean;
+  lowercase: boolean;
+  number: boolean;
+  special: boolean;
+};
+
 @Component({
   selector: 'app-perfil',
   imports: [CommonModule, ReactiveFormsModule, NgbDatepickerModule, TranslatePipe, NgbPopoverModule],
@@ -90,7 +98,7 @@ export class Perfil implements OnInit {
     this.passwordForm = this.fb.group(
       {
         currentPassword: this.fb.nonNullable.control('', [Validators.required]),
-        newPassword: this.fb.nonNullable.control('', [Validators.required, Validators.minLength(8)]),
+        newPassword: this.fb.nonNullable.control('', [Validators.required, Validators.minLength(8), this.passwordPolicyValidator]),
         confirmNewPassword: this.fb.nonNullable.control('', [Validators.required]),
       },
       { validators: this.passwordsMatchValidator },
@@ -286,6 +294,11 @@ export class Perfil implements OnInit {
 
         if (backendMessage.includes('contrasenia actual es incorrecta') || backendMessage.includes('contrasena actual es incorrecta')) {
           this.toastService.error('perfil.password.error.currentIncorrect');
+          return;
+        }
+
+        if (backendMessage.includes('mayuscula') || backendMessage.includes('minuscula') || backendMessage.includes('caracter especial')) {
+          this.toastService.error('perfil.password.error.weakPolicy');
           return;
         }
 
@@ -637,5 +650,34 @@ export class Perfil implements OnInit {
     }
 
     return newPassword === confirmNewPassword ? null : { passwordMismatch: true };
+  };
+
+  protected getPasswordPolicyChecklist(): PasswordPolicyChecklist {
+    const newPassword = String(this.passwordForm.controls.newPassword.value ?? '');
+
+    return {
+      minLength: newPassword.length >= 8,
+      uppercase: /[A-Z]/.test(newPassword),
+      lowercase: /[a-z]/.test(newPassword),
+      number: /\d/.test(newPassword),
+      special: /[^A-Za-z0-9]/.test(newPassword),
+    };
+  }
+
+  private passwordPolicyValidator = (control: FormControl<string>): ValidationErrors | null => {
+    const password = String(control.value ?? '');
+    if (!password) {
+      return null;
+    }
+
+    const checklist = {
+      minLength: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      special: /[^A-Za-z0-9]/.test(password),
+    };
+
+    return Object.values(checklist).every(Boolean) ? null : { weakPassword: true };
   };
 }
