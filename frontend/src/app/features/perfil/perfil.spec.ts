@@ -224,6 +224,17 @@ describe('Perfil Component', () => {
     expect((component as any).getErrorMessageCarnet()).toBe('perfil.validation.carnet.invalidChars');
   });
 
+  it('rejects identity card with alphabetic complement only', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.carnetIdentidad.setValue('1234567-XX');
+    (component as any).editForm.controls.carnetIdentidad.markAsTouched();
+
+    expect((component as any).editForm.controls.carnetIdentidad.invalid).toBeTrue();
+    expect((component as any).getErrorMessageCarnet()).toBe('perfil.validation.carnet.invalidChars');
+  });
+
   it('shows specific toast when backend rejects carnet format', () => {
     const perfilCompleto: PerfilResponse = {
       ...perfilMock,

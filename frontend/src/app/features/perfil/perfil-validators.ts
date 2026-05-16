@@ -9,7 +9,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
  * - No puede estar vacío
  */
 export function carnetIdentidadValidator(): ValidatorFn {
-  const ciRegex = /^\d{6,10}(?:-?[A-Za-z0-9]{1,2})?(?:\s?(?:LP|CB|SC|OR|PT|TJ|CH|BN|PD))?$/i;
+  const ciRegex = /^\d{6,10}(?:-?(?:\d[A-Za-z0-9]?|[A-Za-z0-9]?\d))?(?:\s?(?:LP|CB|SC|OR|PT|TJ|CH|BN|PD))?$/i;
 
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) {
