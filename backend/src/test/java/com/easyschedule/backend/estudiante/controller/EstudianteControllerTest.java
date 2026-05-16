@@ -64,7 +64,7 @@ class EstudianteControllerTest {
               "nombre": "Diego",
               "apellido": "Suarez",
               "email": "diego2@mail.com",
-              "carnetIdentidad": "123456",
+              "carnetIdentidad": "1234567-1A LP",
               "fechaNacimiento": "2001-05-10",
               "carrera": "",
               "universidad": ""
@@ -102,6 +102,29 @@ class EstudianteControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidBody))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateProfileReturnsBadRequestWhenCarnetExtensionIsInvalid() throws Exception {
+        String invalidBody = """
+            {
+              "username": "diego",
+              "nombre": "Diego",
+              "apellido": "Suarez",
+              "email": "diego@mail.com",
+              "carnetIdentidad": "1234567 XX",
+              "fechaNacimiento": "2001-05-10",
+              "carrera": "",
+              "universidad": ""
+            }
+            """;
+
+        mockMvc.perform(put("/api/estudiantes/perfil/diego")
+                .principal(() -> "1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidBody))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").value("Formato de carnet de identidad invalido para Bolivia"));
     }
 
     private EstudianteResponse mockResponse(String username) {

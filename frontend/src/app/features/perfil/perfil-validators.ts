@@ -2,25 +2,28 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 /**
  * Validador personalizado para el carnet de identidad
- * - Máximo 8 caracteres
- * - Sin caracteres especiales (solo letras y números)
+ * Formato Bolivia:
+ * - Base numérica entre 6 y 10 dígitos
+ * - Complemento opcional de 1 a 2 caracteres alfanuméricos (ej: -1A)
+ * - Extensión opcional de departamento (LP, CB, SC, OR, PT, TJ, CH, BN, PD)
  * - No puede estar vacío
  */
 export function carnetIdentidadValidator(): ValidatorFn {
+  const ciRegex = /^\d{6,10}(?:-?[A-Za-z0-9]{1,2})?(?:\s?(?:LP|CB|SC|OR|PT|TJ|CH|BN|PD))?$/i;
+
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) {
       return null; // Dejar que required validator maneje esto
     }
 
-    const value = control.value.trim();
+    const value = control.value.trim().replace(/\s+/g, ' ');
 
     // Validar longitud máxima
-    if (value.length > 8) {
-      return { carnetMaxLength: { requiredLength: 8, actualLength: value.length } };
+    if (value.length > 16) {
+      return { carnetMaxLength: { requiredLength: 16, actualLength: value.length } };
     }
 
-    // Validar que no contenga caracteres especiales (solo letras y números)
-    if (!/^[a-zA-Z0-9]+$/.test(value)) {
+    if (!ciRegex.test(value)) {
       return { carnetInvalidChars: true };
     }
 
