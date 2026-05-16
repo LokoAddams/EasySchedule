@@ -144,8 +144,8 @@ class EstudianteServiceTest {
 
         PerfilUpdateRequest request = new PerfilUpdateRequest(
             "diego2",
-            "Diego",
-            "Suarez",
+            "diEGo",
+            "saavedra de la cruz",
             "diego2@mail.com",
             "998877",
             LocalDate.of(2001, 5, 10),
@@ -168,7 +168,7 @@ class EstudianteServiceTest {
         assertEquals("diego2", response.username());
         assertEquals("diego2@mail.com", response.email());
         assertEquals("Diego", response.nombre());
-        assertEquals("Suarez", response.apellido());
+        assertEquals("Saavedra De La Cruz", response.apellido());
         assertEquals("998877", response.carnetIdentidad());
         verify(userRepository).save(any(User.class));
         verify(estudianteRepository).save(any(Estudiante.class));

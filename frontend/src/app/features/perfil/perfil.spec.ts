@@ -173,6 +173,38 @@ describe('Perfil Component', () => {
     expect((component as any).showChangePasswordModal).toBeFalse();
   });
 
+  it('shows apellido validation error when value includes numbers', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.apellido.setValue('Suarez1');
+    (component as any).editForm.controls.apellido.markAsTouched();
+
+    expect((component as any).editForm.controls.apellido.invalid).toBeTrue();
+    expect((component as any).getErrorMessageApellido()).toBe('perfil.validation.nombre.invalidChars');
+  });
+
+  it('accepts compound last name with single spaces', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.apellido.setValue('De la Cruz');
+    (component as any).editForm.controls.apellido.markAsTouched();
+
+    expect((component as any).editForm.controls.apellido.valid).toBeTrue();
+  });
+
+  it('rejects name with less than 3 characters', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.nombre.setValue('Al');
+    (component as any).editForm.controls.nombre.markAsTouched();
+
+    expect((component as any).editForm.controls.nombre.invalid).toBeTrue();
+    expect((component as any).getErrorMessageNombre()).toBe('perfil.validation.nombre.minLength');
+  });
+
   it('shows toast when current password is incorrect', () => {
     perfilServiceSpy.changePassword.and.returnValue(
       throwError(() => ({ status: 400, error: { message: 'La contrasenia actual es incorrecta' } })),

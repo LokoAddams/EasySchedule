@@ -379,7 +379,7 @@
         "invalidChars": "O documento de identidade só pode conter letras e números."
       },
       "nome": {
-        "minLength": "O nome deve ter pelo menos 2 caracteres.",
+        "minLength": "O nome deve ter pelo menos 3 caracteres.",
         "maxLength": "O nome não pode exceder 50 caracteres.",
         "invalidChars": "O nome só pode conter letras, espaços e acentos."
       },

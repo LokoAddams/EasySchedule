@@ -104,6 +104,29 @@ class EstudianteControllerTest {
             .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void updateProfileReturnsBadRequestWhenApellidoContainsNumbers() throws Exception {
+        String invalidBody = """
+            {
+              "username": "diego",
+              "nombre": "Diego",
+              "apellido": "Suarez1",
+              "email": "diego@mail.com",
+              "carnetIdentidad": "123456",
+              "fechaNacimiento": "2001-05-10",
+              "carrera": "",
+              "universidad": ""
+            }
+            """;
+
+        mockMvc.perform(put("/api/estudiantes/perfil/diego")
+                .principal(() -> "1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidBody))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").value("Los apellidos solo pueden contener letras, espacios y acentos"));
+    }
+
     private EstudianteResponse mockResponse(String username) {
         return new EstudianteResponse(
             1L,

@@ -577,7 +577,29 @@ export class Perfil implements OnInit {
   }
 
   protected getErrorMessageApellido(): string {
-    return this.getErrorMessageNombre(); // Usa las mismas reglas que nombre
+    const control = this.editForm.controls.apellido;
+    
+    if (!control.touched || !control.errors) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return 'perfil.validation.required';
+    }
+
+    if (control.errors['nombreMinLength']) {
+      return 'perfil.validation.nombre.minLength';
+    }
+
+    if (control.errors['nombreMaxLength']) {
+      return 'perfil.validation.nombre.maxLength';
+    }
+
+    if (control.errors['nombreInvalidChars']) {
+      return 'perfil.validation.nombre.invalidChars';
+    }
+
+    return '';
   }
 
   protected getErrorMessageUsername(): string {

@@ -378,7 +378,7 @@
         "invalidChars": "El carnet de identidad solo puede contener letras y números."
       },
       "nombre": {
-        "minLength": "El nombre debe tener al menos 2 caracteres.",
+        "minLength": "El nombre debe tener al menos 3 caracteres.",
         "maxLength": "El nombre no puede exceder 50 caracteres.",
         "invalidChars": "El nombre solo puede contener letras, espacios y acentos."
       },

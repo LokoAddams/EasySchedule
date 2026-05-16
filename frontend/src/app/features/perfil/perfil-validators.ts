@@ -32,7 +32,7 @@ export function carnetIdentidadValidator(): ValidatorFn {
  * Validador para campos de nombres (nombre y apellido)
  * - Máximo 50 caracteres
  * - Solo letras, espacios y acentos
- * - Mínimo 2 caracteres
+ * - Mínimo 3 caracteres
  */
 export function nombreValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -43,8 +43,8 @@ export function nombreValidator(): ValidatorFn {
     const value = control.value.trim();
 
     // Validar longitud mínima
-    if (value.length < 2) {
-      return { nombreMinLength: { requiredLength: 2, actualLength: value.length } };
+    if (value.length < 3) {
+      return { nombreMinLength: { requiredLength: 3, actualLength: value.length } };
     }
 
     // Validar longitud máxima
@@ -52,8 +52,8 @@ export function nombreValidator(): ValidatorFn {
       return { nombreMaxLength: { requiredLength: 50, actualLength: value.length } };
     }
 
-    // Validar que solo contenga letras, espacios y acentos
-    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value)) {
+    // Validar que solo contenga letras, acentos y espacios simples entre palabras
+    if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ]+(?: [A-Za-zÁÉÍÓÚáéíóúÑñ]+)*$/.test(value)) {
       return { nombreInvalidChars: true };
     }
 

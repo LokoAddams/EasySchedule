@@ -378,7 +378,7 @@
         "invalidChars": "Identity card can only contain letters and numbers."
       },
       "nombre": {
-        "minLength": "Name must be at least 2 characters.",
+        "minLength": "Name must be at least 3 characters.",
         "maxLength": "Name cannot exceed 50 characters.",
         "invalidChars": "Name can only contain letters, spaces, and accents."
       },
