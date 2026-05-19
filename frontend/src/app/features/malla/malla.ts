@@ -23,6 +23,7 @@ import { ToastService } from '../../core/services/toast.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
 import { TourHintsService } from '../../services/tour-hints.service';
+import { SeleccionTemporalService, SeleccionTemporalResponse } from '../../services/academico/seleccion-temporal.service';
 
 import { ImportarOfertasModal } from './importar-ofertas-modal/importar-ofertas-modal';
 
@@ -152,6 +153,12 @@ Reglas obligatorias:
   @ViewChild('popoverStep2') popoverStep2?: NgbPopover;
   @ViewChild('popoverStep4') popoverStep4?: NgbPopover;
 
+
+  protected seleccionesTemporales: SeleccionTemporalResponse[] = [];
+  protected showFloatingPanel = false;
+  protected panelExpanded = true;
+  protected loadingSelecciones = false;
+
   constructor(
     private readonly featureService: FeatureToggleService,
     private readonly universidadService: UniversidadService,
@@ -168,6 +175,7 @@ Reglas obligatorias:
     private readonly authSessionService: AuthSessionService,
     private readonly perfilService: PerfilService,
     private readonly tourHintsService: TourHintsService,
+    private readonly seleccionTemporalService: SeleccionTemporalService,
   ) {}
 
   ngOnInit(): void {
@@ -193,6 +201,7 @@ Reglas obligatorias:
 
     void this.featureService.loadFlags();
     void this.loadUniversidades();
+    void this.cargarSeleccionesTemporales();
   }
 
   ngOnDestroy(): void {
@@ -519,15 +528,54 @@ Reglas obligatorias:
       return;
     }
 
-    this.tomaSeleccionService.agregarMateria({
-      id: this.materiaDetalle.mallaMateriaId,
-      nombre: this.materiaDetalle.nombreMateria,
-      creditos: this.materiaDetalle.creditos,
-      ofertaId: this.selectedOfertaId,
+    this.loadingSelecciones = true;
+    this.seleccionTemporalService.agregarSeleccion({ ofertaMateriaId: this.selectedOfertaId }).subscribe({
+      next: () => {
+        void this.cargarSeleccionesTemporales();
+        this.closeModal();
+        this.showFloatingPanel = true;
+        this.panelExpanded = true;
+        this.loadingSelecciones = false;
+        this.toastService.success('malla.selection.added');
+      },
+      error: () => {
+        this.toastService.error('malla.selection.errorAdd');
+        this.loadingSelecciones = false;
+      }
     });
+  }
 
-    this.closeModal();
+  protected async cargarSeleccionesTemporales(): Promise<void> {
+    try {
+      const selecciones = await firstValueFrom(this.seleccionTemporalService.listarSelecciones());
+      this.seleccionesTemporales = selecciones;
+      this.showFloatingPanel = selecciones.length > 0;
+    } catch (error) {
+      console.error('Error loading temporal selections', error);
+    }
+  }
+
+  protected togglePanel(): void {
+    this.panelExpanded = !this.panelExpanded;
+  }
+
+  protected irATomaDeMaterias(): void {
     void this.router.navigate(['/toma-de-materias']);
+  }
+
+  protected cancelarSeleccion(): void {
+    if (confirm(this.translateService.instant('malla.selection.confirmClear'))) {
+      this.seleccionTemporalService.limpiarSelecciones().subscribe({
+        next: () => {
+          this.seleccionesTemporales = [];
+          this.showFloatingPanel = false;
+          this.toastService.success('malla.selection.cleared');
+        },
+        error: () => {
+          this.toastService.error('malla.selection.errorClear');
+        }
+      });
+    }
   }
 
   protected closeModal(): void {
@@ -552,6 +600,10 @@ Reglas obligatorias:
 
   protected setSemestreActual(semestre: number): void {
     this.semestreActual = semestre;
+    const element = document.querySelector(`.malla-board__column[data-semester="${semestre}"]`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    }
   }
 
   protected onImportarOfertasClick(): void {
