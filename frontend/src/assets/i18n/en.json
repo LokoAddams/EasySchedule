@@ -257,6 +257,22 @@
       "confirm": "Confirm import",
       "processing": "Processing...",
       "importSuccessToast": "Academic offers import completed successfully."
+    },
+    "prerequisito": {
+      "button": " Add prerequisite",
+      "modalTitle": "Add prerequisite to: {{materia}}",
+      "helpText": "Check subjects to add as prerequisites. Uncheck existing ones to remove them:",
+      "noAvailable": "No subjects available as prerequisites. Subjects must belong to earlier semesters than \"{{materia}}\" (Semester {{semestre}}).",
+      "semesterTitle": "Semester {{sem}}",
+      "badgeExisting": "Added",
+      "badgeRemove": "Will be removed",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "close": "Close",
+      "successAdd": "Prerequisite added successfully.",
+      "successAddMultiple": "{{count}} prerequisites added successfully.",
+      "successPartial": "Operation completed: {{added}} added, {{removed}} removed.",
+      "errorGeneric": "Error creating prerequisite"
     }
   },
   "tomaMaterias": {
