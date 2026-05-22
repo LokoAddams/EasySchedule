@@ -16,6 +16,7 @@ export interface MallaMateria {
   materiaId: number;
   codigoMateria: string;
   nombreMateria: string;
+  creditos: number;
   semestreSugerido: number;
   estado: 'aprobada' | 'cursando' | 'pendiente' | null;
   prerequisitosIds: number[];
@@ -52,8 +53,20 @@ export class MallaCatalogoService {
     return this.apiService.get<MallaMateria[]>(`/api/academico/mallas/${mallaId}/materias`);
   }
 
-   getDetallesMateria(mallaMateriaId: number): Observable<OfertaDetalleResponse> {
+  getDetallesMateria(mallaMateriaId: number): Observable<OfertaDetalleResponse> {
     return this.apiService.get<OfertaDetalleResponse>(`/api/academico/ofertas/detalles/${mallaMateriaId}`);
   }
 
+  crearPrerequisito(mallaMateriaId: number, prerequisitoMallaMateriaId: number): Observable<any> {
+    return this.apiService.post<any, any>(`/api/academico/prerequisitos`, {
+      mallaMateriaId,
+      prerequisitoMallaMateriaId,
+    });
+  }
+
+  eliminarPrerequisito(mallaMateriaId: number, prerequisitoMallaMateriaId: number): Observable<any> {
+    return this.apiService.delete<any>(
+      `/api/academico/prerequisitos?mallaMateriaId=${mallaMateriaId}&prerequisitoMallaMateriaId=${prerequisitoMallaMateriaId}`
+    );
+  }
 }

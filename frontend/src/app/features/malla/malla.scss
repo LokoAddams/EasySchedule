@@ -844,3 +844,123 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.malla-modal--prereq {
+  width: min(560px, 96vw);
+}
+
+.malla-prereq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.malla-prereq-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.malla-prereq-semestre-title {
+  margin: 0.5rem 0 0.2rem;
+  color: #273a51;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(47, 79, 115, 0.12);
+  padding-bottom: 0.25rem;
+}
+
+.malla-prereq-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(47, 79, 115, 0.12);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: rgba(47, 79, 115, 0.35);
+    background: rgba(47, 79, 115, 0.04);
+  }
+
+  input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: var(--color-blue-dark);
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+  }
+
+  &--seleccionado {
+    border-color: rgba(47, 79, 115, 0.45);
+    background: rgba(47, 79, 115, 0.07);
+  }
+
+  &--existente {
+    opacity: 0.7;
+
+    &:hover {
+      border-color: rgba(47, 79, 115, 0.35);
+      background: rgba(47, 79, 115, 0.04);
+    }
+  }
+
+  &--quitar {
+    opacity: 0.6;
+    border-color: rgba(163, 32, 23, 0.35);
+    background: rgba(163, 32, 23, 0.06);
+    text-decoration: line-through;
+
+    &:hover {
+      border-color: rgba(163, 32, 23, 0.55);
+      background: rgba(163, 32, 23, 0.1);
+    }
+  }
+
+  &__codigo {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: #121722;
+    font-size: 0.85rem;
+    min-width: 5.5rem;
+  }
+
+  &__nombre {
+    font-family: 'Poppins', sans-serif;
+    color: #273a51;
+    font-size: 0.85rem;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__creditos {
+    font-family: 'Poppins', sans-serif;
+    color: rgba(39, 58, 81, 0.6);
+    font-size: 0.78rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  &__badge {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #2e7d32;
+    background: rgba(76, 175, 80, 0.12);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &--remove {
+      color: #a32017;
+      background: rgba(163, 32, 23, 0.1);
+    }
+  }
+}
+

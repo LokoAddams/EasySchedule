@@ -96,6 +96,27 @@
         <button type="button" class="malla-button malla-button--save" (click)="onGuardarUniversidadClick()">
           {{ 'malla.actions.saveUniversidad' | translate }}
         </button>
+
+        <button type="button" class="malla-button malla-button--ghost" style="margin-left: 0.5rem;" (click)="toggleCrearUniversidad()">
+          + Nueva universidad
+        </button>
+
+        <div *ngIf="showCrearUniversidad" class="malla-card" style="margin-top: 0.5rem; padding: 0.8rem;">
+          <div class="malla-form-group">
+            <label class="malla-label" for="nueva-uni-nombre">Nombre</label>
+            <input type="text" id="nueva-uni-nombre" class="malla-input" [(ngModel)]="nuevaUniversidadNombre" placeholder="Nombre de la universidad" maxlength="150" />
+          </div>
+          <div class="malla-form-group">
+            <label class="malla-label" for="nueva-uni-codigo">Código</label>
+            <input type="text" id="nueva-uni-codigo" class="malla-input" [(ngModel)]="nuevaUniversidadCodigo" placeholder="Ej: UMSA" maxlength="30" />
+          </div>
+          <p *ngIf="crearUniversidadError" class="malla-field-error">{{ crearUniversidadError }}</p>
+          <button type="button" class="malla-button malla-button--save" (click)="guardarNuevaUniversidad()" [disabled]="creandoUniversidad">
+            <span *ngIf="creandoUniversidad">Guardando...</span>
+            <span *ngIf="!creandoUniversidad">Guardar universidad</span>
+          </button>
+          <button type="button" class="malla-button malla-button--ghost" (click)="cancelarCrearUniversidad()">Cancelar</button>
+        </div>
       </ng-container>
 
       <div *ngIf="editMode === 'malla' && mallaChangeWarningVisible" class="malla-warning">
@@ -126,6 +147,27 @@
         <button type="button" class="malla-button malla-button--save" (click)="onGuardarCarreraClick()">
           {{ 'malla.actions.saveCarrera' | translate }}
         </button>
+
+        <button type="button" class="malla-button malla-button--ghost" style="margin-left: 0.5rem;" (click)="toggleCrearCarrera()">
+          + Nueva carrera
+        </button>
+
+        <div *ngIf="showCrearCarrera" class="malla-card" style="margin-top: 0.5rem; padding: 0.8rem;">
+          <div class="malla-form-group">
+            <label class="malla-label" for="nueva-carr-nombre">Nombre</label>
+            <input type="text" id="nueva-carr-nombre" class="malla-input" [(ngModel)]="nuevaCarreraNombre" placeholder="Nombre de la carrera" maxlength="150" />
+          </div>
+          <div class="malla-form-group">
+            <label class="malla-label" for="nueva-carr-codigo">Código</label>
+            <input type="text" id="nueva-carr-codigo" class="malla-input" [(ngModel)]="nuevaCarreraCodigo" placeholder="Ej: ING-SIS" maxlength="30" />
+          </div>
+          <p *ngIf="crearCarreraError" class="malla-field-error">{{ crearCarreraError }}</p>
+          <button type="button" class="malla-button malla-button--save" (click)="guardarNuevaCarrera()" [disabled]="creandoCarrera">
+            <span *ngIf="creandoCarrera">Guardando...</span>
+            <span *ngIf="!creandoCarrera">Guardar carrera</span>
+          </button>
+          <button type="button" class="malla-button malla-button--ghost" (click)="cancelarCrearCarrera()">Cancelar</button>
+        </div>
       </div>
 
       <div *ngIf="step === 'malla'" class="malla-section">
@@ -165,6 +207,7 @@
                                  <button type="button" class="malla-button malla-button--ghost" (click)="openImportModal()">
           {{ 'malla.actions.uploadMalla' | translate }}
         </button>
+
 
       </div>
     </div>
@@ -285,7 +328,70 @@
         <button class="malla-button malla-button--outline" style="width: 100%; margin-top: 0;" (click)="onActualizarMallaClick()">
           {{ 'malla.actions.changeStatusSingle' | translate }}
         </button>
+        <button class="malla-button malla-button--outline" style="width: 100%; margin-top: 0;" (click)="abrirModalPrerequisitos()">
+          {{ 'malla.prerequisito.button' | translate }}
+        </button>
       </div>
+    </div>
+  </div>
+
+  <div class="malla-modal-overlay" *ngIf="showPrerequisitoModal">
+    <div class="malla-modal malla-modal--prereq">
+      <header class="malla-modal__header">
+        <div>
+          <p class="malla-modal__eyebrow">{{ 'malla.modal.subjectSelectionEyebrow' | translate }}</p>
+          <h3>{{ 'malla.prerequisito.modalTitle' | translate:{materia: selectedMateriaParaAccion?.nombreMateria} }}</h3>
+        </div>
+        <button type="button" class="malla-modal__close" (click)="cerrarModalPrerequisitos()">×</button>
+      </header>
+
+      <div class="malla-modal__body">
+        <p *ngIf="prereqDisponibles.length === 0" class="malla-field-help" style="padding: 1rem 0;">
+          {{ 'malla.prerequisito.noAvailable' | translate:{materia: selectedMateriaParaAccion?.nombreMateria, semestre: selectedMateriaParaAccion?.semestreSugerido} }}
+        </p>
+
+        <div *ngIf="prereqDisponibles.length > 0" class="malla-prereq-list">
+          <p class="malla-field-help" style="margin-bottom: 0.8rem;">
+            {{ 'malla.prerequisito.helpText' | translate }}
+          </p>
+          <div class="malla-prereq-group" *ngFor="let sem of prereqSemestres">
+            <h4 class="malla-prereq-semestre-title">{{ 'malla.prerequisito.semesterTitle' | translate:{sem: sem} }}</h4>
+            <label
+              class="malla-prereq-item"
+              *ngFor="let materia of prereqDisponiblesPorSemestre.get(sem)"
+              [class.malla-prereq-item--seleccionado]="prereqSeleccionadosTemp.has(materia.id)"
+              [class.malla-prereq-item--existente]="esPrerequisitoExistente(materia.id)"
+              [class.malla-prereq-item--quitar]="prereqQuitarTemp.has(materia.id)"
+            >
+              <input
+                type="checkbox"
+                [checked]="prereqSeleccionadosTemp.has(materia.id) || (esPrerequisitoExistente(materia.id) && !prereqQuitarTemp.has(materia.id))"
+                (change)="esPrerequisitoExistente(materia.id) ? toggleQuitarPrerequisito(materia.id) : togglePrerequisitoTemp(materia.id)"
+              />
+              <span class="malla-prereq-item__codigo">{{ materia.codigoMateria }}</span>
+              <span class="malla-prereq-item__nombre">{{ materia.nombreMateria }}</span>
+              <span class="malla-prereq-item__creditos">{{ materia.creditos }} créd.</span>
+              <span *ngIf="esPrerequisitoExistente(materia.id) && !prereqQuitarTemp.has(materia.id)" class="malla-prereq-item__badge">{{ 'malla.prerequisito.badgeExisting' | translate }}</span>
+              <span *ngIf="prereqQuitarTemp.has(materia.id)" class="malla-prereq-item__badge malla-prereq-item__badge--remove">{{ 'malla.prerequisito.badgeRemove' | translate }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div *ngIf="prereqError" class="malla-card malla-card--error" style="margin-top: 0.8rem;">
+          <p>{{ prereqError }}</p>
+        </div>
+        <div *ngIf="prereqSuccess" class="malla-card malla-card--success" style="margin-top: 0.8rem;">
+          <p>{{ prereqSuccess }}</p>
+        </div>
+      </div>
+
+      <footer class="malla-modal__footer">
+        <button class="malla-button malla-button--ghost" (click)="cerrarModalPrerequisitos()">{{ 'malla.prerequisito.close' | translate }}</button>
+        <button class="malla-button malla-button--save" (click)="guardarPrerequisitos()" [disabled]="(prereqSeleccionadosTemp.size === 0 && prereqQuitarTemp.size === 0) || prereqGuardando">
+          <span *ngIf="prereqGuardando">{{ 'malla.prerequisito.saving' | translate }}</span>
+          <span *ngIf="!prereqGuardando">{{ 'malla.prerequisito.save' | translate }}</span>
+        </button>
+      </footer>
     </div>
   </div>
 
