@@ -7,6 +7,7 @@ public record MallaMateriaResponse(
 	Long materiaId,
 	String codigoMateria,
 	String nombreMateria,
+	Short creditos,
 	Short semestreSugerido,
 	String estado,
 	List<Long> prerequisitosIds

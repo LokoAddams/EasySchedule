@@ -48,6 +48,7 @@ public class MallaService {
 					mm.getMateria().getId(),
 					mm.getMateria().getCodigo(),
 					mm.getMateria().getNombre(),
+					mm.getMateria().getCreditos(),
 					mm.getSemestreSugerido(),
 					estado,
 					prereqs
