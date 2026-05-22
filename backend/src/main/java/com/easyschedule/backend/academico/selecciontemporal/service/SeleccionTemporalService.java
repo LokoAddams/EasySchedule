@@ -7,7 +7,6 @@ import com.easyschedule.backend.academico.oferta_materia.repository.OfertaMateri
 import com.easyschedule.backend.academico.selecciontemporal.dto.SeleccionTemporalRequest;
 import com.easyschedule.backend.academico.selecciontemporal.dto.SeleccionTemporalResponse;
 import com.easyschedule.backend.academico.selecciontemporal.model.SeleccionTemporal;
-import com.easyschedule.backend.academico.selecciontemporal.model.SeleccionTemporal;
 import com.easyschedule.backend.academico.selecciontemporal.repository.SeleccionTemporalRepository;
 import com.easyschedule.backend.estudiante.model.Estudiante;
 import com.easyschedule.backend.estudiante.repository.EstudianteRepository;
