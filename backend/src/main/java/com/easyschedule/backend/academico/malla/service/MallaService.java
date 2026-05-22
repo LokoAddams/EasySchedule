@@ -1,9 +1,9 @@
 package com.easyschedule.backend.academico.malla.service;
 
-import com.easyschedule.backend.academico.malla.dto.MallaResponse;
-import com.easyschedule.backend.academico.malla.repository.MallaRepository;
-import com.easyschedule.backend.academico.malla.repository.MallaMateriaRepository;
 import com.easyschedule.backend.academico.malla.dto.MallaMateriaResponse;
+import com.easyschedule.backend.academico.malla.dto.MallaResponse;
+import com.easyschedule.backend.academico.malla.repository.MallaMateriaRepository;
+import com.easyschedule.backend.academico.malla.repository.MallaRepository;
 import com.easyschedule.backend.academico.estado_materia.service.EstadoMateriaService;
 import com.easyschedule.backend.academico.materia.repository.PrerequisitoRepository;
 import java.util.List;

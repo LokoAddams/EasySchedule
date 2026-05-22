@@ -29,6 +29,7 @@ dependencies {
 	testRuntimeOnly("com.h2database:h2")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
+	implementation("com.github.librepdf:openpdf:1.3.30")
 }
 
 tasks.withType<Test> {

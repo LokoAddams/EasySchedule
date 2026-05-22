@@ -20,6 +20,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestParam;
+import com.easyschedule.backend.estudiante.service.EstudianteMallaExportService;
+import com.easyschedule.backend.shared.exception.ResourceNotFoundException;
+
 import java.security.Principal;
 
 import java.util.List;
@@ -33,9 +39,11 @@ public class EstudianteController {
     private static final Logger log = LoggerFactory.getLogger(EstudianteController.class);
 
     private final EstudianteService estudianteService;
+    private final EstudianteMallaExportService exportService;
 
-    public EstudianteController(EstudianteService estudianteService) {
+    public EstudianteController(EstudianteService estudianteService, EstudianteMallaExportService exportService) {
         this.estudianteService = estudianteService;
+        this.exportService = exportService;
     }
 
     @GetMapping
@@ -96,15 +104,7 @@ public class EstudianteController {
         return estudianteService.updateProfile(username, request);
     }
 
-    @RequestMapping(value = "/perfil/{username}/tour", method = { RequestMethod.PATCH, RequestMethod.POST })
-    public EstudianteResponse completeTour(
-            @PathVariable("username") String username,
-            Principal principal) {
-        Long userId = getAuthenticatedUserId(principal);
-        validateProfileOwnership(username, userId);
-        log.info("[TOUR] Marcando tour como completado para el estudiante con ID: {}", userId);
-        return estudianteService.completeTour(username);
-    }
+
 
     private void validateProfileOwnership(String username, Long userId) {
         if (userId == null) {
