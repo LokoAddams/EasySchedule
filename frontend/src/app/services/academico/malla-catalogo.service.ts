@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { ApiService } from '../api.service';
@@ -50,6 +51,10 @@ export class MallaCatalogoService {
 
   getMateriasPorMalla(mallaId: number): Observable<MallaMateria[]> {
     return this.apiService.get<MallaMateria[]>(`/api/academico/mallas/${mallaId}/materias`);
+  }
+
+  exportarAvanceGraduacion(): Observable<HttpResponse<Blob>> {
+    return this.apiService.getBlob('/api/estudiantes/me/avance-graduacion/export');
   }
 
    getDetallesMateria(mallaMateriaId: number): Observable<OfertaDetalleResponse> {
