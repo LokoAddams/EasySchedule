@@ -258,6 +258,15 @@
       "confirm": "Confirmar importação",
       "processing": "Processando...",
       "importSuccessToast": "Importação de ofertas concluída corretamente."
+    },
+    "export": {
+      "button": "Exportar avanço",
+      "loading": "Exportando...",
+      "success": "Relatório baixado com sucesso.",
+      "insufficientData": "Não há dados suficientes para gerar o relatório.",
+      "connectionError": "Não foi possível conectar ao servidor. Tente novamente.",
+      "downloadError": "Não foi possível baixar o relatório. Tente novamente.",
+      "notAuthenticated": "Inicie sessão para exportar seu avanço."
     }
   },
   "tomaMaterias": {

@@ -223,6 +223,15 @@
       "cancel": "Cancelar",
       "goToToma": "Ir a Toma de materias"
     },
+    "export": {
+      "button": "Exportar avance",
+      "loading": "Exportando...",
+      "success": "Reporte descargado correctamente.",
+      "insufficientData": "No existen datos suficientes para generar el reporte.",
+      "connectionError": "No se pudo conectar con el servidor. Intenta nuevamente.",
+      "downloadError": "No se pudo descargar el reporte. Intenta nuevamente.",
+      "notAuthenticated": "Inicia sesion para exportar tu avance."
+    },
     "validation": {
       "universidadRequired": "Debes seleccionar una universidad.",
       "carreraRequired": "Debes seleccionar una carrera.",

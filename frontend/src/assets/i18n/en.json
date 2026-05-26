@@ -257,6 +257,15 @@
       "confirm": "Confirm import",
       "processing": "Processing...",
       "importSuccessToast": "Academic offers import completed successfully."
+    },
+    "export": {
+      "button": "Export progress",
+      "loading": "Exporting...",
+      "success": "Report downloaded successfully.",
+      "insufficientData": "There is not enough data to generate the report.",
+      "connectionError": "Could not connect to the server. Please try again.",
+      "downloadError": "Could not download the report. Please try again.",
+      "notAuthenticated": "Sign in to export your progress."
     }
   },
   "tomaMaterias": {
