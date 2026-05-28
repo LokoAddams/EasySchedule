@@ -15,6 +15,10 @@ import { AuthSessionService } from '../../core/services/auth-session.service';
 import { ToastService } from '../../core/services/toast.service';
 import { environment } from '../../../environments/environment';
 
+import { firstValueFrom } from 'rxjs';
+import { FeatureToggleService } from '../../services/feature-toggle.service';
+import { PerfilService } from '../perfil/perfil.service';
+
 declare global {
   interface Window {
     google?: {
@@ -42,6 +46,13 @@ declare global {
 
 interface GoogleCredentialResponse {
   credential?: string;
+}
+
+interface LoginResponse {
+  token?: string;
+  username?: string;
+  expiresInSeconds?: number;
+  message?: string;
 }
 
 @Component({
@@ -81,6 +92,8 @@ export class Registro implements AfterViewInit {
     private readonly router: Router,
     private readonly toastService: ToastService,
     private readonly zone: NgZone,
+    private readonly perfilService: PerfilService,
+    private readonly featureToggleService: FeatureToggleService,
   ) {
 
     this.form = this.fb.group({
@@ -154,13 +167,65 @@ export class Registro implements AfterViewInit {
     this.googleButtonReady = true;
   }
 
-  private handleGoogleCredential(response: GoogleCredentialResponse): void {
+  private async handleGoogleCredential(response: GoogleCredentialResponse): Promise<void> {
     if (!response.credential) {
       this.toastService.error('registro.error.googleCancelled');
       return;
     }
 
-    this.toastService.success('registro.googleCredentialReceived');
+    this.googleLoading = true;
+    this.authSessionService.clearSession();
+
+    try {
+      const data = await firstValueFrom(
+        this.apiService.post<LoginResponse, { credential: string }>(
+          '/api/login/google',
+          { credential: response.credential },
+        ),
+      );
+
+      await this.finishGoogleAuthenticatedFlow(data);
+    } catch (error: any) {
+      const status = Number(error?.status ?? 0);
+      const messageKey = status === 401
+        ? 'registro.error.googleInvalid'
+        : 'registro.error.googleGeneric';
+
+      this.toastService.error(messageKey);
+      this.authSessionService.clearSession();
+    } finally {
+      this.googleLoading = false;
+    }
+  }
+
+  private async finishGoogleAuthenticatedFlow(data: LoginResponse): Promise<void> {
+    this.authSessionService.setAuthToken(
+      String(data.token ?? ''),
+      Number(data.expiresInSeconds ?? 3600),
+    );
+
+    const username = typeof data.username === 'string' ? data.username.trim() : '';
+
+    if (!username) {
+      this.toastService.error('registro.error.googleGeneric');
+      this.authSessionService.clearSession();
+      return;
+    }
+
+    const perfil = await firstValueFrom(this.perfilService.getPerfilByUsername(username));
+
+    this.authSessionService.setCurrentUsername(perfil.username);
+    this.authSessionService.setProfileCompleted(perfil.profileCompleted ?? false);
+
+    await this.featureToggleService.loadFlags();
+
+    if (perfil.profileCompleted) {
+      this.toastService.success('login.success.loggedIn');
+      this.router.navigate(['/home']);
+    } else {
+      this.toastService.success('login.success.completeProfile');
+      this.router.navigate(['/perfil']);
+    }
   }
 
   passwordMatch(control: AbstractControl): ValidationErrors | null {

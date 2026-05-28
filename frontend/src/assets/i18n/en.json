@@ -112,7 +112,9 @@
       "invalidCredentials": "Invalid credentials",
       "generic": "Unexpected error",
       "googleUnavailable": "Could not load Google Sign-In. Please try again.",
-      "googleCancelled": "No Google credential received."
+      "googleCancelled": "No Google credential received.",
+      "googleInvalid": "Could not sign in with Google. Please try again.",
+      "googleGeneric": "An error occurred while signing in with Google."
     },
     "divider": {
       "or": "or"
@@ -493,7 +495,9 @@
       "backendConnection": "Could not connect to backend",
       "server": "Server error. Please try again",
       "googleUnavailable": "Could not load Google Sign-In. Please try again.",
-      "googleCancelled": "No Google credential received."
+      "googleCancelled": "No Google credential received.",
+      "googleInvalid": "Could not sign up with Google. Please try again.",
+      "googleGeneric": "An error occurred while signing up with Google."
     },
     "divider": {
       "or": "or"

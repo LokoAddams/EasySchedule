@@ -494,7 +494,9 @@
       "backendConnection": "Não foi possível conectar ao backend",
       "server": "Erro no servidor. Tente novamente",
       "googleUnavailable": "Não foi possível carregar o Cadastro com Google. Tente novamente.",
-      "googleCancelled": "Nenhuma credencial do Google recebida."
+      "googleCancelled": "Nenhuma credencial do Google recebida.",
+      "googleInvalid": "Não foi possível cadastrar com Google. Tente novamente.",
+      "googleGeneric": "Ocorreu um erro ao cadastrar com Google."
     },
     "divider": {
       "or": "ou"
