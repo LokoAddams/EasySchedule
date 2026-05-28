@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -133,22 +134,32 @@ public class MallaImportService {
                 MallaMateria mallaMateria = materiasMap.get(matReq.codigo());
                 for (String prereqCodigo : matReq.prerequisitos()) {
                     MallaMateria prereq = materiasMap.get(prereqCodigo);
-                    if (prereq != null && !prereq.getId().equals(mallaMateria.getId())) {
-                        boolean exists = prerequisitoRepository.findByMallaMateria_Id(mallaMateria.getId())
-                            .stream()
-                            .anyMatch(p -> p.getPrerequisito().getId().equals(prereq.getId()));
-                        if (!exists) {
-                            Prerequisito pre = new Prerequisito();
-                            pre.setMallaMateria(mallaMateria);
-                            pre.setPrerequisito(prereq);
-                            prerequisitoRepository.save(pre);
-                            prerequisitosCount++;
-                            logger.debug("Prerequisito creado: materia={} requiere {}", matReq.codigo(), prereqCodigo);
-                        } else {
-                            logger.debug("Prerequisito ya existente: materia={} requiere {}", matReq.codigo(), prereqCodigo);
-                        }
+                    if (prereq == null) {
+                        logger.warn("Prerequisito con codigo {} no encontrado en la malla", prereqCodigo);
+                        throw new IllegalArgumentException("La materia con codigo '" + prereqCodigo + "' no existe en la malla actual");
+                    }
+                    if (prereq.getId().equals(mallaMateria.getId())) {
+                        throw new IllegalArgumentException("La materia '" + matReq.codigo() + "' no puede ser prerequisito de si misma");
+                    }
+
+                    // Check for inverse relationship
+                    List<Prerequisito> inversePair = prerequisitoRepository.findInversePair(mallaMateria.getId(), prereq.getId());
+                    if (!inversePair.isEmpty()) {
+                        throw new IllegalArgumentException("Relacion inversa de prerequisito detectada entre '" +
+                            matReq.codigo() + "' y '" + prereqCodigo + "'");
+                    }
+
+                    boolean exists = prerequisitoRepository.existsByMallaMateria_IdAndPrerequisito_Id(
+                        mallaMateria.getId(), prereq.getId());
+                    if (!exists) {
+                        Prerequisito pre = new Prerequisito();
+                        pre.setMallaMateria(mallaMateria);
+                        pre.setPrerequisito(prereq);
+                        prerequisitoRepository.save(pre);
+                        prerequisitosCount++;
+                        logger.debug("Prerequisito creado: materia={} requiere {}", matReq.codigo(), prereqCodigo);
                     } else {
-                        logger.warn("Prerequisito no encontrado o es la misma materia: materia={}, prerequisito={}", matReq.codigo(), prereqCodigo);
+                        logger.debug("Prerequisito ya existente: materia={} requiere {}", matReq.codigo(), prereqCodigo);
                     }
                 }
             }

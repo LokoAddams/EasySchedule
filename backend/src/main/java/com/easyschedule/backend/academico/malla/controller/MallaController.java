@@ -7,6 +7,7 @@ import com.easyschedule.backend.academico.malla.service.MallaFileParserService;
 import com.easyschedule.backend.academico.malla.service.MallaImportService;
 import com.easyschedule.backend.academico.malla.service.MallaService;
 import com.easyschedule.backend.academico.malla.dto.MallaMateriaResponse;
+import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import org.slf4j.Logger;
@@ -51,6 +52,19 @@ public class MallaController {
             return Long.valueOf(principal.getName());
         } catch (NumberFormatException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sesion invalida");
+        }
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public MallaImportResponse crearMalla(@Valid @RequestBody MallaImportRequest request) {
+        logger.info("Solicitud de creacion de malla: nombre={}, carreraId={}, materias={}",
+            request.nombre(), request.carreraId(), request.materias() != null ? request.materias().size() : 0);
+        try {
+            return mallaImportService.importarMalla(request);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Error de validacion al crear malla: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 

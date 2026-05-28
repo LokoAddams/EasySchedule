@@ -29,9 +29,8 @@ public class User {
     @Email
     @Column(nullable = false, unique = true, length = 50)
     private String email;
-    @NotBlank
     @Size(max = 120)
-    @Column(name = "password_hash", nullable = false)
+    @Column(name = "password_hash", nullable = true)
     private String passwordHash;
     @Column(name = "is_active", nullable = false)
     private boolean active = true;
@@ -41,6 +40,13 @@ public class User {
     private OffsetDateTime createdAt;
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
+    @Size(max = 255)
+    @Column(name = "google_id", unique = true)
+    private String googleId;
+
+    @Size(max = 30)
+    @Column(name = "auth_provider", length = 30)
+    private String authProvider;
 
     @OneToOne(mappedBy = "user")
     private Estudiante estudiante;
@@ -107,5 +113,20 @@ public class User {
     }
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public String getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(String authProvider) {
+        this.authProvider = authProvider;
     }
 }

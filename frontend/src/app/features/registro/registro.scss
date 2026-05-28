@@ -355,3 +355,80 @@ small {
     margin-bottom: 1.2rem;
   }
 }
+
+.password-checklist {
+  margin: 0.1rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.16rem;
+
+  li {
+    font-size: 0.72rem;
+    color: #7a4d4d;
+    font-family: 'Nunito Sans', sans-serif;
+    line-height: 1.2;
+
+    &::before {
+      content: '\2715';
+      margin-right: 0.35rem;
+      color: #b44a4a;
+      font-size: 0.66rem;
+    }
+
+    &.ok {
+      color: #2e6d43;
+
+      &::before {
+        content: '\2713';
+        color: #2e6d43;
+      }
+    }
+  }
+}
+
+
+.registro-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0 0.9rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.registro-divider::before,
+.registro-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(107, 114, 128, 0.35);
+}
+
+.google-register-wrapper {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+  margin-bottom: 0.85rem;
+}
+
+.google-register-wrapper.is-loading .google-button-container {
+  display: none;
+}
+
+.google-button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.google-loading-button {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #374151;
+  font-weight: 600;
+  cursor: not-allowed;
+}

@@ -95,7 +95,9 @@
     "button": {
       "submit": "Entrar",
       "gotoRegister": "Criar conta",
-      "backHome": "Voltar ao início"
+      "backHome": "Voltar ao início",
+      "google": "Entrar com Google",
+      "googleLoading": "Entrando com Google..."
     },
     "validation": {
       "required": "Este campo é obrigatório"
@@ -103,11 +105,17 @@
     "loading": "Entrando...",
     "success": {
       "loggedIn": "Login realizado com sucesso.",
-      "completeProfile": "Login realizado. Complete seu perfil para continuar."
+      "completeProfile": "Login realizado. Complete seu perfil para continuar.",
+      "googleCredentialReceived": "Credencial do Google recebida com sucesso."
     },
     "error": {
       "invalidCredentials": "Credenciais inválidas",
-      "generic": "Erro inesperado"
+      "generic": "Erro inesperado",
+      "googleUnavailable": "Não foi possível carregar o Login com Google. Por favor, tente novamente.",
+      "googleCancelled": "Nenhuma credencial do Google recebida."
+    },
+    "divider": {
+      "or": "ou"
     }
   },
   "malla": {
@@ -267,6 +275,22 @@
       "connectionError": "Não foi possível conectar ao servidor. Tente novamente.",
       "downloadError": "Não foi possível baixar o relatório. Tente novamente.",
       "notAuthenticated": "Inicie sessão para exportar seu avanço."
+    },
+    "prerequisito": {
+      "button": "Adicionar pré-requisito",
+      "modalTitle": "Adicionar pré-requisito a: {{materia}}",
+      "helpText": "Marque disciplinas para adicionar como pré-requisito. Desmarque as existentes para removê-las:",
+      "noAvailable": "Nenhuma disciplina disponível como pré-requisito. As disciplinas devem ser de semestres anteriores a \"{{materia}}\" (Semestre {{semestre}}).",
+      "semesterTitle": "Semestre {{sem}}",
+      "badgeExisting": "Adicionado",
+      "badgeRemove": "Será removido",
+      "save": "Salvar alterações",
+      "saving": "Salvando...",
+      "close": "Fechar",
+      "successAdd": "Pré-requisito adicionado corretamente.",
+      "successAddMultiple": "{{count}} pré-requisitos adicionados corretamente.",
+      "successPartial": "Operação concluída: {{added}} adicionado(s), {{removed}} removido(s).",
+      "errorGeneric": "Erro ao criar pré-requisito"
     }
   },
   "tomaMaterias": {
@@ -406,11 +430,11 @@
       "required": "Este campo é obrigatório.",
       "emailInvalid": "Formato de email inválido.",
       "carnet": {
-        "maxLength": "O documento de identidade não pode exceder 8 caracteres.",
-        "invalidChars": "O documento de identidade só pode conter letras e números."
+        "maxLength": "O documento de identidade não pode exceder 16 caracteres.",
+        "invalidChars": "Informe um CI boliviano válido (ex: 1234567, 1234567-1A ou 1234567 LP)."
       },
       "nome": {
-        "minLength": "O nome deve ter pelo menos 2 caracteres.",
+        "minLength": "O nome deve ter pelo menos 3 caracteres.",
         "maxLength": "O nome não pode exceder 50 caracteres.",
         "invalidChars": "O nome só pode conter letras, espaços e acentos."
       },
@@ -421,6 +445,11 @@
       },
       "email": {
         "maxLength": "O email não pode exceder 100 caracteres."
+      },
+      "fechaNacimiento": {
+        "future": "A data de nascimento não pode estar no futuro.",
+        "outOfRange": "A data de nascimento deve corresponder a uma idade entre 16 e 70 anos.",
+        "invalid": "Informe uma data de nascimento válida."
       }
     },
     "success": {
@@ -440,7 +469,15 @@
       },
       "validation": {
         "minLength": "A nova senha deve ter pelo menos 8 caracteres.",
-        "mismatch": "A nova senha e a confirmação não coincidem."
+        "mismatch": "A nova senha e a confirmação não coincidem.",
+        "weakPolicy": "A nova senha não atende à política de segurança.",
+        "checklist": {
+          "minLength": "Pelo menos 8 caracteres",
+          "uppercase": "Pelo menos 1 letra maiúscula",
+          "lowercase": "Pelo menos 1 letra minúscula",
+          "number": "Pelo menos 1 número",
+          "special": "Pelo menos 1 caractere especial"
+        }
       },
       "success": {
         "updated": "Senha atualizada com sucesso."
@@ -449,6 +486,7 @@
         "currentIncorrect": "A senha atual está incorreta.",
         "sameAsCurrent": "A nova senha deve ser diferente da senha atual.",
         "mismatch": "A nova senha e a confirmação não coincidem.",
+        "weakPolicy": "A nova senha não atende à política de segurança.",
         "unauthorized": "Sua sessão expirou. Faça login novamente.",
         "generic": "Não foi possível alterar a senha. Tente novamente."
       }
@@ -468,7 +506,8 @@
       "mallaNotFound": "Não existe uma grade para o curso e universidade selecionados.",
       "usernameTaken": "Esse nome de usuário já está em uso.",
       "emailTaken": "Esse email já está cadastrado.",
-      "carnetTaken": "Esse documento de identidade já está em uso."
+      "carnetTaken": "Esse documento de identidade já está em uso.",
+      "carnetInvalidFormat": "Formato de documento inválido. Use um CI boliviano válido."
     }
   },
   "registro": {
@@ -489,22 +528,41 @@
       "emailRequired": "O email é obrigatório",
       "emailInvalid": "Formato de email inválido",
       "passwordMin": "A senha deve ter pelo menos 8 caracteres",
+      "passwordWeak": "A senha não atende aos critérios de segurança.",
+      "passwordChecklist": {
+        "minLength": "Pelo menos 8 caracteres",
+        "uppercase": "Pelo menos 1 letra maiúscula",
+        "lowercase": "Pelo menos 1 letra minúscula",
+        "number": "Pelo menos 1 número",
+        "special": "Pelo menos 1 caractere especial"
+      },
       "confirmRequired": "Você deve confirmar sua senha",
       "passwordMismatch": "As senhas não coincidem"
     },
     "button": {
       "submit": "Cadastrar",
       "gotoLogin": "Entrar",
-      "backHome": "Voltar para o início"
+      "backHome": "Voltar para o início",
+      "google": "Cadastrar com Google",
+      "googleLoading": "Cadastrando com Google..."
     },
     "loading": "Registrando usuário...",
     "success": "Cadastro realizado com sucesso. Redirecionando...",
     "error": {
       "userExists": "O usuário já está registrado",
       "emailExists": "O email já está registrado",
+      "weakPassword": "A senha não atende à política de segurança",
       "invalidData": "Dados inválidos",
       "backendConnection": "Não foi possível conectar ao backend",
-      "server": "Erro no servidor. Tente novamente"
-    }
+      "server": "Erro no servidor. Tente novamente",
+      "googleUnavailable": "Não foi possível carregar o Cadastro com Google. Tente novamente.",
+      "googleCancelled": "Nenhuma credencial do Google recebida.",
+      "googleInvalid": "Não foi possível cadastrar com Google. Tente novamente.",
+      "googleGeneric": "Ocorreu um erro ao cadastrar com Google."
+    },
+    "divider": {
+      "or": "ou"
+    },
+    "googleCredentialReceived": "Credencial do Google recebida com sucesso."
   }
 }

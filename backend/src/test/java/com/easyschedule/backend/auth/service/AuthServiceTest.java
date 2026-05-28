@@ -28,6 +28,9 @@ import com.easyschedule.backend.auth.models.User;
 import com.easyschedule.backend.auth.repositories.UserRepository;
 import com.easyschedule.backend.shared.exception.UserAlreadyExistsException;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import com.easyschedule.backend.auth.dto.request.GoogleLoginRequest;
+
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
@@ -39,6 +42,9 @@ class AuthServiceTest {
 
     @Mock
     private SessionTokenService sessionTokenService;
+
+    @Mock
+    private GoogleTokenVerifierService googleTokenVerifierService;
 
     @InjectMocks
     private AuthService authService;
@@ -247,5 +253,136 @@ class AuthServiceTest {
 
         authService.logout("InvalidHeader");
         verify(sessionTokenService, org.mockito.Mockito.atLeastOnce()).revokeToken("");
+    }
+
+    @Test
+    void loginReturnsUnauthorizedWhenUserHasNoPasswordHash() {
+        com.easyschedule.backend.auth.dto.request.LoginRequest loginRequest =
+                new com.easyschedule.backend.auth.dto.request.LoginRequest();
+        loginRequest.setIdentifier("googleuser@mail.com");
+        loginRequest.setPassword("password123");
+
+        User user = new User();
+        user.setId(5L);
+        user.setUsername("googleuser");
+        user.setEmail("googleuser@mail.com");
+        user.setPasswordHash(null);
+
+        when(userRepository.findByUsernameIgnoreCase("googleuser@mail.com"))
+                .thenReturn(java.util.Optional.empty());
+        when(userRepository.findByEmailIgnoreCase("googleuser@mail.com"))
+                .thenReturn(java.util.Optional.of(user));
+
+        ResponseEntity<?> response = authService.login(loginRequest);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        verify(encoder, never()).matches(any(), any());
+        verify(sessionTokenService, never()).issueToken(any());
+    }
+
+    @Test
+    void googleLoginCreatesNewUserWhenEmailDoesNotExist() {
+        GoogleLoginRequest request = new GoogleLoginRequest();
+        request.setCredential("valid-google-token");
+
+        GoogleUserInfo googleUserInfo = new GoogleUserInfo(
+                "google-123",
+                "newuser@mail.com",
+                "New User"
+        );
+
+        when(googleTokenVerifierService.verify("valid-google-token")).thenReturn(googleUserInfo);
+        when(userRepository.findByEmailIgnoreCase("newuser@mail.com"))
+                .thenReturn(java.util.Optional.empty());
+        when(userRepository.existsByUsernameIgnoreCase("newuser")).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(20L);
+            return user;
+        });
+        when(sessionTokenService.issueToken(20L)).thenReturn("internal-token");
+        when(sessionTokenService.getTokenTtlSeconds()).thenReturn(3600L);
+
+        ResponseEntity<?> response = authService.loginWithGoogle(request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Map<?, ?> body = (Map<?, ?>) response.getBody();
+        assertEquals("internal-token", body.get("token"));
+        assertEquals("newuser", body.get("username"));
+        assertEquals(3600L, body.get("expiresInSeconds"));
+        assertEquals("Login con Google exitoso", body.get("message"));
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userCaptor.capture());
+
+        User savedUser = userCaptor.getValue();
+        assertEquals("newuser", savedUser.getUsername());
+        assertEquals("newuser@mail.com", savedUser.getEmail());
+        assertEquals("google-123", savedUser.getGoogleId());
+        assertEquals("GOOGLE", savedUser.getAuthProvider());
+        assertNull(savedUser.getPasswordHash());
+    }
+
+    @Test
+    void googleLoginReusesExistingUserByEmail() {
+        GoogleLoginRequest request = new GoogleLoginRequest();
+        request.setCredential("valid-google-token");
+
+        GoogleUserInfo googleUserInfo = new GoogleUserInfo(
+                "google-123",
+                "existing@mail.com",
+                "Existing User"
+        );
+
+        User existingUser = new User("existing", "existing@mail.com", "hashed-password");
+        existingUser.setId(10L);
+
+        when(googleTokenVerifierService.verify("valid-google-token")).thenReturn(googleUserInfo);
+        when(userRepository.findByEmailIgnoreCase("existing@mail.com"))
+                .thenReturn(java.util.Optional.of(existingUser));
+        when(userRepository.save(existingUser)).thenReturn(existingUser);
+        when(sessionTokenService.issueToken(10L)).thenReturn("internal-token");
+        when(sessionTokenService.getTokenTtlSeconds()).thenReturn(3600L);
+
+        ResponseEntity<?> response = authService.loginWithGoogle(request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Map<?, ?> body = (Map<?, ?>) response.getBody();
+        assertEquals("internal-token", body.get("token"));
+        assertEquals("existing", body.get("username"));
+        assertEquals("google-123", existingUser.getGoogleId());
+        assertEquals("GOOGLE", existingUser.getAuthProvider());
+
+        verify(userRepository).save(existingUser);
+        verify(sessionTokenService).issueToken(10L);
+    }
+
+    @Test
+    void googleLoginReturnsUnauthorizedWhenTokenIsInvalid() {
+        GoogleLoginRequest request = new GoogleLoginRequest();
+        request.setCredential("invalid-google-token");
+
+        when(googleTokenVerifierService.verify("invalid-google-token")).thenReturn(null);
+
+        ResponseEntity<?> response = authService.loginWithGoogle(request);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        verify(sessionTokenService, never()).issueToken(any());
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void googleLoginReturnsUnauthorizedWhenCredentialIsBlank() {
+        GoogleLoginRequest request = new GoogleLoginRequest();
+        request.setCredential(" ");
+
+        ResponseEntity<?> response = authService.loginWithGoogle(request);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        verify(googleTokenVerifierService, never()).verify(any());
+        verify(sessionTokenService, never()).issueToken(any());
+        verify(userRepository, never()).save(any());
     }
 }

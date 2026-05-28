@@ -55,6 +55,28 @@
           <small class="form-error"
             *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['minlength']">{{
             'registro.validation.passwordMin' | translate }}</small>
+
+          <ul class="password-checklist">
+            <li [class.ok]="getPasswordChecklist().minLength">
+              {{ 'registro.validation.passwordChecklist.minLength' | translate }}
+            </li>
+            <li [class.ok]="getPasswordChecklist().uppercase">
+              {{ 'registro.validation.passwordChecklist.uppercase' | translate }}
+            </li>
+            <li [class.ok]="getPasswordChecklist().lowercase">
+              {{ 'registro.validation.passwordChecklist.lowercase' | translate }}
+            </li>
+            <li [class.ok]="getPasswordChecklist().number">
+              {{ 'registro.validation.passwordChecklist.number' | translate }}
+            </li>
+            <li [class.ok]="getPasswordChecklist().special">
+              {{ 'registro.validation.passwordChecklist.special' | translate }}
+            </li>
+          </ul>
+
+          <small class="form-error" *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['weakPassword']">
+            {{ 'registro.validation.passwordWeak' | translate }}
+          </small>
         </div>
 
         <div class="form-group">
@@ -85,10 +107,23 @@
             'registro.validation.passwordMismatch' | translate }}</small>
         </div>
 
-        <button type="submit" class="btn-primary" [class.btn-loading]="loading" [disabled]="form.invalid || loading">
+        <button type="submit" class="btn-primary" [class.btn-loading]="loading" [disabled]="form.invalid || loading || googleLoading">
           <span class="btn-text">{{ 'registro.button.submit' | translate }}</span>
           <div class="spinner"></div>
         </button>
+
+        <div class="registro-divider">
+          <span>{{ 'registro.divider.or' | translate }}</span>
+        </div>
+
+        <div class="google-register-wrapper" [class.is-loading]="googleLoading">
+          <div #googleButtonContainer class="google-button-container"></div>
+
+          <button type="button" class="google-loading-button" *ngIf="googleLoading" disabled>
+            {{ 'registro.button.googleLoading' | translate }}
+          </button>
+        </div>
+
         <a routerLink="/login" class="btn-secondary">{{ 'registro.button.gotoLogin' | translate }}</a>
       </form>
     </section>

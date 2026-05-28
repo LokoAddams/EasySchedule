@@ -56,9 +56,9 @@ class EstudianteMallaExportServiceTest {
         when(universidadRepository.findByIdAndActiveTrue(10L)).thenReturn(Optional.of(universidad));
         when(carreraRepository.findByIdAndActiveTrue(20L)).thenReturn(Optional.of(carrera));
         when(mallaService.findMateriasByMalla(30L, 1L)).thenReturn(List.of(
-            new MallaMateriaResponse(100L, 200L, "SIS101", "Programacion I", (short) 1, "aprobada", List.of()),
-            new MallaMateriaResponse(101L, 201L, "SIS102", "Programacion II", (short) 2, "cursando", List.of(100L)),
-            new MallaMateriaResponse(102L, 202L, "SIS103", "Bases de Datos", (short) 3, null, List.of(101L))
+            new MallaMateriaResponse(100L, 200L, "SIS101", "Programacion I", (short) 5, (short) 1, "aprobada", List.of()),
+            new MallaMateriaResponse(101L, 201L, "SIS102", "Programacion II", (short) 5, (short) 2, "cursando", List.of(100L)),
+            new MallaMateriaResponse(102L, 202L, "SIS103", "Bases de Datos", (short) 5, (short) 3, null, List.of(101L))
         ));
 
         var export = exportService.exportarAvanceGraduacion(1L, "pdf");

@@ -401,6 +401,36 @@
 	margin-top: 0.2rem;
 }
 
+.password-checklist {
+	margin: 0.15rem 0 0;
+	padding: 0;
+	list-style: none;
+	display: grid;
+	gap: 0.14rem;
+}
+
+.password-checklist li {
+	font-size: 0.74rem;
+	line-height: 1.2;
+	color: #7a4d4d;
+}
+
+.password-checklist li::before {
+	content: '\2715';
+	margin-right: 0.35rem;
+	color: #b44a4a;
+	font-size: 0.66rem;
+}
+
+.password-checklist li.ok {
+	color: #2e6d43;
+}
+
+.password-checklist li.ok::before {
+	content: '\2713';
+	color: #2e6d43;
+}
+
 .perfil-modal__icon {
 	width: 3rem;
 	height: 3rem;
