@@ -7,6 +7,8 @@ import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SeleccionTemporalService } from '../../services/academico/seleccion-temporal.service';
+import { MateriasDisponiblesService } from '../../services/academico/materias-disponibles.service';
+import { HorarioGeneradorService } from '../../services/academico/horario-generador.service';
 
 describe('TomaDeMaterias', () => {
   let component: TomaDeMaterias;
@@ -17,6 +19,8 @@ describe('TomaDeMaterias', () => {
   let perfilServiceSpy: jasmine.SpyObj<PerfilService>;
   let translateServiceSpy: jasmine.SpyObj<TranslateService>;
   let mallaCatalogoServiceSpy: jasmine.SpyObj<any>;
+  let materiasDisponiblesServiceSpy: jasmine.SpyObj<MateriasDisponiblesService>;
+  let horarioGeneradorServiceSpy: jasmine.SpyObj<HorarioGeneradorService>;
 
   beforeEach(() => {
     horarioActualServiceSpy = jasmine.createSpyObj<HorarioActualService>('HorarioActualService', [
@@ -35,6 +39,8 @@ describe('TomaDeMaterias', () => {
     perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername']);
     translateServiceSpy = jasmine.createSpyObj<TranslateService>('TranslateService', ['instant']);
     mallaCatalogoServiceSpy = jasmine.createSpyObj('MallaCatalogoService', ['getMateriasPorMalla']);
+    materiasDisponiblesServiceSpy = jasmine.createSpyObj<MateriasDisponiblesService>('MateriasDisponiblesService', ['getMateriasDisponibles']);
+    horarioGeneradorServiceSpy = jasmine.createSpyObj<HorarioGeneradorService>('HorarioGeneradorService', ['generarHorarios']);
 
     translateServiceSpy.instant.and.callFake((key: string) => {
       const translations: Record<string, string> = {
@@ -67,6 +73,8 @@ describe('TomaDeMaterias', () => {
       translateServiceSpy,
       mallaCatalogoServiceSpy,
       seleccionTemporalServiceSpy,
+      materiasDisponiblesServiceSpy,
+      horarioGeneradorServiceSpy,
     );
   });
 
