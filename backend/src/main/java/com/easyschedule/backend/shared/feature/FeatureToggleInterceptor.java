@@ -19,7 +19,8 @@ public class FeatureToggleInterceptor implements HandlerInterceptor {
         "/api/academico/mallas",
         "/api/academico/seleccion",
         "/api/academico/estados-materia",
-        "/api/estudiantes/me/avance-graduacion"
+        "/api/estudiantes/me/avance-graduacion",
+        "/api/academico/prerequisitos"
     );
 
     private static final List<String> OFERTAS_IMPORT_PATH_PREFIXES = List.of(

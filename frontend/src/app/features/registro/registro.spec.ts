@@ -67,8 +67,8 @@ describe('Registro Component', () => {
     component.form.setValue({
       nombre: 'Eduardo',
       correo: 'test@test.com',
-      password: '12345678',
-      confirmPassword: '12345678'
+      password: 'Abcd1234!',
+      confirmPassword: 'Abcd1234!'
     });
 
     component.registrar();
@@ -88,8 +88,8 @@ describe('Registro Component', () => {
     component.form.setValue({
       nombre: 'Eduardo',
       correo: 'test@test.com',
-      password: '12345678',
-      confirmPassword: '12345678'
+      password: 'Abcd1234!',
+      confirmPassword: 'Abcd1234!'
     });
 
     component.registrar();
@@ -115,6 +115,31 @@ describe('Registro Component', () => {
     expect(component.showConfirmPassword).toBeFalse();
     component.toggleConfirmPasswordVisibility();
     expect(component.showConfirmPassword).toBeTrue();
+  });
+
+  it('no debería enviar registro con password débil', () => {
+    component.form.setValue({
+      nombre: 'Eduardo',
+      correo: 'test@test.com',
+      password: 'abcd1234',
+      confirmPassword: 'abcd1234'
+    });
+
+    component.registrar();
+
+    httpMock.expectNone(registerUrl);
+    expect(component.form.invalid).toBeTrue();
+  });
+
+  it('debería marcar checklist de contraseña fuerte correctamente', () => {
+    component.form.patchValue({ password: 'Abcd1234!' });
+
+    const checklist = (component as any).getPasswordChecklist();
+    expect(checklist.minLength).toBeTrue();
+    expect(checklist.uppercase).toBeTrue();
+    expect(checklist.lowercase).toBeTrue();
+    expect(checklist.number).toBeTrue();
+    expect(checklist.special).toBeTrue();
   });
 
 });

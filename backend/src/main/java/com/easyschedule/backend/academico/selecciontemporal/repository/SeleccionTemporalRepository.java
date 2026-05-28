@@ -1,7 +1,6 @@
 package com.easyschedule.backend.academico.selecciontemporal.repository;
 
 import com.easyschedule.backend.academico.selecciontemporal.model.SeleccionTemporal;
-import com.easyschedule.backend.academico.selecciontemporal.model.SeleccionTemporal;
 
 import java.util.List;
 import java.util.Optional;

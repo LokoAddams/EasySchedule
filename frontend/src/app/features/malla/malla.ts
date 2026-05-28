@@ -112,7 +112,29 @@ export class Malla implements OnInit, OnDestroy {
   protected hoveredMateriaId: number | null = null;
   protected prereqLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
 
+  protected showPrerequisitoModal = false;
+  protected prereqDisponibles: MallaMateria[] = [];
+  protected prereqDisponiblesPorSemestre: Map<number, MallaMateria[]> = new Map();
+  protected prereqSemestres: number[] = [];
+  protected prereqSeleccionadosTemp: Set<number> = new Set();
+  protected prereqQuitarTemp: Set<number> = new Set();
+  protected prereqGuardando = false;
+  protected prereqError: string | null = null;
+  protected prereqSuccess: string | null = null;
+
   protected tourStep = 0;
+
+  protected showCrearUniversidad = false;
+  protected nuevaUniversidadNombre = '';
+  protected nuevaUniversidadCodigo = '';
+  protected crearUniversidadError: string | null = null;
+  protected creandoUniversidad = false;
+
+  protected showCrearCarrera = false;
+  protected nuevaCarreraNombre = '';
+  protected nuevaCarreraCodigo = '';
+  protected crearCarreraError: string | null = null;
+  protected creandoCarrera = false;
 
   public showImportModal = false;
   public importFile: File | null = null;
@@ -494,6 +516,170 @@ Reglas obligatorias:
   protected closeAccionesModal(): void {
     this.showAccionesModal = false;
     this.selectedMateriaParaAccion = null;
+  }
+
+  protected abrirModalPrerequisitos(): void {
+    const materia = this.selectedMateriaParaAccion;
+
+    if (!materia) {
+      return;
+    }
+
+    this.showAccionesModal = false;
+    this.prereqError = null;
+    this.prereqSuccess = null;
+    this.prereqGuardando = false;
+    this.prereqSeleccionadosTemp = new Set();
+    this.prereqQuitarTemp = new Set();
+
+    const semestreMateria = materia.semestreSugerido;
+
+    this.prereqDisponibles = this.materias.filter((m) => {
+      if (m.id === materia.id) {
+        return false;
+      }
+
+      if (m.semestreSugerido >= semestreMateria) {
+        return false;
+      }
+
+      return true;
+    });
+
+    this.prereqDisponiblesPorSemestre = new Map();
+    this.prereqSemestres = [];
+
+    this.prereqDisponibles.forEach((m) => {
+      const sem = m.semestreSugerido;
+
+      if (!this.prereqDisponiblesPorSemestre.has(sem)) {
+        this.prereqDisponiblesPorSemestre.set(sem, []);
+        this.prereqSemestres.push(sem);
+      }
+
+      this.prereqDisponiblesPorSemestre.get(sem)!.push(m);
+    });
+    this.prereqSemestres.sort((a, b) => a - b);
+
+    this.showPrerequisitoModal = true;
+  }
+
+  protected cerrarModalPrerequisitos(): void {
+    this.showPrerequisitoModal = false;
+    this.prereqDisponibles = [];
+    this.prereqDisponiblesPorSemestre = new Map();
+    this.prereqSemestres = [];
+    this.prereqSeleccionadosTemp = new Set();
+    this.prereqQuitarTemp = new Set();
+    this.prereqError = null;
+    this.prereqSuccess = null;
+  }
+
+  protected esPrerequisitoExistente(materiaId: number): boolean {
+    const materia = this.selectedMateriaParaAccion;
+
+    if (!materia) {
+      return false;
+    }
+
+    return materia.prerequisitosIds.includes(materiaId);
+  }
+
+  protected togglePrerequisitoTemp(materiaId: number): void {
+    if (this.prereqSeleccionadosTemp.has(materiaId)) {
+      this.prereqSeleccionadosTemp.delete(materiaId);
+    } else {
+      this.prereqSeleccionadosTemp.add(materiaId);
+    }
+  }
+
+  protected toggleQuitarPrerequisito(materiaId: number): void {
+    if (this.prereqQuitarTemp.has(materiaId)) {
+      this.prereqQuitarTemp.delete(materiaId);
+    } else {
+      this.prereqQuitarTemp.add(materiaId);
+    }
+  }
+
+  protected async guardarPrerequisitos(): Promise<void> {
+    const materia = this.selectedMateriaParaAccion;
+
+    if (!materia) {
+      this.cerrarModalPrerequisitos();
+      return;
+    }
+
+    if (this.prereqSeleccionadosTemp.size === 0 && this.prereqQuitarTemp.size === 0) {
+      this.cerrarModalPrerequisitos();
+      return;
+    }
+
+    this.prereqGuardando = true;
+    this.prereqError = null;
+    this.prereqSuccess = null;
+
+    let addedCount = 0;
+    let removedCount = 0;
+    let errorCount = 0;
+
+    for (const prereqId of this.prereqSeleccionadosTemp) {
+      try {
+        await firstValueFrom(
+          this.mallaCatalogoService.crearPrerequisito(materia.id, prereqId)
+        );
+        materia.prerequisitosIds.push(prereqId);
+        addedCount++;
+      } catch (err: any) {
+        errorCount++;
+        console.error('[PREREQ] Error al crear prerrequisito:', err);
+        const errorMsg = err?.error?.error || err?.message || this.translateService.instant('malla.prerequisito.errorGeneric');
+
+        if (!this.prereqError) {
+          this.prereqError = errorMsg + (err?.error?.message ? ' - ' + err?.error?.message : '');
+        }
+      }
+    }
+
+    for (const prereqId of this.prereqQuitarTemp) {
+      try {
+        await firstValueFrom(
+          this.mallaCatalogoService.eliminarPrerequisito(materia.id, prereqId)
+        );
+        const idx = materia.prerequisitosIds.indexOf(prereqId);
+        if (idx >= 0) {
+          materia.prerequisitosIds.splice(idx, 1);
+        }
+        removedCount++;
+      } catch (err: any) {
+        errorCount++;
+        console.error('[PREREQ] Error al quitar prerrequisito:', err);
+        const errorMsg = err?.error?.error || err?.message || this.translateService.instant('malla.prerequisito.errorGeneric');
+
+        if (!this.prereqError) {
+          this.prereqError = errorMsg + (err?.error?.message ? ' - ' + err?.error?.message : '');
+        }
+      }
+    }
+
+    this.prereqGuardando = false;
+
+    const totalOk = addedCount + removedCount;
+
+    if (errorCount === 0 && totalOk > 0) {
+      if (addedCount > 0 && removedCount === 0) {
+        this.prereqSuccess = addedCount === 1
+          ? this.translateService.instant('malla.prerequisito.successAdd')
+          : this.translateService.instant('malla.prerequisito.successAddMultiple', { count: addedCount });
+      } else {
+        this.prereqSuccess = this.translateService.instant('malla.prerequisito.successPartial', { added: addedCount, removed: removedCount });
+      }
+    } else if (totalOk > 0) {
+      this.prereqSuccess = this.translateService.instant('malla.prerequisito.successPartial', { added: addedCount, removed: removedCount });
+    }
+
+    if (totalOk > 0) {
+      this.updatePrereqLines();
+    }
   }
 
   protected onTomarMateriaClick(): void {
@@ -1004,6 +1190,99 @@ Reglas obligatorias:
     this.cerrarTodosLosPopovers();
     localStorage.setItem(this.getTourStorageKey(), 'true');
     this.persistirTourCompletado();
+  }
+
+  protected toggleCrearUniversidad(): void {
+    this.showCrearUniversidad = !this.showCrearUniversidad;
+    if (!this.showCrearUniversidad) {
+      this.cancelarCrearUniversidad();
+    }
+  }
+
+  protected cancelarCrearUniversidad(): void {
+    this.showCrearUniversidad = false;
+    this.nuevaUniversidadNombre = '';
+    this.nuevaUniversidadCodigo = '';
+    this.crearUniversidadError = null;
+  }
+
+  protected async guardarNuevaUniversidad(): Promise<void> {
+    this.crearUniversidadError = null;
+    if (!this.nuevaUniversidadNombre.trim()) {
+      this.crearUniversidadError = 'El nombre de la universidad es requerido';
+      return;
+    }
+    if (!this.nuevaUniversidadCodigo.trim()) {
+      this.crearUniversidadError = 'El codigo de la universidad es requerido';
+      return;
+    }
+
+    this.creandoUniversidad = true;
+    try {
+      const nueva = await firstValueFrom(
+        this.universidadService.createUniversidad({
+          nombre: this.nuevaUniversidadNombre.trim(),
+          codigo: this.nuevaUniversidadCodigo.trim(),
+        })
+      );
+      await this.loadUniversidades();
+      this.selectedUniversidadId = nueva.id;
+      this.cancelarCrearUniversidad();
+      this.toastService.success('Universidad creada exitosamente');
+    } catch (error: any) {
+      this.crearUniversidadError = error.error?.message || error.message || 'Error al crear la universidad';
+    } finally {
+      this.creandoUniversidad = false;
+    }
+  }
+
+  protected toggleCrearCarrera(): void {
+    this.showCrearCarrera = !this.showCrearCarrera;
+    if (!this.showCrearCarrera) {
+      this.cancelarCrearCarrera();
+    }
+  }
+
+  protected cancelarCrearCarrera(): void {
+    this.showCrearCarrera = false;
+    this.nuevaCarreraNombre = '';
+    this.nuevaCarreraCodigo = '';
+    this.crearCarreraError = null;
+  }
+
+  protected async guardarNuevaCarrera(): Promise<void> {
+    this.crearCarreraError = null;
+    if (!this.nuevaCarreraNombre.trim()) {
+      this.crearCarreraError = 'El nombre de la carrera es requerido';
+      return;
+    }
+    if (!this.nuevaCarreraCodigo.trim()) {
+      this.crearCarreraError = 'El codigo de la carrera es requerido';
+      return;
+    }
+    if (this.selectedUniversidadId === null) {
+      this.crearCarreraError = 'Debe seleccionar una universidad primero';
+      return;
+    }
+
+    this.creandoCarrera = true;
+    try {
+      const nueva = await firstValueFrom(
+        this.carreraService.createCarrera({
+          universidadId: this.selectedUniversidadId,
+          nombre: this.nuevaCarreraNombre.trim(),
+          codigo: this.nuevaCarreraCodigo.trim(),
+        })
+      );
+      await this.loadCarreras(this.selectedUniversidadId, false);
+      this.selectedCarreraId = nueva.id;
+      this.cancelarCrearCarrera();
+      this.toastService.success('Carrera creada exitosamente');
+    } catch (error: any) {
+      this.crearCarreraError = error.error?.message || error.message || 'Error al crear la carrera';
+    } finally {
+      this.creandoCarrera = false;
+    }
   }
 
   public openImportModal(): void {
