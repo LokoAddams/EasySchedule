@@ -70,7 +70,7 @@ public class EstudianteService {
 
         estudiante.setNombre(formatProperName(request.nombre()));
         estudiante.setApellido(formatProperName(request.apellido()));
-        estudiante.setCarnetIdentidad(request.carnetIdentidad());
+        estudiante.setCarnetIdentidad(normalizeCarnetIdentidad(request.carnetIdentidad()));
         estudiante.setFechaNacimiento(request.fechaNacimiento());
         estudiante.setSemestreActual(request.semestreActual());
         estudiante.setUniversidadId(request.universidadId());
@@ -228,7 +228,7 @@ public class EstudianteService {
 
             String usernameNormalizado = request.username().trim();
             String emailNormalizado = request.email().trim().toLowerCase(Locale.ROOT);
-            String carnetNormalizado = request.carnetIdentidad().trim();
+            String carnetNormalizado = normalizeCarnetIdentidad(request.carnetIdentidad());
             String nombreNormalizado = formatProperName(request.nombre());
             String apellidoNormalizado = formatProperName(request.apellido());
 
@@ -360,6 +360,14 @@ public class EstudianteService {
             return false;
         }
         return left.equals(right);
+    }
+
+    private String normalizeCarnetIdentidad(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        return value.trim().replaceAll("\\s+", " ").toUpperCase(Locale.ROOT);
     }
 
     private Estudiante getOrCreateByIdentifier(String identifier) {

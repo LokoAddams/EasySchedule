@@ -384,8 +384,8 @@
       "required": "Este campo é obrigatório.",
       "emailInvalid": "Formato de email inválido.",
       "carnet": {
-        "maxLength": "O documento de identidade não pode exceder 8 caracteres.",
-        "invalidChars": "O documento de identidade só pode conter letras e números."
+        "maxLength": "O documento de identidade não pode exceder 16 caracteres.",
+        "invalidChars": "Informe um CI boliviano válido (ex: 1234567, 1234567-1A ou 1234567 LP)."
       },
       "nome": {
         "minLength": "O nome deve ter pelo menos 3 caracteres.",
@@ -446,7 +446,8 @@
       "mallaNotFound": "Não existe uma grade para o curso e universidade selecionados.",
       "usernameTaken": "Esse nome de usuário já está em uso.",
       "emailTaken": "Esse email já está cadastrado.",
-      "carnetTaken": "Esse documento de identidade já está em uso."
+      "carnetTaken": "Esse documento de identidade já está em uso.",
+      "carnetInvalidFormat": "Formato de documento inválido. Use um CI boliviano válido."
     }
   },
   "registro": {

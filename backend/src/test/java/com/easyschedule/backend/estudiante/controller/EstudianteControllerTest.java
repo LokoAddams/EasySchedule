@@ -70,7 +70,7 @@ class EstudianteControllerTest {
               "nombre": "Diego",
               "apellido": "Suarez",
               "email": "diego2@mail.com",
-              "carnetIdentidad": "123456",
+              "carnetIdentidad": "1234567-1A LP",
               "fechaNacimiento": "2001-05-10",
               "carrera": "",
               "universidad": ""

@@ -383,8 +383,8 @@
       "required": "This field is required.",
       "emailInvalid": "Invalid email format.",
       "carnet": {
-        "maxLength": "Identity card cannot exceed 8 characters.",
-        "invalidChars": "Identity card can only contain letters and numbers."
+        "maxLength": "Identity card cannot exceed 16 characters.",
+        "invalidChars": "Enter a valid Bolivian ID (e.g. 1234567, 1234567-1A or 1234567 LP)."
       },
       "nombre": {
         "minLength": "Name must be at least 3 characters.",
@@ -445,7 +445,8 @@
       "mallaNotFound": "No curriculum was found for the selected career and university.",
       "usernameTaken": "That username is already in use.",
       "emailTaken": "That email is already registered.",
-      "carnetTaken": "That identity card is already in use."
+      "carnetTaken": "That identity card is already in use.",
+      "carnetInvalidFormat": "Invalid identity card format. Use a valid Bolivian ID."
     }
   },
   "registro": {

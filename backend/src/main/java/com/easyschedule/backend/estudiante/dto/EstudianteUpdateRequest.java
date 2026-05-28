@@ -21,7 +21,8 @@ public record EstudianteUpdateRequest(
     String apellido,
 
     @NotBlank(message = "El carnet de identidad es obligatorio")
-    @Size(max = 30, message = "El carnet de identidad no puede exceder 30 caracteres")
+    @Size(min = 6, max = 16, message = "El carnet de identidad debe tener entre 6 y 16 caracteres")
+    @Pattern(regexp = "(?i)^\\d{6,10}(?:-?(?:\\d[A-Z0-9]?|[A-Z0-9]?\\d))?(?:\\s?(?:LP|CB|SC|OR|PT|TJ|CH|BN|PD))?$", message = "Formato de carnet de identidad invalido para Bolivia")
     String carnetIdentidad,
 
     @NotNull(message = "La fecha de nacimiento es obligatoria")

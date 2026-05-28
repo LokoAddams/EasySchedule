@@ -223,4 +223,73 @@ describe('Perfil Component', () => {
     expect(toastServiceSpy.error).toHaveBeenCalledWith('perfil.password.error.currentIncorrect');
     expect((component as any).showChangePasswordModal).toBeTrue();
   });
+
+  it('accepts bolivian identity card format with extension', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.carnetIdentidad.setValue('1234567-1A lp');
+    (component as any).editForm.controls.carnetIdentidad.markAsTouched();
+
+    expect((component as any).editForm.controls.carnetIdentidad.valid).toBeTrue();
+  });
+
+  it('rejects identity card with invalid mixed format', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.carnetIdentidad.setValue('abc123');
+    (component as any).editForm.controls.carnetIdentidad.markAsTouched();
+
+    expect((component as any).editForm.controls.carnetIdentidad.invalid).toBeTrue();
+    expect((component as any).getErrorMessageCarnet()).toBe('perfil.validation.carnet.invalidChars');
+  });
+
+  it('rejects identity card with 5 digits', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.carnetIdentidad.setValue('93267');
+    (component as any).editForm.controls.carnetIdentidad.markAsTouched();
+
+    expect((component as any).editForm.controls.carnetIdentidad.invalid).toBeTrue();
+    expect((component as any).getErrorMessageCarnet()).toBe('perfil.validation.carnet.invalidChars');
+  });
+
+  it('rejects identity card with alphabetic complement only', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.carnetIdentidad.setValue('1234567-XX');
+    (component as any).editForm.controls.carnetIdentidad.markAsTouched();
+
+    expect((component as any).editForm.controls.carnetIdentidad.invalid).toBeTrue();
+    expect((component as any).getErrorMessageCarnet()).toBe('perfil.validation.carnet.invalidChars');
+  });
+
+  it('shows specific toast when backend rejects carnet format', () => {
+    const perfilCompleto: PerfilResponse = {
+      ...perfilMock,
+      nombre: 'Diego',
+      apellido: 'Suarez',
+      email: 'diego@mail.com',
+      carnetIdentidad: '1234567',
+      fechaNacimiento: '2001-03-10',
+    };
+
+    perfilServiceSpy.getPerfilByUsername.and.returnValue(of(perfilCompleto));
+    perfilServiceSpy.updatePerfil.and.returnValue(
+      throwError(() => ({ status: 400, error: { message: 'Formato de carnet de identidad invalido para Bolivia' } })),
+    );
+
+    fixture.detectChanges();
+    (component as any).activarEdicion();
+    (component as any).editForm.patchValue({
+      carnetIdentidad: '1234567',
+    });
+
+    (component as any).guardarEdicion();
+
+    expect(toastServiceSpy.error).toHaveBeenCalledWith('perfil.error.carnetInvalidFormat');
+  });
 });

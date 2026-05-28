@@ -216,7 +216,7 @@ export class Perfil implements OnInit {
       nombre: this.editForm.controls.nombre.value.trim(),
       apellido: this.editForm.controls.apellido.value.trim(),
       email,
-      carnetIdentidad: this.editForm.controls.carnetIdentidad.value.trim(),
+      carnetIdentidad: this.normalizeCarnetIdentidadInput(this.editForm.controls.carnetIdentidad.value),
       fechaNacimiento: this.formatDateForApi(this.editForm.controls.fechaNacimiento.value),
       carrera,
       universidad,
@@ -363,6 +363,14 @@ export class Perfil implements OnInit {
 
           if (backendMessage.includes('carnet')) {
             this.toastService.error('perfil.error.carnetTaken');
+            return;
+          }
+        }
+
+        if (error.status === 400) {
+          const backendMessage = this.extractBackendMessage(error);
+          if (backendMessage.includes('carnet')) {
+            this.toastService.error('perfil.error.carnetInvalidFormat');
             return;
           }
         }
@@ -526,6 +534,10 @@ export class Perfil implements OnInit {
     const month = String(dateStruct.month).padStart(2, '0');
     const day = String(dateStruct.day).padStart(2, '0');
     return `${dateStruct.year}-${month}-${day}`;
+  }
+
+  private normalizeCarnetIdentidadInput(value: string): string {
+    return value.trim().replace(/\s+/g, ' ').toUpperCase();
   }
 
   protected getErrorMessageCarnet(): string {
