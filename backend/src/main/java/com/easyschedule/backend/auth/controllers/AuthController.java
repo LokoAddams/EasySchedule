@@ -56,7 +56,7 @@ public class AuthController {
         return authService.login(request);
     }
     @PostMapping("/login/google")
-    public ResponseEntity<?> loginWithGoogle(@Valid @RequestBody GoogleLoginRequest request) {
+    public ResponseEntity<?> loginWithGoogle(@RequestBody GoogleLoginRequest request) {
         log.debug(
             "[AUTH_GOOGLE] request recibido | credentialPresent={}",
             request.getCredential() != null && !request.getCredential().isBlank()
