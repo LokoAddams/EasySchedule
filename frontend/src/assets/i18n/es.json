@@ -223,6 +223,15 @@
       "cancel": "Cancelar",
       "goToToma": "Ir a Toma de materias"
     },
+    "export": {
+      "button": "Exportar avance",
+      "loading": "Exportando...",
+      "success": "Reporte descargado correctamente.",
+      "insufficientData": "No existen datos suficientes para generar el reporte.",
+      "connectionError": "No se pudo conectar con el servidor. Intenta nuevamente.",
+      "downloadError": "No se pudo descargar el reporte. Intenta nuevamente.",
+      "notAuthenticated": "Inicia sesion para exportar tu avance."
+    },
     "validation": {
       "universidadRequired": "Debes seleccionar una universidad.",
       "carreraRequired": "Debes seleccionar una carrera.",
@@ -401,11 +410,11 @@
       "required": "Este campo es obligatorio.",
       "emailInvalid": "Formato de correo electrónico inválido.",
       "carnet": {
-        "maxLength": "El carnet de identidad no puede exceder 8 caracteres.",
-        "invalidChars": "El carnet de identidad solo puede contener letras y números."
+        "maxLength": "El carnet de identidad no puede exceder 16 caracteres.",
+        "invalidChars": "Ingresa un CI de Bolivia válido (ej: 1234567, 1234567-1A o 1234567 LP)."
       },
       "nombre": {
-        "minLength": "El nombre debe tener al menos 2 caracteres.",
+        "minLength": "El nombre debe tener al menos 3 caracteres.",
         "maxLength": "El nombre no puede exceder 50 caracteres.",
         "invalidChars": "El nombre solo puede contener letras, espacios y acentos."
       },
@@ -416,6 +425,11 @@
       },
       "email": {
         "maxLength": "El correo electrónico no puede exceder 100 caracteres."
+      },
+      "fechaNacimiento": {
+        "future": "La fecha de nacimiento no puede estar en el futuro.",
+        "outOfRange": "La fecha de nacimiento debe corresponder a una edad entre 16 y 70 años.",
+        "invalid": "Ingresa una fecha de nacimiento válida."
       }
     },
     "success": {
@@ -435,7 +449,15 @@
       },
       "validation": {
         "minLength": "La nueva contraseña debe tener al menos 8 caracteres.",
-        "mismatch": "La nueva contraseña y su repetición no coinciden."
+        "mismatch": "La nueva contraseña y su repetición no coinciden.",
+        "weakPolicy": "La nueva contraseña no cumple la política de seguridad.",
+        "checklist": {
+          "minLength": "Mínimo 8 caracteres",
+          "uppercase": "Al menos 1 mayúscula",
+          "lowercase": "Al menos 1 minúscula",
+          "number": "Al menos 1 número",
+          "special": "Al menos 1 carácter especial"
+        }
       },
       "success": {
         "updated": "Contraseña actualizada correctamente."
@@ -444,6 +466,7 @@
         "currentIncorrect": "La contraseña actual no es correcta.",
         "sameAsCurrent": "La nueva contraseña debe ser distinta a la actual.",
         "mismatch": "La nueva contraseña y su repetición no coinciden.",
+        "weakPolicy": "La nueva contraseña no cumple la política de seguridad.",
         "unauthorized": "Tu sesión expiró. Vuelve a iniciar sesión.",
         "generic": "No se pudo cambiar la contraseña. Intenta nuevamente."
       }
@@ -463,7 +486,8 @@
       "mallaNotFound": "No existe una malla con la carrera y universidad seleccionadas.",
       "usernameTaken": "Ese nombre de usuario ya está en uso.",
       "emailTaken": "Ese correo electrónico ya está registrado.",
-      "carnetTaken": "Ese carnet de identidad ya está en uso."
+      "carnetTaken": "Ese carnet de identidad ya está en uso.",
+      "carnetInvalidFormat": "Formato de carnet inválido. Usa un CI de Bolivia válido."
     }
   },
   "registro": {
@@ -484,6 +508,14 @@
       "emailRequired": "El correo es obligatorio",
       "emailInvalid": "Formato de correo inválido",
       "passwordMin": "La contraseña debe tener mínimo 8 caracteres",
+      "passwordWeak": "La contraseña no cumple los criterios de seguridad.",
+      "passwordChecklist": {
+        "minLength": "Mínimo 8 caracteres",
+        "uppercase": "Al menos 1 mayúscula",
+        "lowercase": "Al menos 1 minúscula",
+        "number": "Al menos 1 número",
+        "special": "Al menos 1 carácter especial"
+      },
       "confirmRequired": "Debes confirmar tu contraseña",
       "passwordMismatch": "Las contraseñas no coinciden"
     },
@@ -497,6 +529,7 @@
     "error": {
       "userExists": "El usuario ya está registrado",
       "emailExists": "El correo ya está registrado",
+      "weakPassword": "La contraseña no cumple la política de seguridad",
       "invalidData": "Datos inválidos",
       "backendConnection": "No se pudo conectar con el backend",
       "server": "Error del servidor. Intenta nuevamente"

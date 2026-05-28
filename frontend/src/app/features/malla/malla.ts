@@ -1,7 +1,7 @@
 import { NgFor, NgIf, NgClass } from '@angular/common';
 import { Component, OnDestroy, OnInit, HostListener, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter, firstValueFrom, Subscription } from 'rxjs';
@@ -70,6 +70,7 @@ export class Malla implements OnInit, OnDestroy {
   protected semestreActual = 1;
   protected loadingMaterias = false;
   protected loadMateriasError = false;
+  protected exportingAvance = false;
 
   protected loadingUniversidades = true;
   protected loadingCarreras = false;
@@ -800,6 +801,35 @@ Reglas obligatorias:
     this.showImportarOfertasModal = true;
   }
 
+  protected async onExportarAvanceClick(): Promise<void> {
+    if (this.exportingAvance) {
+      return;
+    }
+
+    if (!this.authSessionService.isLoggedIn()) {
+      this.toastService.error('malla.export.notAuthenticated');
+      return;
+    }
+
+    this.exportingAvance = true;
+
+    try {
+      const response = await firstValueFrom(this.mallaCatalogoService.exportarAvanceGraduacion());
+      const blob = response.body;
+
+      if (!blob) {
+        throw new Error('empty-response');
+      }
+
+      this.downloadBlob(blob, this.getExportFilename(response));
+      this.toastService.success('malla.export.success');
+    } catch (error) {
+      this.toastService.error(this.getExportErrorKey(error));
+    } finally {
+      this.exportingAvance = false;
+    }
+  }
+
   protected closeImportarOfertasModal(): void {
     this.showImportarOfertasModal = false;
   }
@@ -836,6 +866,53 @@ Reglas obligatorias:
     } finally {
       this.loadingUniversidades = false;
     }
+  }
+
+  private getExportFilename(response: HttpResponse<Blob>): string {
+    const contentDisposition = response.headers.get('content-disposition') ?? '';
+    const utf8Match = /filename\*=UTF-8''([^;]+)/i.exec(contentDisposition);
+    const asciiMatch = /filename="?([^";]+)"?/i.exec(contentDisposition);
+    const encodedFilename = utf8Match?.[1] ?? asciiMatch?.[1];
+
+    if (!encodedFilename) {
+      return 'avance_graduacion.pdf';
+    }
+
+    try {
+      return decodeURIComponent(encodedFilename);
+    } catch {
+      return encodedFilename;
+    }
+  }
+
+  private getExportErrorKey(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 401 || error.status === 403) {
+        return 'malla.export.notAuthenticated';
+      }
+
+      if (error.status === 422 || error.status === 404 || error.status === 400) {
+        return 'malla.export.insufficientData';
+      }
+
+      if (error.status === 0) {
+        return 'malla.export.connectionError';
+      }
+    }
+
+    return 'malla.export.downloadError';
+  }
+
+  private downloadBlob(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
 
   private async loadSeleccionActual(): Promise<void> {

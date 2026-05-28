@@ -10,10 +10,10 @@ import {
 } from '../../services/academico/horario-actual.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ApiService } from '../../services/api.service';
-import { TomaSeleccionService } from '../../services/academico/toma-seleccion.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
 import { MallaCatalogoService, MallaMateria } from '../../services/academico/malla-catalogo.service';
+import { SeleccionTemporalService } from '../../services/academico/seleccion-temporal.service';
 
 export interface MateriaSeleccionada {
   id: number;
@@ -64,11 +64,11 @@ export class TomaDeMaterias implements OnInit {
   constructor(
     private readonly horarioActualService: HorarioActualService,
     private readonly apiService: ApiService,
-    private readonly tomaSeleccionService: TomaSeleccionService,
     private readonly authSessionService: AuthSessionService,
     private readonly perfilService: PerfilService,
     private readonly translateService: TranslateService,
     private readonly mallaCatalogoService: MallaCatalogoService,
+    private readonly seleccionTemporalService: SeleccionTemporalService,
   ) {}
 
   // Estadísticas de malla
@@ -81,10 +81,24 @@ export class TomaDeMaterias implements OnInit {
 
   ngOnInit(): void {
     this.cargarHorarioYSelecciones();
+    this.cargarSeleccionesTemporales();
+  }
 
-    this.tomaSeleccionService.seleccion$.subscribe(materias => {
-      this.materiasSeleccionadas = materias;
-      this.calcularTotalCreditos();
+  private cargarSeleccionesTemporales(): void {
+    this.seleccionTemporalService.listarSelecciones().subscribe({
+      next: (selecciones) => {
+        this.materiasSeleccionadas = selecciones.map((s) => ({
+          id: s.materiaId,
+          nombre: s.materiaNombre,
+          creditos: 0,
+          ofertaId: s.ofertaMateriaId,
+        }));
+        this.calcularTotalCreditos();
+      },
+      error: () => {
+        this.materiasSeleccionadas = [];
+        this.calcularTotalCreditos();
+      },
     });
   }
 
@@ -141,7 +155,17 @@ export class TomaDeMaterias implements OnInit {
   protected removerMateria(id: number): void {
     const confirmacion = window.confirm(this.translateService.instant('tomaMaterias.confirm.removeSubject'));
     if (confirmacion) {
-      this.tomaSeleccionService.removerMateria(id);
+      const materia = this.materiasSeleccionadas.find(m => m.id === id);
+      if (!materia) {
+        return;
+      }
+
+      this.seleccionTemporalService.removerSeleccion(materia.ofertaId).subscribe({
+        next: () => this.cargarSeleccionesTemporales(),
+        error: () => {
+          this.submitError = this.translateService.instant('tomaMaterias.messages.unexpectedRegistrationError');
+        },
+      });
     }
   }
 
@@ -169,8 +193,16 @@ export class TomaDeMaterias implements OnInit {
         const creditosNuevos = this.materiasSeleccionadas.reduce((sum, m) => sum + (Number(m.creditos) || 0), 0);
         this.creditosConfirmados += creditosNuevos;
 
-        this.tomaSeleccionService.limpiar();
-        this.cargarHorarioYSelecciones();
+        this.seleccionTemporalService.limpiarSelecciones().subscribe({
+          next: () => {
+            this.materiasSeleccionadas = [];
+            this.calcularTotalCreditos();
+            this.cargarHorarioYSelecciones();
+          },
+          error: () => {
+            this.cargarHorarioYSelecciones();
+          },
+        });
       },
       error: (err: HttpErrorResponse) => {
         this.submitLoading = false;

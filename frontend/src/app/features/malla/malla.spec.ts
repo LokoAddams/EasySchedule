@@ -1,5 +1,11 @@
 import { HttpClient } from '@angular/common/http';
+import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, of, throwError } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import { Malla } from './malla';
 import { CarreraService } from '../../services/academico/carrera.service';
@@ -13,6 +19,8 @@ import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
 import { ToastService } from '../../core/services/toast.service';
 import { TourHintsService } from '../../services/tour-hints.service';
+import { SeleccionTemporalService } from '../../services/academico/seleccion-temporal.service';
+import { EstadoMateriaService } from '../../services/academico/estado-materia.service';
 
 describe('Malla component logic', () => {
   let component: Malla;
@@ -30,6 +38,7 @@ describe('Malla component logic', () => {
   let perfilServiceSpy: jasmine.SpyObj<PerfilService>;
   let toastServiceSpy: jasmine.SpyObj<ToastService>;
   let tourHintsServiceSpy: jasmine.SpyObj<TourHintsService>;
+  let seleccionTemporalServiceSpy: jasmine.SpyObj<SeleccionTemporalService>;
   let routerSpy: jasmine.SpyObj<any>;
   let activatedRouteStub: any;
 
@@ -42,7 +51,12 @@ describe('Malla component logic', () => {
 
     universidadServiceSpy = jasmine.createSpyObj<UniversidadService>('UniversidadService', ['getUniversidadesActivas']);
     carreraServiceSpy = jasmine.createSpyObj<CarreraService>('CarreraService', ['getCarrerasActivasPorUniversidad']);
-    mallaCatalogoServiceSpy = jasmine.createSpyObj<MallaCatalogoService>('MallaCatalogoService', ['getMallasActivasPorCarrera', 'getMateriasPorMalla']);
+    mallaCatalogoServiceSpy = jasmine.createSpyObj<MallaCatalogoService>('MallaCatalogoService', [
+      'getMallasActivasPorCarrera',
+      'getMateriasPorMalla',
+      'exportarAvanceGraduacion',
+      'getDetallesMateria',
+    ]);
     seleccionAcademicaServiceSpy = jasmine.createSpyObj<SeleccionAcademicaService>('SeleccionAcademicaService', ['getSeleccionActual', 'guardarSeleccion']);
     estadoMateriaServiceSpy = jasmine.createSpyObj('EstadoMateriaService', ['getEstadosMateria', 'guardarEstado']);
     tomaSeleccionServiceSpy = jasmine.createSpyObj<TomaSeleccionService>('TomaSeleccionService', ['agregarMateria']);
@@ -50,8 +64,9 @@ describe('Malla component logic', () => {
     translateServiceSpy = jasmine.createSpyObj<TranslateService>('TranslateService', ['instant']);
     translateServiceSpy.instant.and.callFake((key: string) => key);
     httpClientSpy = jasmine.createSpyObj<HttpClient>('HttpClient', ['get', 'post']);
-    authSessionServiceSpy = jasmine.createSpyObj<AuthSessionService>('AuthSessionService', ['getCurrentUsername']);
+    authSessionServiceSpy = jasmine.createSpyObj<AuthSessionService>('AuthSessionService', ['getCurrentUsername', 'isLoggedIn']);
     authSessionServiceSpy.getCurrentUsername.and.returnValue('testuser');
+    authSessionServiceSpy.isLoggedIn.and.returnValue(true);
     perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername', 'completeTour']);
     perfilServiceSpy.getPerfilByUsername.and.returnValue(of({ tourCompleted: true } as any));
     perfilServiceSpy.completeTour.and.returnValue(of({}) as any);
@@ -60,7 +75,14 @@ describe('Malla component logic', () => {
       'openTomaMateriasPopover',
       'closeTomaMateriasPopover',
     ]);
+    seleccionTemporalServiceSpy = jasmine.createSpyObj<SeleccionTemporalService>('SeleccionTemporalService', [
+      'listarSelecciones',
+      'agregarSeleccion',
+      'limpiarSelecciones',
+    ]);
+    seleccionTemporalServiceSpy.listarSelecciones.and.returnValue(of([]));
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
+    Object.defineProperty(routerSpy, 'events', { value: of([]) });
     activatedRouteStub = { snapshot: { queryParams: {} } };
 
     component = new (Malla as any)(
@@ -79,6 +101,7 @@ describe('Malla component logic', () => {
       authSessionServiceSpy,
       perfilServiceSpy,
       tourHintsServiceSpy,
+      seleccionTemporalServiceSpy,
     );
   });
 
@@ -239,4 +262,136 @@ describe('Malla component logic', () => {
     expect((component as any).loadMateriasError).toBeTrue();
     expect((component as any).loadingMaterias).toBeFalse();
   });
+
+  it('calls graduation progress export endpoint when export button action runs', async () => {
+    const response = buildBlobResponse('avance_graduacion.pdf');
+    mallaCatalogoServiceSpy.exportarAvanceGraduacion.and.returnValue(of(response));
+    spyOn(component as any, 'downloadBlob');
+
+    await (component as any).onExportarAvanceClick();
+
+    expect(mallaCatalogoServiceSpy.exportarAvanceGraduacion).toHaveBeenCalled();
+  });
+
+  it('shows loading state during graduation progress export', () => {
+    const exportSubject = new Subject<HttpResponse<Blob>>();
+    mallaCatalogoServiceSpy.exportarAvanceGraduacion.and.returnValue(exportSubject.asObservable());
+    spyOn(component as any, 'downloadBlob');
+
+    void (component as any).onExportarAvanceClick();
+
+    expect((component as any).exportingAvance).toBeTrue();
+
+    exportSubject.next(buildBlobResponse('avance_graduacion.pdf'));
+    exportSubject.complete();
+  });
+
+  it('downloads the generated report when export succeeds', async () => {
+    const response = buildBlobResponse('avance_graduacion.pdf');
+    mallaCatalogoServiceSpy.exportarAvanceGraduacion.and.returnValue(of(response));
+    const downloadSpy = spyOn(component as any, 'downloadBlob');
+
+    await (component as any).onExportarAvanceClick();
+
+    expect(downloadSpy).toHaveBeenCalledWith(response.body, 'avance_graduacion.pdf');
+    expect(toastServiceSpy.success).toHaveBeenCalledWith('malla.export.success');
+  });
+
+  it('uses filename received from backend when export succeeds', async () => {
+    const response = buildBlobResponse('mi_avance.pdf');
+    mallaCatalogoServiceSpy.exportarAvanceGraduacion.and.returnValue(of(response));
+    const downloadSpy = spyOn(component as any, 'downloadBlob');
+
+    await (component as any).onExportarAvanceClick();
+
+    expect(downloadSpy).toHaveBeenCalledWith(response.body, 'mi_avance.pdf');
+  });
+
+  it('shows insufficient data error when backend rejects export data', async () => {
+    mallaCatalogoServiceSpy.exportarAvanceGraduacion.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 422 })),
+    );
+
+    await (component as any).onExportarAvanceClick();
+
+    expect(toastServiceSpy.error).toHaveBeenCalledWith('malla.export.insufficientData');
+  });
+
+  it('shows connection error when export request fails by network', async () => {
+    mallaCatalogoServiceSpy.exportarAvanceGraduacion.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 0 })),
+    );
+
+    await (component as any).onExportarAvanceClick();
+
+    expect(toastServiceSpy.error).toHaveBeenCalledWith('malla.export.connectionError');
+  });
+
+  it('ignores duplicate export clicks while request is in progress', () => {
+    const exportSubject = new Subject<HttpResponse<Blob>>();
+    mallaCatalogoServiceSpy.exportarAvanceGraduacion.and.returnValue(exportSubject.asObservable());
+    spyOn(component as any, 'downloadBlob');
+
+    void (component as any).onExportarAvanceClick();
+    void (component as any).onExportarAvanceClick();
+
+    expect(mallaCatalogoServiceSpy.exportarAvanceGraduacion).toHaveBeenCalledTimes(1);
+    exportSubject.next(buildBlobResponse('avance_graduacion.pdf'));
+    exportSubject.complete();
+  });
+
+  it('does not export when user is not authenticated', async () => {
+    authSessionServiceSpy.isLoggedIn.and.returnValue(false);
+
+    await (component as any).onExportarAvanceClick();
+
+    expect(mallaCatalogoServiceSpy.exportarAvanceGraduacion).not.toHaveBeenCalled();
+    expect(toastServiceSpy.error).toHaveBeenCalledWith('malla.export.notAuthenticated');
+  });
+
+  it('renders graduation progress export button', async () => {
+    universidadServiceSpy.getUniversidadesActivas.and.returnValue(of([]));
+    seleccionAcademicaServiceSpy.getSeleccionActual.and.returnValue(throwError(() => new Error('empty')));
+    mallaCatalogoServiceSpy.getMateriasPorMalla.and.returnValue(of([]));
+
+    await TestBed.configureTestingModule({
+      imports: [Malla, TranslateModule.forRoot()],
+      providers: [
+        { provide: FeatureToggleService, useValue: featureServiceMock },
+        { provide: UniversidadService, useValue: universidadServiceSpy },
+        { provide: CarreraService, useValue: carreraServiceSpy },
+        { provide: MallaCatalogoService, useValue: mallaCatalogoServiceSpy },
+        { provide: SeleccionAcademicaService, useValue: seleccionAcademicaServiceSpy },
+        { provide: EstadoMateriaService, useValue: estadoMateriaServiceSpy },
+        { provide: TomaSeleccionService, useValue: tomaSeleccionServiceSpy },
+        { provide: HttpClient, useValue: httpClientSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: AuthSessionService, useValue: authSessionServiceSpy },
+        { provide: PerfilService, useValue: perfilServiceSpy },
+        { provide: TourHintsService, useValue: tourHintsServiceSpy },
+        { provide: SeleccionTemporalService, useValue: seleccionTemporalServiceSpy },
+        { provide: ActivatedRoute, useValue: activatedRouteStub },
+        { provide: Router, useValue: routerSpy },
+      ],
+    }).compileComponents();
+
+    const fixture: ComponentFixture<Malla> = TestBed.createComponent(Malla);
+    (fixture.componentInstance as any).mallaEnabled = true;
+    (fixture.componentInstance as any).step = 'resumen';
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const buttons = fixture.debugElement.queryAll(By.css('.malla-page__actions button'));
+    const hasExportButton = buttons.some((button) => button.nativeElement.textContent.includes('malla.export.button'));
+
+    expect(hasExportButton).toBeTrue();
+  });
+
+  function buildBlobResponse(filename: string): HttpResponse<Blob> {
+    return new HttpResponse({
+      body: new Blob(['pdf'], { type: 'application/pdf' }),
+      headers: new HttpHeaders({ 'content-disposition': `attachment; filename="${filename}"` }),
+    });
+  }
 });

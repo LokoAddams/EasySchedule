@@ -258,6 +258,15 @@
       "processing": "Processing...",
       "importSuccessToast": "Academic offers import completed successfully."
     },
+    "export": {
+      "button": "Export progress",
+      "loading": "Exporting...",
+      "success": "Report downloaded successfully.",
+      "insufficientData": "There is not enough data to generate the report.",
+      "connectionError": "Could not connect to the server. Please try again.",
+      "downloadError": "Could not download the report. Please try again.",
+      "notAuthenticated": "Sign in to export your progress."
+    },
     "prerequisito": {
       "button": " Add prerequisite",
       "modalTitle": "Add prerequisite to: {{materia}}",
@@ -390,11 +399,11 @@
       "required": "This field is required.",
       "emailInvalid": "Invalid email format.",
       "carnet": {
-        "maxLength": "Identity card cannot exceed 8 characters.",
-        "invalidChars": "Identity card can only contain letters and numbers."
+        "maxLength": "Identity card cannot exceed 16 characters.",
+        "invalidChars": "Enter a valid Bolivian ID (e.g. 1234567, 1234567-1A or 1234567 LP)."
       },
       "nombre": {
-        "minLength": "Name must be at least 2 characters.",
+        "minLength": "Name must be at least 3 characters.",
         "maxLength": "Name cannot exceed 50 characters.",
         "invalidChars": "Name can only contain letters, spaces, and accents."
       },
@@ -405,6 +414,11 @@
       },
       "email": {
         "maxLength": "Email cannot exceed 100 characters."
+      },
+      "fechaNacimiento": {
+        "future": "Birth date cannot be in the future.",
+        "outOfRange": "Birth date must correspond to an age between 16 and 70 years.",
+        "invalid": "Enter a valid birth date."
       }
     },
     "success": {
@@ -424,7 +438,15 @@
       },
       "validation": {
         "minLength": "The new password must be at least 8 characters long.",
-        "mismatch": "The new password and confirmation do not match."
+        "mismatch": "The new password and confirmation do not match.",
+        "weakPolicy": "The new password does not meet the security policy.",
+        "checklist": {
+          "minLength": "At least 8 characters",
+          "uppercase": "At least 1 uppercase letter",
+          "lowercase": "At least 1 lowercase letter",
+          "number": "At least 1 number",
+          "special": "At least 1 special character"
+        }
       },
       "success": {
         "updated": "Password updated successfully."
@@ -433,6 +455,7 @@
         "currentIncorrect": "Current password is incorrect.",
         "sameAsCurrent": "The new password must be different from the current one.",
         "mismatch": "The new password and confirmation do not match.",
+        "weakPolicy": "The new password does not meet the security policy.",
         "unauthorized": "Your session expired. Please sign in again.",
         "generic": "Could not change password. Please try again."
       }
@@ -452,7 +475,8 @@
       "mallaNotFound": "No curriculum was found for the selected career and university.",
       "usernameTaken": "That username is already in use.",
       "emailTaken": "That email is already registered.",
-      "carnetTaken": "That identity card is already in use."
+      "carnetTaken": "That identity card is already in use.",
+      "carnetInvalidFormat": "Invalid identity card format. Use a valid Bolivian ID."
     }
   },
   "registro": {
@@ -473,6 +497,14 @@
       "emailRequired": "Email is required",
       "emailInvalid": "Invalid email format",
       "passwordMin": "Password must be at least 8 characters",
+      "passwordWeak": "Password does not meet security criteria.",
+      "passwordChecklist": {
+        "minLength": "At least 8 characters",
+        "uppercase": "At least 1 uppercase letter",
+        "lowercase": "At least 1 lowercase letter",
+        "number": "At least 1 number",
+        "special": "At least 1 special character"
+      },
       "confirmRequired": "You must confirm your password",
       "passwordMismatch": "Passwords do not match"
     },
@@ -486,6 +518,7 @@
     "error": {
       "userExists": "User is already registered",
       "emailExists": "Email is already registered",
+      "weakPassword": "Password does not meet security policy",
       "invalidData": "Invalid data",
       "backendConnection": "Could not connect to backend",
       "server": "Server error. Please try again"

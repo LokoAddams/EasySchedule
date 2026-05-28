@@ -14,6 +14,14 @@ import { ApiService } from '../../services/api.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { ToastService } from '../../core/services/toast.service';
 
+type PasswordChecklist = {
+  minLength: boolean;
+  uppercase: boolean;
+  lowercase: boolean;
+  number: boolean;
+  special: boolean;
+};
+
 @Component({
   selector: 'app-registro',
   standalone: true,
@@ -49,7 +57,7 @@ export class Registro {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: ['', [Validators.required, Validators.minLength(8), this.passwordPolicyValidator]],
       confirmPassword: ['', Validators.required],
     }, { validators: this.passwordMatch });
 
@@ -77,7 +85,10 @@ export class Registro {
 
   registrar() {
 
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     this.loading = true;
     this.successMessageKey = '';
@@ -125,8 +136,13 @@ export class Registro {
           this.errorMessageKey = 'registro.error.emailExists';
           this.toastService.error('registro.error.emailExists');
         } else if (err.status === 400) {
-          this.errorMessageKey = 'registro.error.invalidData';
-          this.toastService.error('registro.error.invalidData');
+          if (backendMessage.includes('contrasenia') || backendMessage.includes('password')) {
+            this.errorMessageKey = 'registro.error.weakPassword';
+            this.toastService.error('registro.error.weakPassword');
+          } else {
+            this.errorMessageKey = 'registro.error.invalidData';
+            this.toastService.error('registro.error.invalidData');
+          }
         } else if (err.status === 0) {
           this.errorMessageKey = 'registro.error.backendConnection';
           this.toastService.error('registro.error.backendConnection');
@@ -162,5 +178,35 @@ export class Registro {
 
     return '';
   }
+
+  protected getPasswordChecklist(): PasswordChecklist {
+    const password = String(this.form.get('password')?.value ?? '');
+
+    return {
+      minLength: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      special: /[^A-Za-z0-9]/.test(password),
+    };
+  }
+
+  private passwordPolicyValidator = (control: AbstractControl): ValidationErrors | null => {
+    const password = String(control.value ?? '');
+    if (!password) {
+      return null;
+    }
+
+    const checklist = {
+      minLength: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      special: /[^A-Za-z0-9]/.test(password),
+    };
+
+    const isValid = Object.values(checklist).every(Boolean);
+    return isValid ? null : { weakPassword: true };
+  };
 
 }

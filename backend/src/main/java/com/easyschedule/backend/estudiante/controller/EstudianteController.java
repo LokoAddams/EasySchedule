@@ -1,6 +1,7 @@
 package com.easyschedule.backend.estudiante.controller;
 
 import com.easyschedule.backend.auth.dto.RegistroRequest;
+import com.easyschedule.backend.estudiante.dto.AvanceGraduacionExport;
 import com.easyschedule.backend.estudiante.dto.EstudianteResponse;
 import com.easyschedule.backend.estudiante.dto.EstudianteUpdateRequest;
 import com.easyschedule.backend.estudiante.dto.PerfilUpdateRequest;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import com.easyschedule.backend.estudiante.service.EstudianteMallaExportService;
 
 import java.security.Principal;
@@ -99,7 +102,16 @@ public class EstudianteController {
         return estudianteService.updateProfile(username, request);
     }
 
+    @GetMapping("/me/avance-graduacion/export")
+    public ResponseEntity<byte[]> exportarAvanceGraduacion(Principal principal) {
+        Long userId = getAuthenticatedUserId(principal);
+        AvanceGraduacionExport export = exportService.exportarAvanceGraduacion(userId, "pdf");
 
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + export.filename() + "\"")
+            .contentType(MediaType.parseMediaType(export.contentType()))
+            .body(export.contenido());
+    }
 
     private void validateProfileOwnership(String username, Long userId) {
         if (userId == null) {
