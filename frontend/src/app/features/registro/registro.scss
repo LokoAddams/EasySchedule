@@ -356,6 +356,38 @@ small {
   }
 }
 
+.password-checklist {
+  margin: 0.1rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.16rem;
+
+  li {
+    font-size: 0.72rem;
+    color: #7a4d4d;
+    font-family: 'Nunito Sans', sans-serif;
+    line-height: 1.2;
+
+    &::before {
+      content: '\2715';
+      margin-right: 0.35rem;
+      color: #b44a4a;
+      font-size: 0.66rem;
+    }
+
+    &.ok {
+      color: #2e6d43;
+
+      &::before {
+        content: '\2713';
+        color: #2e6d43;
+      }
+    }
+  }
+}
+
+
 .registro-divider {
   display: flex;
   align-items: center;

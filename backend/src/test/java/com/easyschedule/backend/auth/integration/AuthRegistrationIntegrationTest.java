@@ -52,7 +52,7 @@ class AuthRegistrationIntegrationTest {
                 {
                   "username": "integration_user",
                   "email": "integration_user@mail.com",
-                  "password": "123456"
+                  "password": "Abcd1234!"
                 }
                 """;
 
@@ -64,19 +64,19 @@ class AuthRegistrationIntegrationTest {
         User createdUser = userRepository.findByUsername("integration_user").orElseThrow();
 
         assertNotNull(createdUser.getId());
-        assertTrue(passwordEncoder.matches("123456", createdUser.getPasswordHash()));
+        assertTrue(passwordEncoder.matches("Abcd1234!", createdUser.getPasswordHash()));
     }
 
     @Test
     void registerEndpointReturnsConflictWhenUsernameAlreadyExists() throws Exception {
-        User existing = new User("integration_user", "first@mail.com", passwordEncoder.encode("123456"));
+        User existing = new User("integration_user", "first@mail.com", passwordEncoder.encode("Abcd1234!"));
         userRepository.save(existing);
 
         String requestBody = """
                 {
                   "username": "integration_user",
                   "email": "second@mail.com",
-                  "password": "123456"
+                  "password": "Abcd1234!"
                 }
                 """;
 
@@ -85,5 +85,22 @@ class AuthRegistrationIntegrationTest {
                         .content(requestBody))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Error: El nombre de usuario ya está en uso"));
+    }
+
+    @Test
+    void registerEndpointReturnsBadRequestWhenPasswordIsWeak() throws Exception {
+        String requestBody = """
+                {
+                  "username": "integration_user",
+                  "email": "integration_user@mail.com",
+                  "password": "abcd1234"
+                }
+                """;
+
+        mockMvc.perform(post("/api/registro")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
     }
 }

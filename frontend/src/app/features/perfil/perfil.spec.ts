@@ -158,19 +158,51 @@ describe('Perfil Component', () => {
     (component as any).abrirCambioContrasenia();
     (component as any).passwordForm.patchValue({
       currentPassword: 'actual1234',
-      newPassword: 'nueva1234',
-      confirmNewPassword: 'nueva1234',
+      newPassword: 'Nueva1234!',
+      confirmNewPassword: 'Nueva1234!',
     });
 
     (component as any).guardarCambioContrasenia();
 
     expect(perfilServiceSpy.changePassword).toHaveBeenCalledWith({
-      currentPassword: 'actual1234',
-      newPassword: 'nueva1234',
-      confirmNewPassword: 'nueva1234',
+        currentPassword: 'actual1234',
+        newPassword: 'Nueva1234!',
+        confirmNewPassword: 'Nueva1234!',
     });
     expect(toastServiceSpy.success).toHaveBeenCalledWith('perfil.password.success.updated');
     expect((component as any).showChangePasswordModal).toBeFalse();
+  });
+
+  it('shows apellido validation error when value includes numbers', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.apellido.setValue('Suarez1');
+    (component as any).editForm.controls.apellido.markAsTouched();
+
+    expect((component as any).editForm.controls.apellido.invalid).toBeTrue();
+    expect((component as any).getErrorMessageApellido()).toBe('perfil.validation.nombre.invalidChars');
+  });
+
+  it('accepts compound last name with single spaces', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.apellido.setValue('De la Cruz');
+    (component as any).editForm.controls.apellido.markAsTouched();
+
+    expect((component as any).editForm.controls.apellido.valid).toBeTrue();
+  });
+
+  it('rejects name with less than 3 characters', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.nombre.setValue('Al');
+    (component as any).editForm.controls.nombre.markAsTouched();
+
+    expect((component as any).editForm.controls.nombre.invalid).toBeTrue();
+    expect((component as any).getErrorMessageNombre()).toBe('perfil.validation.nombre.minLength');
   });
 
   it('shows toast when current password is incorrect', () => {
@@ -182,13 +214,131 @@ describe('Perfil Component', () => {
     (component as any).abrirCambioContrasenia();
     (component as any).passwordForm.patchValue({
       currentPassword: 'incorrecta',
-      newPassword: 'nueva1234',
-      confirmNewPassword: 'nueva1234',
+      newPassword: 'Nueva1234!',
+      confirmNewPassword: 'Nueva1234!',
     });
 
     (component as any).guardarCambioContrasenia();
 
     expect(toastServiceSpy.error).toHaveBeenCalledWith('perfil.password.error.currentIncorrect');
     expect((component as any).showChangePasswordModal).toBeTrue();
+  });
+
+  it('accepts bolivian identity card format with extension', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.carnetIdentidad.setValue('1234567-1A lp');
+    (component as any).editForm.controls.carnetIdentidad.markAsTouched();
+
+    expect((component as any).editForm.controls.carnetIdentidad.valid).toBeTrue();
+  });
+
+  it('rejects identity card with invalid mixed format', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.carnetIdentidad.setValue('abc123');
+    (component as any).editForm.controls.carnetIdentidad.markAsTouched();
+
+    expect((component as any).editForm.controls.carnetIdentidad.invalid).toBeTrue();
+    expect((component as any).getErrorMessageCarnet()).toBe('perfil.validation.carnet.invalidChars');
+  });
+
+  it('rejects identity card with 5 digits', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.carnetIdentidad.setValue('93267');
+    (component as any).editForm.controls.carnetIdentidad.markAsTouched();
+
+    expect((component as any).editForm.controls.carnetIdentidad.invalid).toBeTrue();
+    expect((component as any).getErrorMessageCarnet()).toBe('perfil.validation.carnet.invalidChars');
+  });
+
+  it('rejects identity card with alphabetic complement only', () => {
+    fixture.detectChanges();
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.carnetIdentidad.setValue('1234567-XX');
+    (component as any).editForm.controls.carnetIdentidad.markAsTouched();
+
+    expect((component as any).editForm.controls.carnetIdentidad.invalid).toBeTrue();
+    expect((component as any).getErrorMessageCarnet()).toBe('perfil.validation.carnet.invalidChars');
+  });
+
+  it('shows specific toast when backend rejects carnet format', () => {
+    const perfilCompleto: PerfilResponse = {
+      ...perfilMock,
+      nombre: 'Diego',
+      apellido: 'Suarez',
+      email: 'diego@mail.com',
+      carnetIdentidad: '1234567',
+      fechaNacimiento: '2001-03-10',
+    };
+
+    perfilServiceSpy.getPerfilByUsername.and.returnValue(of(perfilCompleto));
+    perfilServiceSpy.updatePerfil.and.returnValue(
+      throwError(() => ({ status: 400, error: { message: 'Formato de carnet de identidad invalido para Bolivia' } })),
+    );
+
+    fixture.detectChanges();
+    (component as any).activarEdicion();
+    (component as any).editForm.patchValue({
+      carnetIdentidad: '1234567',
+    });
+
+    (component as any).guardarEdicion();
+
+    expect(toastServiceSpy.error).toHaveBeenCalledWith('perfil.error.carnetInvalidFormat');
+  });
+
+  it('rejects birth date when age is less than 16', () => {
+    fixture.detectChanges();
+
+    const now = new Date();
+    const underageDate = {
+      year: now.getFullYear() - 15,
+      month: now.getMonth() + 1,
+      day: now.getDate(),
+    };
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.fechaNacimiento.setValue(underageDate);
+    (component as any).editForm.controls.fechaNacimiento.markAsTouched();
+
+    expect((component as any).editForm.controls.fechaNacimiento.invalid).toBeTrue();
+    expect((component as any).getErrorMessageFechaNacimiento()).toBe('perfil.validation.fechaNacimiento.outOfRange');
+  });
+
+  it('accepts birth date when age is between 16 and 70', () => {
+    fixture.detectChanges();
+
+    const now = new Date();
+    const validDate = {
+      year: now.getFullYear() - 20,
+      month: now.getMonth() + 1,
+      day: now.getDate(),
+    };
+
+    (component as any).activarEdicion();
+    (component as any).editForm.controls.fechaNacimiento.setValue(validDate);
+    (component as any).editForm.controls.fechaNacimiento.markAsTouched();
+
+    expect((component as any).editForm.controls.fechaNacimiento.valid).toBeTrue();
+  });
+
+  it('marks new password as invalid when it does not meet policy', () => {
+    fixture.detectChanges();
+
+    (component as any).abrirCambioContrasenia();
+    (component as any).passwordForm.patchValue({
+      currentPassword: 'actual1234',
+      newPassword: 'nuevapassword123',
+      confirmNewPassword: 'nuevapassword123',
+    });
+
+    expect((component as any).passwordForm.controls.newPassword.invalid).toBeTrue();
+    expect((component as any).passwordForm.controls.newPassword.errors?.['weakPassword']).toBeTrue();
   });
 });

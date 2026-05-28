@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 .materia-container {
     max-width: 900px;
     margin: 2rem auto;
@@ -59,7 +61,7 @@
                 cursor: pointer;
                 transition: color 0.2s;
                 &:hover {
-                    color: darken(#9f2017, 10%);
+                    color: color.adjust(#9f2017, $lightness: -10%);
                 }
             }
         }
@@ -117,7 +119,7 @@
             color: var(--color-blue-dark);
             border: 1px solid #ccc;
             &:hover {
-                background: darken(#e5e1d3, 5%);
+                background: color.adjust(#e5e1d3, $lightness: -5%);
             }
         }
 

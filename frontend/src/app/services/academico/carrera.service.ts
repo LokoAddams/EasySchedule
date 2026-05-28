@@ -10,6 +10,13 @@ export interface CarreraCatalogoItem {
   codigo: string;
 }
 
+export interface CarreraRequest {
+  universidadId: number;
+  nombre: string;
+  codigo: string;
+  active?: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -18,5 +25,9 @@ export class CarreraService {
 
   getCarrerasActivasPorUniversidad(universidadId: number): Observable<CarreraCatalogoItem[]> {
     return this.apiService.get<CarreraCatalogoItem[]>(`/api/academico/carreras?universidadId=${universidadId}`);
+  }
+
+  createCarrera(request: CarreraRequest): Observable<CarreraCatalogoItem> {
+    return this.apiService.post<CarreraCatalogoItem, CarreraRequest>('/api/academico/carreras', request);
   }
 }

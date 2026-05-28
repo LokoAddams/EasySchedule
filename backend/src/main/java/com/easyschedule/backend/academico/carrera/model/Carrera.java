@@ -27,23 +27,43 @@ public class Carrera {
 	@Column(nullable = false)
 	private boolean active = true;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Long getUniversidadId() {
-		return universidadId;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    public Long getUniversidadId() {
+        return universidadId;
+    }
 
-	public String getCodigo() {
-		return codigo;
-	}
+    public void setUniversidadId(Long universidadId) {
+        this.universidadId = universidadId;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

@@ -55,6 +55,28 @@
           <small class="form-error"
             *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['minlength']">{{
             'registro.validation.passwordMin' | translate }}</small>
+
+          <ul class="password-checklist">
+            <li [class.ok]="getPasswordChecklist().minLength">
+              {{ 'registro.validation.passwordChecklist.minLength' | translate }}
+            </li>
+            <li [class.ok]="getPasswordChecklist().uppercase">
+              {{ 'registro.validation.passwordChecklist.uppercase' | translate }}
+            </li>
+            <li [class.ok]="getPasswordChecklist().lowercase">
+              {{ 'registro.validation.passwordChecklist.lowercase' | translate }}
+            </li>
+            <li [class.ok]="getPasswordChecklist().number">
+              {{ 'registro.validation.passwordChecklist.number' | translate }}
+            </li>
+            <li [class.ok]="getPasswordChecklist().special">
+              {{ 'registro.validation.passwordChecklist.special' | translate }}
+            </li>
+          </ul>
+
+          <small class="form-error" *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['weakPassword']">
+            {{ 'registro.validation.passwordWeak' | translate }}
+          </small>
         </div>
 
         <div class="form-group">

@@ -11,7 +11,13 @@ import { ToastService } from '../../core/services/toast.service';
 import { SeleccionAcademicaService } from '../../services/academico/seleccion-academica.service';
 import { ChangePasswordRequest, PerfilResponse, PerfilUpdateRequest } from './perfil.model';
 import { PerfilService } from './perfil.service';
-import { carnetIdentidadValidator, nombreValidator, usernameValidator, emailValidator } from './perfil-validators';
+import {
+  carnetIdentidadValidator,
+  nombreValidator,
+  usernameValidator,
+  emailValidator,
+  fechaNacimientoEdadValidator,
+} from './perfil-validators';
 
 type PerfilEditForm = FormGroup<{
   username: FormControl<string>;
@@ -30,6 +36,14 @@ type PasswordChangeForm = FormGroup<{
   confirmNewPassword: FormControl<string>;
 }>;
 
+type PasswordPolicyChecklist = {
+  minLength: boolean;
+  uppercase: boolean;
+  lowercase: boolean;
+  number: boolean;
+  special: boolean;
+};
+
 @Component({
   selector: 'app-perfil',
   imports: [CommonModule, ReactiveFormsModule, NgbDatepickerModule, TranslatePipe, NgbPopoverModule],
@@ -37,6 +51,9 @@ type PasswordChangeForm = FormGroup<{
   styleUrl: './perfil.scss',
 })
 export class Perfil implements OnInit {
+  private static readonly EDAD_MINIMA = 16;
+  private static readonly EDAD_MAXIMA = 70;
+
   protected perfil: PerfilResponse | null = null;
   protected editMode = false;
   protected loading = true;
@@ -48,7 +65,7 @@ export class Perfil implements OnInit {
   protected showCurrentPassword = false;
   protected showNewPassword = false;
   protected showConfirmNewPassword = false;
-  protected readonly fechaNacimientoMinDate: NgbDateStruct = { year: 1950, month: 1, day: 1 };
+  protected readonly fechaNacimientoMinDate: NgbDateStruct;
   protected readonly fechaNacimientoMaxDate: NgbDateStruct;
   protected readonly editForm: PerfilEditForm;
   protected readonly passwordForm: PasswordChangeForm;
@@ -70,11 +87,8 @@ export class Perfil implements OnInit {
     private readonly translateService: TranslateService,
   ) {
     const today = new Date();
-    this.fechaNacimientoMaxDate = {
-      year: today.getFullYear(),
-      month: today.getMonth() + 1,
-      day: today.getDate(),
-    };
+    this.fechaNacimientoMaxDate = this.getBirthDateBoundary(today, Perfil.EDAD_MINIMA);
+    this.fechaNacimientoMinDate = this.getBirthDateBoundary(today, Perfil.EDAD_MAXIMA);
 
     this.editForm = this.fb.group({
       username: this.fb.nonNullable.control('', [Validators.required, usernameValidator()]),
@@ -82,7 +96,7 @@ export class Perfil implements OnInit {
       apellido: this.fb.nonNullable.control('', [Validators.required, nombreValidator()]),
       email: this.fb.nonNullable.control('', [Validators.required, Validators.email, emailValidator()]),
       carnetIdentidad: this.fb.nonNullable.control('', [Validators.required, carnetIdentidadValidator()]),
-      fechaNacimiento: this.fb.control<NgbDateStruct | null>(null, [Validators.required]),
+      fechaNacimiento: this.fb.control<NgbDateStruct | null>(null, [Validators.required, fechaNacimientoEdadValidator(Perfil.EDAD_MINIMA, Perfil.EDAD_MAXIMA)]),
       carrera: this.fb.nonNullable.control(''),
       universidad: this.fb.nonNullable.control(''),
     }) as PerfilEditForm;
@@ -90,7 +104,7 @@ export class Perfil implements OnInit {
     this.passwordForm = this.fb.group(
       {
         currentPassword: this.fb.nonNullable.control('', [Validators.required]),
-        newPassword: this.fb.nonNullable.control('', [Validators.required, Validators.minLength(8)]),
+        newPassword: this.fb.nonNullable.control('', [Validators.required, Validators.minLength(8), this.passwordPolicyValidator]),
         confirmNewPassword: this.fb.nonNullable.control('', [Validators.required]),
       },
       { validators: this.passwordsMatchValidator },
@@ -216,7 +230,7 @@ export class Perfil implements OnInit {
       nombre: this.editForm.controls.nombre.value.trim(),
       apellido: this.editForm.controls.apellido.value.trim(),
       email,
-      carnetIdentidad: this.editForm.controls.carnetIdentidad.value.trim(),
+      carnetIdentidad: this.normalizeCarnetIdentidadInput(this.editForm.controls.carnetIdentidad.value),
       fechaNacimiento: this.formatDateForApi(this.editForm.controls.fechaNacimiento.value),
       carrera,
       universidad,
@@ -286,6 +300,11 @@ export class Perfil implements OnInit {
 
         if (backendMessage.includes('contrasenia actual es incorrecta') || backendMessage.includes('contrasena actual es incorrecta')) {
           this.toastService.error('perfil.password.error.currentIncorrect');
+          return;
+        }
+
+        if (backendMessage.includes('mayuscula') || backendMessage.includes('minuscula') || backendMessage.includes('caracter especial')) {
+          this.toastService.error('perfil.password.error.weakPolicy');
           return;
         }
 
@@ -367,6 +386,14 @@ export class Perfil implements OnInit {
           }
         }
 
+        if (error.status === 400) {
+          const backendMessage = this.extractBackendMessage(error);
+          if (backendMessage.includes('carnet')) {
+            this.toastService.error('perfil.error.carnetInvalidFormat');
+            return;
+          }
+        }
+
         this.errorKey = 'perfil.error.saveFailed';
         this.toastService.error('perfil.error.saveFailed');
       },
@@ -399,6 +426,14 @@ export class Perfil implements OnInit {
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
       .trim();
+  }
+
+  private getBirthDateBoundary(referenceDate: Date, age: number): NgbDateStruct {
+    return {
+      year: referenceDate.getFullYear() - age,
+      month: referenceDate.getMonth() + 1,
+      day: referenceDate.getDate(),
+    };
   }
 
   protected getNombreCompleto(): string {
@@ -528,6 +563,10 @@ export class Perfil implements OnInit {
     return `${dateStruct.year}-${month}-${day}`;
   }
 
+  private normalizeCarnetIdentidadInput(value: string): string {
+    return value.trim().replace(/\s+/g, ' ').toUpperCase();
+  }
+
   protected getErrorMessageCarnet(): string {
     const control = this.editForm.controls.carnetIdentidad;
     
@@ -548,6 +587,28 @@ export class Perfil implements OnInit {
     }
 
     return '';
+  }
+
+  protected getErrorMessageFechaNacimiento(): string {
+    const control = this.editForm.controls.fechaNacimiento;
+
+    if (!control.touched || !control.errors) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return 'perfil.validation.required';
+    }
+
+    if (control.errors['fechaNacimientoFuture']) {
+      return 'perfil.validation.fechaNacimiento.future';
+    }
+
+    if (control.errors['fechaNacimientoOutOfRange']) {
+      return 'perfil.validation.fechaNacimiento.outOfRange';
+    }
+
+    return 'perfil.validation.fechaNacimiento.invalid';
   }
 
   protected getErrorMessageNombre(): string {
@@ -577,7 +638,29 @@ export class Perfil implements OnInit {
   }
 
   protected getErrorMessageApellido(): string {
-    return this.getErrorMessageNombre(); // Usa las mismas reglas que nombre
+    const control = this.editForm.controls.apellido;
+    
+    if (!control.touched || !control.errors) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return 'perfil.validation.required';
+    }
+
+    if (control.errors['nombreMinLength']) {
+      return 'perfil.validation.nombre.minLength';
+    }
+
+    if (control.errors['nombreMaxLength']) {
+      return 'perfil.validation.nombre.maxLength';
+    }
+
+    if (control.errors['nombreInvalidChars']) {
+      return 'perfil.validation.nombre.invalidChars';
+    }
+
+    return '';
   }
 
   protected getErrorMessageUsername(): string {
@@ -637,5 +720,34 @@ export class Perfil implements OnInit {
     }
 
     return newPassword === confirmNewPassword ? null : { passwordMismatch: true };
+  };
+
+  protected getPasswordPolicyChecklist(): PasswordPolicyChecklist {
+    const newPassword = String(this.passwordForm.controls.newPassword.value ?? '');
+
+    return {
+      minLength: newPassword.length >= 8,
+      uppercase: /[A-Z]/.test(newPassword),
+      lowercase: /[a-z]/.test(newPassword),
+      number: /\d/.test(newPassword),
+      special: /[^A-Za-z0-9]/.test(newPassword),
+    };
+  }
+
+  private passwordPolicyValidator = (control: FormControl<string>): ValidationErrors | null => {
+    const password = String(control.value ?? '');
+    if (!password) {
+      return null;
+    }
+
+    const checklist = {
+      minLength: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      special: /[^A-Za-z0-9]/.test(password),
+    };
+
+    return Object.values(checklist).every(Boolean) ? null : { weakPassword: true };
   };
 }
