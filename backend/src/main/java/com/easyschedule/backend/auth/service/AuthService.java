@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.easyschedule.backend.auth.dto.request.SignupRequest;
 import com.easyschedule.backend.auth.models.User;
+import com.easyschedule.backend.auth.dto.request.GoogleLoginRequest;
 
 import com.easyschedule.backend.auth.repositories.UserRepository;
 import com.easyschedule.backend.auth.dto.request.ChangePasswordRequest;
@@ -28,11 +29,13 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final SessionTokenService sessionTokenService;
+    private final GoogleTokenVerifierService googleTokenVerifierService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder encoder, SessionTokenService sessionTokenService) {
+    public AuthService(UserRepository userRepository, PasswordEncoder encoder, SessionTokenService sessionTokenService, GoogleTokenVerifierService googleTokenVerifierService) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.sessionTokenService = sessionTokenService;
+        this.googleTokenVerifierService = googleTokenVerifierService;
     }
 
     public void registerUser(SignupRequest signUpRequest) {
@@ -80,6 +83,13 @@ public class AuthService {
         User user = userOpt.get();
     
 
+        if (user.getPasswordHash() == null || user.getPasswordHash().isBlank()) {
+            log.warn("[AUTH_LOGIN] fallo autenticacion | userId={} motivo=password_no_configurada", user.getId());
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Credenciales incorrectas");
+        }
+
         if (!encoder.matches(request.getPassword(), user.getPasswordHash())) {
             log.warn("[AUTH_LOGIN] fallo autenticacion | userId={} motivo=password_incorrecta", user.getId());
             return ResponseEntity
@@ -99,6 +109,43 @@ public class AuthService {
                 "expiresInSeconds", sessionTokenService.getTokenTtlSeconds(),
                 "message", "Login exitoso"
             )
+        );
+    }
+
+    public ResponseEntity<?> loginWithGoogle(GoogleLoginRequest request) {
+        String credential = request.getCredential();
+
+        if (credential == null || credential.isBlank()) {
+            log.warn("[AUTH_GOOGLE] fallo autenticacion | motivo=credential_vacia");
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Login con Google invalido");
+        }
+
+        GoogleUserInfo googleUserInfo = googleTokenVerifierService.verify(credential);
+
+        if (googleUserInfo == null) {
+            log.warn("[AUTH_GOOGLE] fallo autenticacion | motivo=token_invalido");
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Login con Google invalido");
+        }
+
+        User user = userRepository.findByEmailIgnoreCase(googleUserInfo.email())
+                .map(existingUser -> updateGoogleAssociation(existingUser, googleUserInfo))
+                .orElseGet(() -> createGoogleUser(googleUserInfo));
+
+        String token = sessionTokenService.issueToken(user.getId());
+
+        log.info("[AUTH_GOOGLE] autenticacion exitosa | userId={} username={}", user.getId(), user.getUsername());
+
+        return ResponseEntity.ok().body(
+                Map.of(
+                        "token", token,
+                        "username", user.getUsername(),
+                        "expiresInSeconds", sessionTokenService.getTokenTtlSeconds(),
+                        "message", "Login con Google exitoso"
+                )
         );
     }
 
@@ -140,6 +187,83 @@ public class AuthService {
         log.info("[AUTH_CHANGE_PASSWORD] exito | userId={}", userId);
     
         return ResponseEntity.ok().body(Map.of("message", "Contrasenia actualizada correctamente"));
+    }
+
+    private User updateGoogleAssociation(User user, GoogleUserInfo googleUserInfo) {
+        boolean changed = false;
+
+        if (user.getGoogleId() == null || user.getGoogleId().isBlank()) {
+            user.setGoogleId(googleUserInfo.googleId());
+            changed = true;
+        }
+
+        if (user.getAuthProvider() == null || user.getAuthProvider().isBlank()) {
+            user.setAuthProvider("GOOGLE");
+            changed = true;
+        }
+
+        if (changed) {
+            user.setUpdatedAt(OffsetDateTime.now());
+            return userRepository.save(user);
+        }
+
+        return user;
+    }
+
+    private User createGoogleUser(GoogleUserInfo googleUserInfo) {
+        String baseUsername = buildUsernameFromEmail(googleUserInfo.email());
+        String username = buildUniqueUsername(baseUsername);
+
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(googleUserInfo.email());
+        user.setPasswordHash(null);
+        user.setGoogleId(googleUserInfo.googleId());
+        user.setAuthProvider("GOOGLE");
+        user.setActive(true);
+        user.setTokenVersion(0);
+        user.setCreatedAt(OffsetDateTime.now());
+        user.setUpdatedAt(OffsetDateTime.now());
+
+        User savedUser = userRepository.save(user);
+
+        log.info("[AUTH_GOOGLE] usuario creado con Google | userId={} username={}", savedUser.getId(), savedUser.getUsername());
+
+        return savedUser;
+    }
+
+    private String buildUsernameFromEmail(String email) {
+        String localPart = email.split("@")[0]
+                .replaceAll("[^a-zA-Z0-9_]", "");
+
+        if (localPart.length() < 3) {
+            localPart = "user";
+        }
+
+        if (localPart.length() > 20) {
+            return localPart.substring(0, 20);
+        }
+
+        return localPart;
+    }
+
+    private String buildUniqueUsername(String baseUsername) {
+        String candidate = baseUsername;
+        int suffix = 1;
+
+        while (Boolean.TRUE.equals(userRepository.existsByUsernameIgnoreCase(candidate))) {
+            String suffixText = String.valueOf(suffix);
+            int maxBaseLength = 20 - suffixText.length();
+
+            String trimmedBase = baseUsername.length() > maxBaseLength
+                    ? baseUsername.substring(0, maxBaseLength)
+                    : baseUsername;
+
+            candidate = trimmedBase + suffixText;
+            suffix++;
+        }
+
+        return candidate;
     }
 
     private String extractBearerToken(String authorizationHeader) {

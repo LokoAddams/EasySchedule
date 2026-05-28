@@ -32,6 +32,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
                 .requestMatchers(HttpMethod.POST,"/api/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/login/google").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/registro").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/estudiantes/registro").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/features").permitAll()

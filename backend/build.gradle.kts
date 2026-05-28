@@ -30,6 +30,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
 	implementation("com.github.librepdf:openpdf:1.3.30")
+	implementation("com.google.api-client:google-api-client:2.7.2")
+	implementation("com.google.http-client:google-http-client-gson:1.45.0")
 }
 
 tasks.withType<Test> {
