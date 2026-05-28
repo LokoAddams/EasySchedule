@@ -237,25 +237,15 @@
                 >
                 <span>{{ 'tomaMaterias.parallel.any' | translate }}</span>
               </label>
-              <label class="toma-paralelo-option">
+              <label class="toma-paralelo-option" *ngFor="let p of getUniqueParalelos(materia.ofertas)">
                 <input
                   type="radio"
                   [name]="'paralelo-' + materia.id"
-                  value="1"
-                  [checked]="getParalelo(materia.id) === '1'"
-                  (change)="setParalelo(materia.id, '1')"
+                  [value]="p"
+                  [checked]="getParalelo(materia.id) === p"
+                  (change)="setParalelo(materia.id, p)"
                 >
-                <span>{{ 'tomaMaterias.parallel.label' | translate:{ number: 1 } }}</span>
-              </label>
-              <label class="toma-paralelo-option">
-                <input
-                  type="radio"
-                  [name]="'paralelo-' + materia.id"
-                  value="2"
-                  [checked]="getParalelo(materia.id) === '2'"
-                  (change)="setParalelo(materia.id, '2')"
-                >
-                <span>{{ 'tomaMaterias.parallel.label' | translate:{ number: 2 } }}</span>
+                <span>Paralelo {{ p }}</span>
               </label>
             </div>
           </div>
