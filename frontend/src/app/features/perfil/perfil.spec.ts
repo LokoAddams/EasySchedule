@@ -158,16 +158,16 @@ describe('Perfil Component', () => {
     (component as any).abrirCambioContrasenia();
     (component as any).passwordForm.patchValue({
       currentPassword: 'actual1234',
-      newPassword: 'nueva1234',
-      confirmNewPassword: 'nueva1234',
+      newPassword: 'Nueva1234!',
+      confirmNewPassword: 'Nueva1234!',
     });
 
     (component as any).guardarCambioContrasenia();
 
     expect(perfilServiceSpy.changePassword).toHaveBeenCalledWith({
-      currentPassword: 'actual1234',
-      newPassword: 'nueva1234',
-      confirmNewPassword: 'nueva1234',
+        currentPassword: 'actual1234',
+        newPassword: 'Nueva1234!',
+        confirmNewPassword: 'Nueva1234!',
     });
     expect(toastServiceSpy.success).toHaveBeenCalledWith('perfil.password.success.updated');
     expect((component as any).showChangePasswordModal).toBeFalse();
@@ -214,8 +214,8 @@ describe('Perfil Component', () => {
     (component as any).abrirCambioContrasenia();
     (component as any).passwordForm.patchValue({
       currentPassword: 'incorrecta',
-      newPassword: 'nueva1234',
-      confirmNewPassword: 'nueva1234',
+      newPassword: 'Nueva1234!',
+      confirmNewPassword: 'Nueva1234!',
     });
 
     (component as any).guardarCambioContrasenia();
@@ -326,5 +326,19 @@ describe('Perfil Component', () => {
     (component as any).editForm.controls.fechaNacimiento.markAsTouched();
 
     expect((component as any).editForm.controls.fechaNacimiento.valid).toBeTrue();
+  });
+
+  it('marks new password as invalid when it does not meet policy', () => {
+    fixture.detectChanges();
+
+    (component as any).abrirCambioContrasenia();
+    (component as any).passwordForm.patchValue({
+      currentPassword: 'actual1234',
+      newPassword: 'nuevapassword123',
+      confirmNewPassword: 'nuevapassword123',
+    });
+
+    expect((component as any).passwordForm.controls.newPassword.invalid).toBeTrue();
+    expect((component as any).passwordForm.controls.newPassword.errors?.['weakPassword']).toBeTrue();
   });
 });

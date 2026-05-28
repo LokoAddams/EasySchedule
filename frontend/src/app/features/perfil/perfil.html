@@ -240,6 +240,16 @@
 					<small class="form-error" *ngIf="passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.errors?.['minlength']">
 						{{ 'perfil.password.validation.minLength' | translate }}
 					</small>
+					<ul class="password-checklist">
+						<li [class.ok]="getPasswordPolicyChecklist().minLength">{{ 'perfil.password.validation.checklist.minLength' | translate }}</li>
+						<li [class.ok]="getPasswordPolicyChecklist().uppercase">{{ 'perfil.password.validation.checklist.uppercase' | translate }}</li>
+						<li [class.ok]="getPasswordPolicyChecklist().lowercase">{{ 'perfil.password.validation.checklist.lowercase' | translate }}</li>
+						<li [class.ok]="getPasswordPolicyChecklist().number">{{ 'perfil.password.validation.checklist.number' | translate }}</li>
+						<li [class.ok]="getPasswordPolicyChecklist().special">{{ 'perfil.password.validation.checklist.special' | translate }}</li>
+					</ul>
+					<small class="form-error" *ngIf="passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.errors?.['weakPassword']">
+						{{ 'perfil.password.validation.weakPolicy' | translate }}
+					</small>
 				</label>
 
 				<label class="perfil-field">

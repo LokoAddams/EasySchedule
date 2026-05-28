@@ -2,6 +2,7 @@ package com.easyschedule.backend.auth.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import com.easyschedule.backend.shared.validation.PasswordPolicy;
 
 public class ChangePasswordRequest {
 
@@ -11,6 +12,7 @@ public class ChangePasswordRequest {
 
     @NotBlank(message = "La nueva contrasenia es obligatoria")
     @Size(min = 8, max = 120, message = "La nueva contrasenia debe tener entre 8 y 120 caracteres")
+    @PasswordPolicy(message = "La nueva contrasenia debe tener minimo 8 caracteres, incluir una mayuscula, una minuscula, un numero y un caracter especial")
     private String newPassword;
 
     @NotBlank(message = "Debes repetir la nueva contrasenia")

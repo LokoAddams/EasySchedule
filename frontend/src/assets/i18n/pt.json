@@ -423,7 +423,15 @@
       },
       "validation": {
         "minLength": "A nova senha deve ter pelo menos 8 caracteres.",
-        "mismatch": "A nova senha e a confirmação não coincidem."
+        "mismatch": "A nova senha e a confirmação não coincidem.",
+        "weakPolicy": "A nova senha não atende à política de segurança.",
+        "checklist": {
+          "minLength": "Pelo menos 8 caracteres",
+          "uppercase": "Pelo menos 1 letra maiúscula",
+          "lowercase": "Pelo menos 1 letra minúscula",
+          "number": "Pelo menos 1 número",
+          "special": "Pelo menos 1 caractere especial"
+        }
       },
       "success": {
         "updated": "Senha atualizada com sucesso."
@@ -432,6 +440,7 @@
         "currentIncorrect": "A senha atual está incorreta.",
         "sameAsCurrent": "A nova senha deve ser diferente da senha atual.",
         "mismatch": "A nova senha e a confirmação não coincidem.",
+        "weakPolicy": "A nova senha não atende à política de segurança.",
         "unauthorized": "Sua sessão expirou. Faça login novamente.",
         "generic": "Não foi possível alterar a senha. Tente novamente."
       }
@@ -473,6 +482,14 @@
       "emailRequired": "O email é obrigatório",
       "emailInvalid": "Formato de email inválido",
       "passwordMin": "A senha deve ter pelo menos 8 caracteres",
+      "passwordWeak": "A senha não atende aos critérios de segurança.",
+      "passwordChecklist": {
+        "minLength": "Pelo menos 8 caracteres",
+        "uppercase": "Pelo menos 1 letra maiúscula",
+        "lowercase": "Pelo menos 1 letra minúscula",
+        "number": "Pelo menos 1 número",
+        "special": "Pelo menos 1 caractere especial"
+      },
       "confirmRequired": "Você deve confirmar sua senha",
       "passwordMismatch": "As senhas não coincidem"
     },
@@ -486,6 +503,7 @@
     "error": {
       "userExists": "O usuário já está registrado",
       "emailExists": "O email já está registrado",
+      "weakPassword": "A senha não atende à política de segurança",
       "invalidData": "Dados inválidos",
       "backendConnection": "Não foi possível conectar ao backend",
       "server": "Erro no servidor. Tente novamente"

@@ -433,7 +433,15 @@
       },
       "validation": {
         "minLength": "La nueva contraseña debe tener al menos 8 caracteres.",
-        "mismatch": "La nueva contraseña y su repetición no coinciden."
+        "mismatch": "La nueva contraseña y su repetición no coinciden.",
+        "weakPolicy": "La nueva contraseña no cumple la política de seguridad.",
+        "checklist": {
+          "minLength": "Mínimo 8 caracteres",
+          "uppercase": "Al menos 1 mayúscula",
+          "lowercase": "Al menos 1 minúscula",
+          "number": "Al menos 1 número",
+          "special": "Al menos 1 carácter especial"
+        }
       },
       "success": {
         "updated": "Contraseña actualizada correctamente."
@@ -442,6 +450,7 @@
         "currentIncorrect": "La contraseña actual no es correcta.",
         "sameAsCurrent": "La nueva contraseña debe ser distinta a la actual.",
         "mismatch": "La nueva contraseña y su repetición no coinciden.",
+        "weakPolicy": "La nueva contraseña no cumple la política de seguridad.",
         "unauthorized": "Tu sesión expiró. Vuelve a iniciar sesión.",
         "generic": "No se pudo cambiar la contraseña. Intenta nuevamente."
       }
@@ -483,6 +492,14 @@
       "emailRequired": "El correo es obligatorio",
       "emailInvalid": "Formato de correo inválido",
       "passwordMin": "La contraseña debe tener mínimo 8 caracteres",
+      "passwordWeak": "La contraseña no cumple los criterios de seguridad.",
+      "passwordChecklist": {
+        "minLength": "Mínimo 8 caracteres",
+        "uppercase": "Al menos 1 mayúscula",
+        "lowercase": "Al menos 1 minúscula",
+        "number": "Al menos 1 número",
+        "special": "Al menos 1 carácter especial"
+      },
       "confirmRequired": "Debes confirmar tu contraseña",
       "passwordMismatch": "Las contraseñas no coinciden"
     },
@@ -496,6 +513,7 @@
     "error": {
       "userExists": "El usuario ya está registrado",
       "emailExists": "El correo ya está registrado",
+      "weakPassword": "La contraseña no cumple la política de seguridad",
       "invalidData": "Datos inválidos",
       "backendConnection": "No se pudo conectar con el backend",
       "server": "Error del servidor. Intenta nuevamente"

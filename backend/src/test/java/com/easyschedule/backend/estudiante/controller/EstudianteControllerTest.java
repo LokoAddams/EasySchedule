@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -45,6 +46,40 @@ class EstudianteControllerTest {
     @MockitoBean
     private EstudianteMallaExportService exportService;
 
+
+    @Test
+    void registerReturnsCreatedWhenRequestIsValid() throws Exception {
+        when(estudianteService.register(any())).thenReturn(mockResponse("diego"));
+
+        String requestBody = """
+            {
+              "username": "diego",
+              "email": "diego@mail.com",
+              "password": "Abcd1234!"
+            }
+            """;
+
+        mockMvc.perform(post("/api/estudiantes/registro")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+            .andExpect(status().isCreated());
+    }
+
+    @Test
+    void registerReturnsBadRequestWhenPasswordIsWeak() throws Exception {
+        String requestBody = """
+            {
+              "username": "diego",
+              "email": "diego@mail.com",
+              "password": "abcd1234"
+            }
+            """;
+
+        mockMvc.perform(post("/api/estudiantes/registro")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+            .andExpect(status().isBadRequest());
+    }
 
     @Test
     void findProfileByUsernameReturnsOk() throws Exception {

@@ -2,6 +2,7 @@
 package com.easyschedule.backend.auth.dto.request;
 
 import jakarta.validation.constraints.*;
+import com.easyschedule.backend.shared.validation.PasswordPolicy;
  
 public class SignupRequest {
     @NotBlank
@@ -14,7 +15,8 @@ public class SignupRequest {
     private String email;
 
     @NotBlank
-    @Size(min = 6, max = 40)
+    @Size(min = 8, max = 120)
+    @PasswordPolicy
     private String password;
   
     public String getUsername() {
