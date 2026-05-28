@@ -189,7 +189,7 @@
 						</button>
 					</div>
 					<small class="form-error" *ngIf="editForm.controls.fechaNacimiento.touched && editForm.controls.fechaNacimiento.invalid">
-						{{ 'perfil.validation.required' | translate }}
+						{{ getErrorMessageFechaNacimiento() | translate }}
 					</small>
 				</label>
 			</div>

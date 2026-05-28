@@ -258,6 +258,15 @@
       "confirm": "Confirmar importação",
       "processing": "Processando...",
       "importSuccessToast": "Importação de ofertas concluída corretamente."
+    },
+    "export": {
+      "button": "Exportar avanço",
+      "loading": "Exportando...",
+      "success": "Relatório baixado com sucesso.",
+      "insufficientData": "Não há dados suficientes para gerar o relatório.",
+      "connectionError": "Não foi possível conectar ao servidor. Tente novamente.",
+      "downloadError": "Não foi possível baixar o relatório. Tente novamente.",
+      "notAuthenticated": "Inicie sessão para exportar seu avanço."
     }
   },
   "tomaMaterias": {
@@ -375,11 +384,11 @@
       "required": "Este campo é obrigatório.",
       "emailInvalid": "Formato de email inválido.",
       "carnet": {
-        "maxLength": "O documento de identidade não pode exceder 8 caracteres.",
-        "invalidChars": "O documento de identidade só pode conter letras e números."
+        "maxLength": "O documento de identidade não pode exceder 16 caracteres.",
+        "invalidChars": "Informe um CI boliviano válido (ex: 1234567, 1234567-1A ou 1234567 LP)."
       },
       "nome": {
-        "minLength": "O nome deve ter pelo menos 2 caracteres.",
+        "minLength": "O nome deve ter pelo menos 3 caracteres.",
         "maxLength": "O nome não pode exceder 50 caracteres.",
         "invalidChars": "O nome só pode conter letras, espaços e acentos."
       },
@@ -390,6 +399,11 @@
       },
       "email": {
         "maxLength": "O email não pode exceder 100 caracteres."
+      },
+      "fechaNacimiento": {
+        "future": "A data de nascimento não pode estar no futuro.",
+        "outOfRange": "A data de nascimento deve corresponder a uma idade entre 16 e 70 anos.",
+        "invalid": "Informe uma data de nascimento válida."
       }
     },
     "success": {
@@ -446,7 +460,8 @@
       "mallaNotFound": "Não existe uma grade para o curso e universidade selecionados.",
       "usernameTaken": "Esse nome de usuário já está em uso.",
       "emailTaken": "Esse email já está cadastrado.",
-      "carnetTaken": "Esse documento de identidade já está em uso."
+      "carnetTaken": "Esse documento de identidade já está em uso.",
+      "carnetInvalidFormat": "Formato de documento inválido. Use um CI boliviano válido."
     }
   },
   "registro": {

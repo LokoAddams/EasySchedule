@@ -1,1 +1,63 @@
-<p class="placeholder-page">{{ 'materia.placeholder' | translate }}</p>
+<div class="materia-container">
+  <div class="header">
+    <h2>Configurar Materia</h2>
+    <p>Agrega los días, horarios, docente y aula para tu materia.</p>
+  </div>
+
+  <form [formGroup]="materiaForm" (ngSubmit)="save()">
+    <div formArrayName="bloques" class="bloques-list">
+      <div *ngFor="let bloque of bloques.controls; let i=index" [formGroupName]="i" class="bloque-card">
+        
+        <div class="header-card">
+          <h4>Bloque {{i + 1}}</h4>
+          <button type="button" class="btn-remove" (click)="removeBloque(i)" title="Eliminar bloque">
+             <i class="icon-trash">✕</i>
+          </button>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>Día</label>
+                <select formControlName="dia">
+                    <option value="" disabled>Seleccione un día</option>
+                    <option *ngFor="let d of dias" [value]="d">{{d}}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Bloque (Horario)</label>
+                <select formControlName="bloque">
+                    <option value="" disabled>Seleccione horario</option>
+                    <option *ngFor="let b of bloquesHorarios" [value]="b">{{b}}</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Docente</label>
+                <input type="text" formControlName="docente" placeholder="Nombre completo">
+            </div>
+
+            <div class="form-group">
+                <label>Aula</label>
+                <input type="text" formControlName="aula" placeholder="Ej. A-101">
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+        <button type="button" class="btn-add" (click)="addBloque()">+ Añadir Bloque</button>
+        <button type="button" class="btn-clear" (click)="clearBloques()">Borrar Todos</button>
+    </div>
+
+    <div class="messages">
+        <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+        <div class="success-msg" *ngIf="successMessage">{{ successMessage }}</div>
+    </div>
+
+    <div class="footer-actions">
+        <button type="submit" class="btn-save">Guardar Configuración</button>
+    </div>
+
+  </form>
+</div>
