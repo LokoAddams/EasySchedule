@@ -5,12 +5,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-
+import com.easyschedule.backend.estudiante.dto.AvanceGraduacionExport;
+import com.easyschedule.backend.estudiante.service.EstudianteMallaExportService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -39,6 +41,10 @@ class EstudianteControllerTest {
 
     @MockitoBean
     private BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter;
+
+    @MockitoBean
+    private EstudianteMallaExportService exportService;
+
 
     @Test
     void findProfileByUsernameReturnsOk() throws Exception {
@@ -102,6 +108,25 @@ class EstudianteControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidBody))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void exportarAvanceGraduacionReturnsDownloadablePdfForAuthenticatedUser() throws Exception {
+        when(exportService.exportarAvanceGraduacion(1L, "pdf"))
+            .thenReturn(new AvanceGraduacionExport("%PDF-test".getBytes(), "application/pdf", "avance_graduacion.pdf"));
+
+        mockMvc.perform(get("/api/estudiantes/me/avance-graduacion/export").principal(() -> "1"))
+            .andExpect(status().isOk())
+            .andExpect(header().string("Content-Type", "application/pdf"))
+            .andExpect(header().string("Content-Disposition", "attachment; filename=\"avance_graduacion.pdf\""));
+
+        verify(exportService).exportarAvanceGraduacion(1L, "pdf");
+    }
+
+    @Test
+    void exportarAvanceGraduacionReturnsUnauthorizedWhenPrincipalMissing() throws Exception {
+        mockMvc.perform(get("/api/estudiantes/me/avance-graduacion/export"))
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
