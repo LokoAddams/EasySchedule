@@ -43,7 +43,7 @@ class AuthControllerTest {
                 {
                   "username": "newuser",
                   "email": "newuser@mail.com",
-                  "password": "123456"
+                  "password": "Abcd1234!"
                 }
                 """;
 
@@ -65,7 +65,7 @@ class AuthControllerTest {
                 {
                   "username": "duplicate",
                   "email": "duplicate@mail.com",
-                  "password": "123456"
+                  "password": "Abcd1234!"
                 }
                 """;
 
@@ -95,12 +95,30 @@ class AuthControllerTest {
     }
 
     @Test
+    void registerUserReturnsBadRequestWhenPasswordIsWeak() throws Exception {
+        String requestBody = """
+                {
+                  "username": "newuser",
+                  "email": "newuser@mail.com",
+                  "password": "abcd1234"
+                }
+                """;
+
+        mockMvc.perform(post("/api/registro")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+
+        verify(authService, never()).registerUser(any(SignupRequest.class));
+    }
+
+    @Test
     void changePasswordReturnsOkWhenRequestIsValid() throws Exception {
         String requestBody = """
                 {
                   "currentPassword": "actual1234",
-                  "newPassword": "nuevaPassword123",
-                  "confirmNewPassword": "nuevaPassword123"
+                  "newPassword": "NuevaPassword123!",
+                  "confirmNewPassword": "NuevaPassword123!"
                 }
                 """;
 
@@ -109,5 +127,22 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void changePasswordReturnsBadRequestWhenNewPasswordIsWeak() throws Exception {
+        String requestBody = """
+                {
+                  "currentPassword": "actual1234",
+                  "newPassword": "nuevapassword123",
+                  "confirmNewPassword": "nuevapassword123"
+                }
+                """;
+
+        mockMvc.perform(post("/api/change-password")
+                        .principal(() -> "19")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
     }
 }
