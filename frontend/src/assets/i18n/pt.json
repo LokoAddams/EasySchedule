@@ -267,6 +267,22 @@
       "connectionError": "Não foi possível conectar ao servidor. Tente novamente.",
       "downloadError": "Não foi possível baixar o relatório. Tente novamente.",
       "notAuthenticated": "Inicie sessão para exportar seu avanço."
+    },
+    "prerequisito": {
+      "button": "Adicionar pré-requisito",
+      "modalTitle": "Adicionar pré-requisito a: {{materia}}",
+      "helpText": "Marque disciplinas para adicionar como pré-requisito. Desmarque as existentes para removê-las:",
+      "noAvailable": "Nenhuma disciplina disponível como pré-requisito. As disciplinas devem ser de semestres anteriores a \"{{materia}}\" (Semestre {{semestre}}).",
+      "semesterTitle": "Semestre {{sem}}",
+      "badgeExisting": "Adicionado",
+      "badgeRemove": "Será removido",
+      "save": "Salvar alterações",
+      "saving": "Salvando...",
+      "close": "Fechar",
+      "successAdd": "Pré-requisito adicionado corretamente.",
+      "successAddMultiple": "{{count}} pré-requisitos adicionados corretamente.",
+      "successPartial": "Operação concluída: {{added}} adicionado(s), {{removed}} removido(s).",
+      "errorGeneric": "Erro ao criar pré-requisito"
     }
   },
   "tomaMaterias": {

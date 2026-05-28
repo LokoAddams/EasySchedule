@@ -266,6 +266,22 @@
       "connectionError": "Could not connect to the server. Please try again.",
       "downloadError": "Could not download the report. Please try again.",
       "notAuthenticated": "Sign in to export your progress."
+    },
+    "prerequisito": {
+      "button": " Add prerequisite",
+      "modalTitle": "Add prerequisite to: {{materia}}",
+      "helpText": "Check subjects to add as prerequisites. Uncheck existing ones to remove them:",
+      "noAvailable": "No subjects available as prerequisites. Subjects must belong to earlier semesters than \"{{materia}}\" (Semester {{semestre}}).",
+      "semesterTitle": "Semester {{sem}}",
+      "badgeExisting": "Added",
+      "badgeRemove": "Will be removed",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "close": "Close",
+      "successAdd": "Prerequisite added successfully.",
+      "successAddMultiple": "{{count}} prerequisites added successfully.",
+      "successPartial": "Operation completed: {{added}} added, {{removed}} removed.",
+      "errorGeneric": "Error creating prerequisite"
     }
   },
   "tomaMaterias": {

@@ -277,6 +277,22 @@
       "confirm": "Confirmar importación",
       "processing": "Procesando...",
       "importSuccessToast": "Importación de ofertas completada correctamente."
+    },
+    "prerequisito": {
+      "button": " Añadir prerrequisito",
+      "modalTitle": "Añadir prerrequisito a: {{materia}}",
+      "helpText": "Marca materias para agregar como prerrequisito. Desmarca las existentes para quitarlas:",
+      "noAvailable": "No hay materias disponibles como prerrequisito. Las materias deben pertenecer a semestres anteriores al de \"{{materia}}\" (Semestre {{semestre}}).",
+      "semesterTitle": "Semestre {{sem}}",
+      "badgeExisting": "Agregado",
+      "badgeRemove": "Se quitará",
+      "save": "Guardar cambios",
+      "saving": "Guardando...",
+      "close": "Cerrar",
+      "successAdd": "Prerrequisito agregado correctamente.",
+      "successAddMultiple": "Se agregaron {{count}} prerrequisitos correctamente.",
+      "successPartial": "Operación completada: {{added}} agregado(s), {{removed}} quitado(s).",
+      "errorGeneric": "Error al crear prerrequisito"
     }
   },
   "tomaMaterias": {

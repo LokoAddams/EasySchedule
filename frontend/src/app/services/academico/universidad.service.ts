@@ -9,6 +9,12 @@ export interface UniversidadCatalogoItem {
   codigo: string;
 }
 
+export interface UniversidadRequest {
+  nombre: string;
+  codigo: string;
+  active?: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -17,5 +23,9 @@ export class UniversidadService {
 
   getUniversidadesActivas(): Observable<UniversidadCatalogoItem[]> {
     return this.apiService.get<UniversidadCatalogoItem[]>('/api/academico/universidades');
+  }
+
+  createUniversidad(request: UniversidadRequest): Observable<UniversidadCatalogoItem> {
+    return this.apiService.post<UniversidadCatalogoItem, UniversidadRequest>('/api/academico/universidades', request);
   }
 }
