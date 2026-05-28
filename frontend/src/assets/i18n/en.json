@@ -95,7 +95,9 @@
     "button": {
       "submit": "Sign In",
       "gotoRegister": "Create account",
-      "backHome": "Back to home"
+      "backHome": "Back to home",
+      "google": "Sign in with Google",
+      "googleLoading": "Signing in with Google..."
     },
     "validation": {
       "required": "This field is required"
@@ -103,11 +105,19 @@
     "loading": "Signing in...",
     "success": {
       "loggedIn": "Signed in successfully.",
-      "completeProfile": "Signed in. Complete your profile to continue."
+      "completeProfile": "Signed in. Complete your profile to continue.",
+      "googleCredentialReceived": "Google credential received successfully."
     },
     "error": {
       "invalidCredentials": "Invalid credentials",
-      "generic": "Unexpected error"
+      "generic": "Unexpected error",
+      "googleUnavailable": "Could not load Google Sign-In. Please try again.",
+      "googleCancelled": "No Google credential received.",
+      "googleInvalid": "Could not sign in with Google. Please try again.",
+      "googleGeneric": "An error occurred while signing in with Google."
+    },
+    "divider": {
+      "or": "or"
     }
   },
   "malla": {
@@ -511,7 +521,9 @@
     "button": {
       "submit": "Sign Up",
       "gotoLogin": "Sign In",
-      "backHome": "Back to home"
+      "backHome": "Back to home",
+      "google": "Sign up with Google",
+      "googleLoading": "Signing up with Google..."
     },
     "loading": "Registering user...",
     "success": "Registration successful. Redirecting...",
@@ -521,8 +533,16 @@
       "weakPassword": "Password does not meet security policy",
       "invalidData": "Invalid data",
       "backendConnection": "Could not connect to backend",
-      "server": "Server error. Please try again"
-    }
+      "server": "Server error. Please try again",
+      "googleUnavailable": "Could not load Google Sign-In. Please try again.",
+      "googleCancelled": "No Google credential received.",
+      "googleInvalid": "Could not sign up with Google. Please try again.",
+      "googleGeneric": "An error occurred while signing up with Google."
+    },
+    "divider": {
+      "or": "or"
+    },
+    "googleCredentialReceived": "Google credential received successfully."
   },
   "Toma de materias":{
     "Materias disponibles": "Available courses",
