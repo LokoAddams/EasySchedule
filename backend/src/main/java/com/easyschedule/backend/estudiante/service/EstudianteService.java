@@ -68,8 +68,8 @@ public class EstudianteService {
         Estudiante estudiante = getEstudianteOrThrow(id);
         Malla malla = request.mallaId() == null ? null : getMallaOrThrow(request.mallaId());
 
-        estudiante.setNombre(request.nombre());
-        estudiante.setApellido(request.apellido());
+        estudiante.setNombre(formatProperName(request.nombre()));
+        estudiante.setApellido(formatProperName(request.apellido()));
         estudiante.setCarnetIdentidad(normalizeCarnetIdentidad(request.carnetIdentidad()));
         estudiante.setFechaNacimiento(request.fechaNacimiento());
         estudiante.setSemestreActual(request.semestreActual());
@@ -229,8 +229,8 @@ public class EstudianteService {
             String usernameNormalizado = request.username().trim();
             String emailNormalizado = request.email().trim().toLowerCase(Locale.ROOT);
             String carnetNormalizado = normalizeCarnetIdentidad(request.carnetIdentidad());
-            String nombreNormalizado = request.nombre().trim();
-            String apellidoNormalizado = request.apellido().trim();
+            String nombreNormalizado = formatProperName(request.nombre());
+            String apellidoNormalizado = formatProperName(request.apellido());
 
             if (!user.getUsername().equalsIgnoreCase(usernameNormalizado)
                 && (Boolean.TRUE.equals(userRepository.existsByUsernameIgnoreCase(usernameNormalizado))
@@ -324,6 +324,32 @@ public class EstudianteService {
             return false;
         }
         return left.equalsIgnoreCase(right);
+    }
+
+    private String formatProperName(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String cleaned = value.trim().replaceAll("\\s+", " ");
+        if (cleaned.isEmpty()) {
+            return cleaned;
+        }
+
+        String[] parts = cleaned.split(" ");
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i].toLowerCase(Locale.ROOT);
+            String formattedPart = part.substring(0, 1).toUpperCase(Locale.ROOT) + part.substring(1);
+
+            if (i > 0) {
+                result.append(' ');
+            }
+            result.append(formattedPart);
+        }
+
+        return result.toString();
     }
 
     private boolean equalsNullable(Object left, Object right) {

@@ -257,6 +257,15 @@
       "confirm": "Confirm import",
       "processing": "Processing...",
       "importSuccessToast": "Academic offers import completed successfully."
+    },
+    "export": {
+      "button": "Export progress",
+      "loading": "Exporting...",
+      "success": "Report downloaded successfully.",
+      "insufficientData": "There is not enough data to generate the report.",
+      "connectionError": "Could not connect to the server. Please try again.",
+      "downloadError": "Could not download the report. Please try again.",
+      "notAuthenticated": "Sign in to export your progress."
     }
   },
   "tomaMaterias": {
@@ -378,7 +387,7 @@
         "invalidChars": "Enter a valid Bolivian ID (e.g. 1234567, 1234567-1A or 1234567 LP)."
       },
       "nombre": {
-        "minLength": "Name must be at least 2 characters.",
+        "minLength": "Name must be at least 3 characters.",
         "maxLength": "Name cannot exceed 50 characters.",
         "invalidChars": "Name can only contain letters, spaces, and accents."
       },
