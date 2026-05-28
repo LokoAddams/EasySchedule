@@ -95,7 +95,9 @@
   "button": {
     "submit": "Ingresar",
     "gotoRegister": "Crear cuenta",
-    "backHome": "Volver al inicio"
+    "backHome": "Volver al inicio",
+    "google": "Iniciar sesión con Google",
+    "googleLoading": "Iniciando sesión con Google..."
   },
   "validation": {
     "required": "Este campo es obligatorio"
@@ -103,11 +105,17 @@
   "loading": "Iniciando sesión...",
   "success": {
     "loggedIn": "Inicio de sesión exitoso.",
-    "completeProfile": "Sesión iniciada. Completa tu perfil para continuar."
+    "completeProfile": "Sesión iniciada. Completa tu perfil para continuar.",
+    "googleCredentialReceived": "Credencial de Google recibida correctamente."
   },
   "error": {
     "invalidCredentials": "Credenciales inválidas",
-    "generic": "Error inesperado"
+    "generic": "Error inesperado",
+    "googleUnavailable": "No se pudo cargar Google Sign-In. Intenta nuevamente.",
+    "googleCancelled": "No se recibió una credencial de Google."
+  },
+  "divider": {
+    "or": "o"
   }
 },
   "malla": {

@@ -95,7 +95,9 @@
     "button": {
       "submit": "Sign In",
       "gotoRegister": "Create account",
-      "backHome": "Back to home"
+      "backHome": "Back to home",
+      "google": "Sign in with Google",
+      "googleLoading": "Signing in with Google..."
     },
     "validation": {
       "required": "This field is required"
@@ -103,11 +105,17 @@
     "loading": "Signing in...",
     "success": {
       "loggedIn": "Signed in successfully.",
-      "completeProfile": "Signed in. Complete your profile to continue."
+      "completeProfile": "Signed in. Complete your profile to continue.",
+      "googleCredentialReceived": "Google credential received successfully."
     },
     "error": {
       "invalidCredentials": "Invalid credentials",
-      "generic": "Unexpected error"
+      "generic": "Unexpected error",
+      "googleUnavailable": "Could not load Google Sign-In. Please try again.",
+      "googleCancelled": "No Google credential received."
+    },
+    "divider": {
+      "or": "or"
     }
   },
   "malla": {

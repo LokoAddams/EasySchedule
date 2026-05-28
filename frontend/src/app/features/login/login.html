@@ -55,11 +55,28 @@
           </div>
   
           <!-- BOTÓN -->
-          <button type="submit" class="btn-primary" [class.btn-loading]="loading" [disabled]="form.invalid || loading">
+          <button type="submit" class="btn-primary" [class.btn-loading]="loading" [disabled]="form.invalid || loading || googleLoading">
             <span class="btn-text">{{ 'login.button.submit' | translate }}</span>
             <div class="spinner"></div>
           </button>
-  
+
+          <div class="login-divider">
+            <span>{{ 'login.divider.or' | translate }}</span>
+          </div>
+
+          <div class="google-login-wrapper" [class.is-loading]="googleLoading">
+            <div #googleButtonContainer class="google-button-container"></div>
+
+            <button
+              type="button"
+              class="google-loading-button"
+              *ngIf="googleLoading"
+              disabled
+            >
+              {{ 'login.button.googleLoading' | translate }}
+            </button>
+          </div>
+
           <!-- LINKS -->
           <a routerLink="/registro" class="btn-secondary">
             {{ 'login.button.gotoRegister' | translate }}
