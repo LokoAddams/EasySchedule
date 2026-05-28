@@ -134,9 +134,11 @@
         class="toma-generate-btn"
         type="button"
         (click)="generarHorario()"
+        [disabled]="isGenerating"
         id="btn-generar-horario"
       >
-        {{ 'tomaMaterias.generate.button' | translate }}
+        <span *ngIf="!isGenerating">{{ 'tomaMaterias.generate.button' | translate }}</span>
+        <span *ngIf="isGenerating">{{ 'tomaMaterias.loading' | translate }}...</span>
       </button>
 
       <!-- Botón Cancelar -->

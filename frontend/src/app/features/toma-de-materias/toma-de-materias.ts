@@ -9,6 +9,13 @@ import {
   HorarioActualService,
   HorarioClase,
 } from '../../services/academico/horario-actual.service';
+import {
+  HorarioGeneradorService,
+  HorarioGeneradorRequest,
+  HorarioGeneradoResponse,
+  MateriaSeleccionadaRequest
+} from '../../services/academico/horario-generador.service';
+
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ApiService } from '../../services/api.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
@@ -29,6 +36,7 @@ export interface MateriaSeleccionada {
 
 export interface PrioridadItem {
   nombre: string;
+  enumValue: string;
   activo: boolean;
 }
 
@@ -83,14 +91,16 @@ export class TomaDeMaterias implements OnInit {
   protected materiasDisponiblesLoading = false;
   protected materiasSeleccionMap = new Map<number, MateriaSeleccionState>();
   protected prioridades: PrioridadItem[] = [
-    { nombre: 'Prioridad 1', activo: true },
-    { nombre: 'Prioridad 2', activo: true },
-    { nombre: 'Prioridad 3', activo: true },
-    { nombre: 'Prioridad 4', activo: true },
-    { nombre: 'Prioridad 5', activo: true },
+    { nombre: 'Evitar primera hora (07:00)', enumValue: 'EVITAR_PRIMERA_HORA', activo: true },
+    { nombre: 'Concentrar clases en la mañana', enumValue: 'CONCENTRAR_MANANA', activo: true },
+    { nombre: 'Concentrar clases en la tarde/noche', enumValue: 'CONCENTRAR_TARDE', activo: true },
+    { nombre: 'Minimizar ventanas (horas huecas)', enumValue: 'MINIMIZAR_VENTANAS', activo: true },
+    { nombre: 'Tener días libres', enumValue: 'TENER_DIAS_LIBRES', activo: true },
   ];
   protected currentScheduleIndex = 0;
-  protected totalSchedules = 1;
+  protected totalSchedules = 0;
+  protected horariosGenerados: HorarioGeneradoResponse[] = [];
+  protected isGenerating = false;
 
   constructor(
     private readonly horarioActualService: HorarioActualService,
@@ -101,6 +111,7 @@ export class TomaDeMaterias implements OnInit {
     private readonly mallaCatalogoService: MallaCatalogoService,
     private readonly seleccionTemporalService: SeleccionTemporalService,
     private readonly materiasDisponiblesService: MateriasDisponiblesService,
+    private readonly horarioGeneradorService: HorarioGeneradorService,
   ) {}
 
   // Estadísticas de malla
@@ -121,12 +132,30 @@ export class TomaDeMaterias implements OnInit {
   protected prevSchedule(): void {
     if (this.currentScheduleIndex > 0) {
       this.currentScheduleIndex--;
+      this.renderScheduleIndex(this.currentScheduleIndex);
     }
   }
 
   protected nextSchedule(): void {
     if (this.currentScheduleIndex < this.totalSchedules - 1) {
       this.currentScheduleIndex++;
+      this.renderScheduleIndex(this.currentScheduleIndex);
+    }
+  }
+
+  private renderScheduleIndex(index: number): void {
+    const generated = this.horariosGenerados[index];
+    if (generated) {
+      this.horario = {
+        universidad: null,
+        carrera: null,
+        malla: 'Horario Generado',
+        semestreOferta: 'Puntaje: ' + generated.puntajeTotal,
+        semestreActual: null,
+        clases: generated.clases,
+      };
+      this.buildGrid(this.horario.clases);
+      this.calcularCreditosHorario();
     }
   }
 
@@ -189,18 +218,60 @@ export class TomaDeMaterias implements OnInit {
     }
   }
 
-  // --- Método de generación (placeholder) ---
+  // --- Método de generación ---
 
   protected generarHorario(): void {
-    const seleccionadas: { materiaId: number; paralelo: string }[] = [];
+    if (!this.estudianteId || !this.mallaId) {
+      alert('Error: No se pudo obtener el ID del usuario o la malla.');
+      return;
+    }
+
+    const seleccionadas: MateriaSeleccionadaRequest[] = [];
     this.materiasSeleccionMap.forEach((state, id) => {
       if (state.selected) {
-        seleccionadas.push({ materiaId: id, paralelo: state.paralelo });
+        const paralelos: string[] = [];
+        if (state.paralelo !== 'any') {
+          paralelos.push(state.paralelo);
+        }
+        seleccionadas.push({ materiaId: id, paralelos });
       }
     });
-    // TODO: Conectar con endpoint de generación de horarios cuando esté disponible
-    console.log('Generar horario con materias:', seleccionadas);
-    console.log('Prioridades:', this.prioridades);
+
+    if (seleccionadas.length === 0) {
+      alert('Por favor selecciona al menos una materia para generar el horario.');
+      return;
+    }
+
+    const prioridadesIds = this.prioridades
+      .filter(p => p.activo)
+      .map(p => p.enumValue);
+
+    const request: HorarioGeneradorRequest = {
+      userId: this.estudianteId,
+      mallaId: this.mallaId,
+      materiasSeleccionadas: seleccionadas,
+      prioridades: prioridadesIds
+    };
+
+    this.isGenerating = true;
+    this.horarioGeneradorService.generarHorarios(request).subscribe({
+      next: (horarios) => {
+        this.horariosGenerados = horarios;
+        this.totalSchedules = horarios.length;
+        this.currentScheduleIndex = 0;
+        this.isGenerating = false;
+        
+        if (this.totalSchedules > 0) {
+          this.renderScheduleIndex(0);
+        } else {
+          alert('No se pudo generar ningún horario viable con las materias y paralelos seleccionados.');
+        }
+      },
+      error: () => {
+        this.isGenerating = false;
+        alert('Ocurrió un error al generar los horarios.');
+      }
+    });
   }
 
   // --- Métodos existentes ---
