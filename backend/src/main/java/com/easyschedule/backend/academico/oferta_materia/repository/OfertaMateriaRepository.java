@@ -51,10 +51,7 @@ public interface OfertaMateriaRepository extends JpaRepository<OfertaMateria, Lo
                                 ON tme.oferta_id = o.id
                                 AND tme.user_id = :userId
             WHERE mm.malla_id = :mallaId
-                            AND (
-                                    (mm.semestre_sugerido = :semestreActual AND LOWER(eme.estado) = 'cursando')
-                                    OR LOWER(COALESCE(tme.estado, '')) IN ('inscrita', 'cursando')
-                            )
+                            AND LOWER(COALESCE(tme.estado, '')) IN ('inscrita', 'cursando')
             ORDER BY ma.nombre ASC, o.paralelo ASC, o.id ASC
             """,
         nativeQuery = true
