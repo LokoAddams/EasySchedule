@@ -1,7 +1,8 @@
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 
 import {
   HorarioActualResponse,
@@ -14,6 +15,10 @@ import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
 import { MallaCatalogoService, MallaMateria } from '../../services/academico/malla-catalogo.service';
 import { SeleccionTemporalService } from '../../services/academico/seleccion-temporal.service';
+import {
+  MateriasDisponiblesService,
+  MateriaDisponible,
+} from '../../services/academico/materias-disponibles.service';
 
 export interface MateriaSeleccionada {
   id: number;
@@ -22,9 +27,20 @@ export interface MateriaSeleccionada {
   ofertaId: number;
 }
 
+export interface PrioridadItem {
+  nombre: string;
+  activo: boolean;
+}
+
+export interface MateriaSeleccionState {
+  selected: boolean;
+  paralelo: string;
+  expanded: boolean;
+}
+
 @Component({
   selector: 'app-toma-de-materias',
-  imports: [NgIf, NgFor, FormsModule, TranslatePipe],
+  imports: [NgIf, NgFor, NgClass, FormsModule, TranslatePipe, CdkDropList, CdkDrag, CdkDragHandle],
   templateUrl: './toma-de-materias.html',
   styleUrl: './toma-de-materias.scss',
 })
@@ -60,6 +76,21 @@ export class TomaDeMaterias implements OnInit {
   protected submitSuccess = '';
 
   private estudianteId: number | null = null;
+  private mallaId: number | null = null;
+
+  // --- Nuevas propiedades para el panel de generación ---
+  protected materiasDisponibles: MateriaDisponible[] = [];
+  protected materiasDisponiblesLoading = false;
+  protected materiasSeleccionMap = new Map<number, MateriaSeleccionState>();
+  protected prioridades: PrioridadItem[] = [
+    { nombre: 'Prioridad 1', activo: true },
+    { nombre: 'Prioridad 2', activo: true },
+    { nombre: 'Prioridad 3', activo: true },
+    { nombre: 'Prioridad 4', activo: true },
+    { nombre: 'Prioridad 5', activo: true },
+  ];
+  protected currentScheduleIndex = 0;
+  protected totalSchedules = 1;
 
   constructor(
     private readonly horarioActualService: HorarioActualService,
@@ -69,6 +100,7 @@ export class TomaDeMaterias implements OnInit {
     private readonly translateService: TranslateService,
     private readonly mallaCatalogoService: MallaCatalogoService,
     private readonly seleccionTemporalService: SeleccionTemporalService,
+    private readonly materiasDisponiblesService: MateriasDisponiblesService,
   ) {}
 
   // Estadísticas de malla
@@ -83,6 +115,95 @@ export class TomaDeMaterias implements OnInit {
     this.cargarHorarioYSelecciones();
     this.cargarSeleccionesTemporales();
   }
+
+  // --- Métodos de navegación de horarios generados ---
+
+  protected prevSchedule(): void {
+    if (this.currentScheduleIndex > 0) {
+      this.currentScheduleIndex--;
+    }
+  }
+
+  protected nextSchedule(): void {
+    if (this.currentScheduleIndex < this.totalSchedules - 1) {
+      this.currentScheduleIndex++;
+    }
+  }
+
+  // --- Métodos de prioridades ---
+
+  protected dropPrioridad(event: CdkDragDrop<PrioridadItem[]>): void {
+    moveItemInArray(this.prioridades, event.previousIndex, event.currentIndex);
+  }
+
+  protected movePrioridadUp(index: number, event: Event): void {
+    event.stopPropagation();
+    if (index > 0) {
+      moveItemInArray(this.prioridades, index, index - 1);
+    }
+  }
+
+  protected movePrioridadDown(index: number, event: Event): void {
+    event.stopPropagation();
+    if (index < this.prioridades.length - 1) {
+      moveItemInArray(this.prioridades, index, index + 1);
+    }
+  }
+
+  // --- Métodos de toggle de materias disponibles ---
+
+  protected toggleMateria(id: number): void {
+    const state = this.materiasSeleccionMap.get(id);
+    if (state) {
+      state.selected = !state.selected;
+      if (!state.selected) {
+        state.paralelo = 'any';
+        state.expanded = false;
+      }
+    }
+  }
+
+  protected toggleAccordion(id: number): void {
+    const state = this.materiasSeleccionMap.get(id);
+    if (state) {
+      state.expanded = !state.expanded;
+    }
+  }
+
+  protected isMateriaSelected(id: number): boolean {
+    return this.materiasSeleccionMap.get(id)?.selected ?? false;
+  }
+
+  protected isMateriaExpanded(id: number): boolean {
+    return this.materiasSeleccionMap.get(id)?.expanded ?? false;
+  }
+
+  protected getParalelo(id: number): string {
+    return this.materiasSeleccionMap.get(id)?.paralelo ?? 'any';
+  }
+
+  protected setParalelo(id: number, paralelo: string): void {
+    const state = this.materiasSeleccionMap.get(id);
+    if (state) {
+      state.paralelo = paralelo;
+    }
+  }
+
+  // --- Método de generación (placeholder) ---
+
+  protected generarHorario(): void {
+    const seleccionadas: { materiaId: number; paralelo: string }[] = [];
+    this.materiasSeleccionMap.forEach((state, id) => {
+      if (state.selected) {
+        seleccionadas.push({ materiaId: id, paralelo: state.paralelo });
+      }
+    });
+    // TODO: Conectar con endpoint de generación de horarios cuando esté disponible
+    console.log('Generar horario con materias:', seleccionadas);
+    console.log('Prioridades:', this.prioridades);
+  }
+
+  // --- Métodos existentes ---
 
   private cargarSeleccionesTemporales(): void {
     this.seleccionTemporalService.listarSelecciones().subscribe({
@@ -149,6 +270,28 @@ export class TomaDeMaterias implements OnInit {
       error: () => {
         // leave zeros on error
       }
+    });
+  }
+
+  private cargarMateriasDisponibles(mallaId: number, userId: number): void {
+    this.materiasDisponiblesLoading = true;
+    this.materiasDisponiblesService.getMateriasDisponibles(mallaId, userId).subscribe({
+      next: (materias) => {
+        this.materiasDisponibles = materias;
+        this.materiasSeleccionMap.clear();
+        for (const m of materias) {
+          this.materiasSeleccionMap.set(m.id, {
+            selected: false,
+            paralelo: 'any',
+            expanded: false,
+          });
+        }
+        this.materiasDisponiblesLoading = false;
+      },
+      error: () => {
+        this.materiasDisponibles = [];
+        this.materiasDisponiblesLoading = false;
+      },
     });
   }
 
@@ -465,7 +608,13 @@ export class TomaDeMaterias implements OnInit {
     this.perfilService.getPerfilByUsername(username).subscribe({
       next: (perfil) => {
         this.estudianteId = perfil.id;
+        this.mallaId = perfil.mallaId ?? null;
         this.loadMallaProgress(perfil.mallaId ?? null);
+
+        // Cargar materias disponibles si tenemos mallaId y userId
+        if (this.mallaId && this.estudianteId) {
+          this.cargarMateriasDisponibles(this.mallaId, this.estudianteId);
+        }
       },
       error: () => {
         this.estudianteId = null;

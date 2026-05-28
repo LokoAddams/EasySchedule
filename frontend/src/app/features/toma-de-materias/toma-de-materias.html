@@ -1,4 +1,259 @@
 <section class="horario-page">
+
+  <!-- ===== LOADING / ERROR STATES ===== -->
+  <div class="horario-state" *ngIf="loading">{{ 'tomaMaterias.loading' | translate }}</div>
+  <div class="horario-state horario-state--error" *ngIf="!loading && error">
+    {{ 'tomaMaterias.loadError' | translate }}
+  </div>
+
+  <!-- ===== TWO-COLUMN LAYOUT ===== -->
+  <div class="toma-two-col-layout" *ngIf="!loading && !error">
+
+    <!-- ========== COLUMNA IZQUIERDA: HORARIO GENERADO ========== -->
+    <div class="toma-col-izquierda">
+
+      <div class="horario-chip" *ngIf="horario?.carrera || horario?.malla" style="margin-bottom: 0.5rem; display: inline-block;">
+        {{ horario?.carrera ?? ('tomaMaterias.header.careerFallback' | translate) }} - {{ horario?.malla ?? ('tomaMaterias.header.curriculumFallback' | translate) }}
+      </div>
+      <div class="horario-section-title">
+        <h3>{{ 'tomaMaterias.schedulePreview' | translate }}</h3>
+      </div>
+
+      <!-- Estado vacío -->
+      <div class="horario-state" *ngIf="!horario || !horario.clases || horario.clases.length === 0">
+        {{ 'tomaMaterias.messages.noScheduleToExport' | translate }}
+      </div>
+
+      <!-- Navegación de horarios + tabla desktop -->
+      <div class="toma-schedule-nav-wrapper" *ngIf="horario && horario.clases && horario.clases.length">
+
+        <!-- Navegación de horarios generados -->
+        <div class="toma-nav-arrows">
+          <button
+            class="toma-nav-btn"
+            type="button"
+            (click)="prevSchedule()"
+            [disabled]="currentScheduleIndex <= 0"
+            [attr.aria-label]="'tomaMaterias.scheduleNav.previous' | translate"
+          >
+            <span class="toma-nav-icon">◀</span>
+          </button>
+
+          <span class="toma-nav-counter">
+            {{ 'tomaMaterias.scheduleNav.counter' | translate:{ current: currentScheduleIndex + 1, total: totalSchedules } }}
+          </span>
+
+          <button
+            class="toma-nav-btn"
+            type="button"
+            (click)="nextSchedule()"
+            [disabled]="currentScheduleIndex >= totalSchedules - 1"
+            [attr.aria-label]="'tomaMaterias.scheduleNav.next' | translate"
+          >
+            <span class="toma-nav-icon">▶</span>
+          </button>
+        </div>
+
+        <!-- Tabla horario Desktop -->
+        <div class="horario-grid-wrapper desktop-only">
+          <table class="horario-grid">
+            <thead>
+              <tr>
+                <th>{{ 'tomaMaterias.table.time' | translate }}</th>
+                <th *ngFor="let dia of dias">{{ ('tomaMaterias.days.' + dia) | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let timeRow of timeRows">
+                <td class="time-cell">{{ timeRow }}</td>
+                <td *ngFor="let dia of dias" class="slot-cell">
+                  <div class="slot-card" *ngFor="let clase of getCellItems(timeRow, dia)">
+                    <div class="slot-card__materia">{{ clase.materia }}</div>
+                    <div class="slot-card__meta" *ngIf="clase.paralelo || clase.aula">
+                      {{ clase.paralelo ? (('tomaMaterias.table.parallel' | translate) + ' ' + clase.paralelo) : '' }}
+                      <span *ngIf="clase.paralelo && clase.aula"> | </span>
+                      {{ clase.aula ?? '' }}
+                    </div>
+                    <div class="slot-card__meta" *ngIf="clase.docente">{{ clase.docente }}</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Vista móvil -->
+        <div class="horario-mobile-list mobile-only">
+          <ng-container *ngFor="let dia of dias">
+            <ng-container *ngIf="getClasesPorDia(dia) as clasesDelDia">
+              <div class="horario-day-card" *ngIf="clasesDelDia.length > 0">
+                <h4 class="horario-day-title">{{ ('tomaMaterias.days.' + dia) | translate }}</h4>
+                <div class="horario-class-item" *ngFor="let clase of clasesDelDia">
+                  <div class="class-time">{{ clase.horaInicio }} - {{ clase.horaFin }}</div>
+                  <div class="class-details">
+                    <div class="class-name">{{ clase.materia }}</div>
+                    <div class="class-meta" *ngIf="clase.paralelo || clase.aula">
+                      {{ clase.paralelo ? (('tomaMaterias.table.parallel' | translate) + ' ' + clase.paralelo) : '' }}
+                      <span *ngIf="clase.paralelo && clase.aula"> | </span>
+                      {{ clase.aula ?? '' }}
+                    </div>
+                    <div class="class-meta" *ngIf="clase.docente">{{ clase.docente }}</div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+
+        <!-- Opciones de Exportación -->
+        <div class="horario-export">
+          <label class="horario-export__label" for="export-format">{{ 'tomaMaterias.export.format' | translate }}</label>
+          <select id="export-format" class="horario-export__select" [(ngModel)]="exportFormat">
+            <option value="csv">CSV</option>
+            <option value="pdf">PDF</option>
+            <option value="imagen">{{ 'tomaMaterias.export.image' | translate }}</option>
+          </select>
+          <button class="horario-export__button" type="button" (click)="exportHorario()" [disabled]="exportLoading">
+            <span *ngIf="!exportLoading">{{ 'tomaMaterias.export.button' | translate }}</span>
+            <span *ngIf="exportLoading">{{ 'tomaMaterias.export.generating' | translate }}</span>
+          </button>
+        </div>
+        <div class="horario-export__message" *ngIf="exportInfo">{{ exportInfo }}</div>
+        <div class="horario-export__message horario-export__message--error" *ngIf="exportError">
+          {{ exportError }}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========== COLUMNA DERECHA: PANEL DE GENERACIÓN ========== -->
+    <aside class="toma-col-derecha">
+
+      <!-- Botón GENERAR -->
+      <button
+        class="toma-generate-btn"
+        type="button"
+        (click)="generarHorario()"
+        id="btn-generar-horario"
+      >
+        {{ 'tomaMaterias.generate.button' | translate }}
+      </button>
+
+      <!-- Botón Cancelar -->
+      <button
+        class="toma-cancel-btn"
+        type="button"
+        id="btn-cancelar-generacion"
+      >
+        {{ 'tomaMaterias.generate.cancel' | translate }}
+      </button>
+
+      <!-- Sección de Prioridades -->
+      <div class="toma-panel-section">
+        <h4 class="toma-panel-section__title">{{ 'tomaMaterias.priorities.title' | translate }}</h4>
+        <ul class="toma-prioridad-list" cdkDropList (cdkDropListDropped)="dropPrioridad($event)">
+          <li class="toma-prioridad-item" *ngFor="let p of prioridades; let i = index" cdkDrag>
+            <div class="toma-prioridad-item-content">
+              <label class="toma-prioridad-checkbox-wrapper">
+                <input type="checkbox" [(ngModel)]="p.activo" class="toma-prioridad-checkbox">
+                <span class="toma-prioridad-label" [ngClass]="{'inactive': !p.activo}">{{ p.nombre }}</span>
+              </label>
+              
+              <div class="toma-prioridad-actions">
+                <button type="button" class="btn-move" (click)="movePrioridadUp(i, $event)" [disabled]="i === 0">▲</button>
+                <button type="button" class="btn-move" (click)="movePrioridadDown(i, $event)" [disabled]="i === prioridades.length - 1">▼</button>
+                <div class="drag-handle" cdkDragHandle>☰</div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Sección de Materias Disponibles -->
+      <div class="toma-panel-section">
+        <h4 class="toma-panel-section__title">{{ 'tomaMaterias.availableSubjects.title' | translate }}</h4>
+
+        <!-- Loading -->
+        <div class="toma-panel-loading" *ngIf="materiasDisponiblesLoading">
+          {{ 'tomaMaterias.availableSubjects.loading' | translate }}
+        </div>
+
+        <!-- Sin materias -->
+        <div class="toma-panel-empty" *ngIf="!materiasDisponiblesLoading && materiasDisponibles.length === 0">
+          {{ 'tomaMaterias.availableSubjects.noSubjects' | translate }}
+        </div>
+
+        <!-- Cards de materias -->
+        <div class="toma-materias-disponibles-list" *ngIf="!materiasDisponiblesLoading && materiasDisponibles.length > 0">
+          <div
+            class="toma-materia-card"
+            *ngFor="let materia of materiasDisponibles"
+            [ngClass]="{ 'toma-materia-card--selected': isMateriaSelected(materia.id) }"
+          >
+            <!-- Header de la materia (toggle) -->
+            <div class="toma-materia-card__header" (click)="toggleMateria(materia.id)">
+              <div class="toma-materia-card__check">
+                <span class="toma-materia-card__checkbox" [ngClass]="{ 'toma-materia-card__checkbox--checked': isMateriaSelected(materia.id) }">
+                  <span *ngIf="isMateriaSelected(materia.id)">✓</span>
+                </span>
+              </div>
+              <div class="toma-materia-card__info">
+                <span class="toma-materia-card__code">{{ materia.codigoMateria }}</span>
+                <span class="toma-materia-card__name">{{ materia.nombreMateria }}</span>
+              </div>
+              <button
+                class="toma-materia-card__expand"
+                type="button"
+                (click)="$event.stopPropagation(); toggleAccordion(materia.id)"
+                *ngIf="isMateriaSelected(materia.id)"
+              >
+                <span [ngClass]="{ 'toma-expand-icon--open': isMateriaExpanded(materia.id) }">▾</span>
+              </button>
+            </div>
+
+            <!-- Acordeón de paralelos -->
+            <div class="toma-materia-accordion" *ngIf="isMateriaSelected(materia.id) && isMateriaExpanded(materia.id)">
+              <label class="toma-paralelo-option">
+                <input
+                  type="radio"
+                  [name]="'paralelo-' + materia.id"
+                  value="any"
+                  [checked]="getParalelo(materia.id) === 'any'"
+                  (change)="setParalelo(materia.id, 'any')"
+                >
+                <span>{{ 'tomaMaterias.parallel.any' | translate }}</span>
+              </label>
+              <label class="toma-paralelo-option">
+                <input
+                  type="radio"
+                  [name]="'paralelo-' + materia.id"
+                  value="1"
+                  [checked]="getParalelo(materia.id) === '1'"
+                  (change)="setParalelo(materia.id, '1')"
+                >
+                <span>{{ 'tomaMaterias.parallel.label' | translate:{ number: 1 } }}</span>
+              </label>
+              <label class="toma-paralelo-option">
+                <input
+                  type="radio"
+                  [name]="'paralelo-' + materia.id"
+                  value="2"
+                  [checked]="getParalelo(materia.id) === '2'"
+                  (change)="setParalelo(materia.id, '2')"
+                >
+                <span>{{ 'tomaMaterias.parallel.label' | translate:{ number: 2 } }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- ===== SECCIONES INFERIORES (debajo de las dos columnas) ===== -->
+
+  <!-- Header con título y datos del horario (movido aquí) -->
   <header class="horario-header" *ngIf="horario as h">
     <div class="horario-chip" *ngIf="h.carrera || h.malla">
       {{ h.carrera ?? ('tomaMaterias.header.careerFallback' | translate) }} - {{ h.malla ?? ('tomaMaterias.header.curriculumFallback' | translate) }}
@@ -9,23 +264,6 @@
       <span *ngIf="h.semestreOferta"> | {{ h.semestreOferta }}</span>
       <span *ngIf="h.semestreActual"> | {{ 'tomaMaterias.header.semester' | translate }} {{ h.semestreActual }}</span>
     </p>
-
-    <div class="horario-export">
-      <label class="horario-export__label" for="export-format">{{ 'tomaMaterias.export.format' | translate }}</label>
-      <select id="export-format" class="horario-export__select" [(ngModel)]="exportFormat">
-        <option value="csv">CSV</option>
-        <option value="pdf">PDF</option>
-        <option value="imagen">{{ 'tomaMaterias.export.image' | translate }}</option>
-      </select>
-      <button class="horario-export__button" type="button" (click)="exportHorario()" [disabled]="exportLoading">
-        <span *ngIf="!exportLoading">{{ 'tomaMaterias.export.button' | translate }}</span>
-        <span *ngIf="exportLoading">{{ 'tomaMaterias.export.generating' | translate }}</span>
-      </button>
-    </div>
-    <div class="horario-export__message" *ngIf="exportInfo">{{ exportInfo }}</div>
-    <div class="horario-export__message horario-export__message--error" *ngIf="exportError">
-      {{ exportError }}
-    </div>
   </header>
 
   <div class="toma-seleccion-container" *ngIf="!loading && !error">
@@ -80,69 +318,6 @@
     </div>
   </div>
 
-  <hr class="toma-divider" *ngIf="!loading && !error">
-
-  <div class="horario-section-title" *ngIf="!loading && !error">
-    <h3>{{ 'tomaMaterias.schedulePreview' | translate }}</h3>
-  </div>
-
-  <div class="horario-state" *ngIf="loading">{{ 'tomaMaterias.loading' | translate }}</div>
-  <div class="horario-state horario-state--error" *ngIf="!loading && error">
-    {{ 'tomaMaterias.loadError' | translate }}
-  </div>
-
-  <div class="horario-state" *ngIf="!loading && !error && (!horario || !horario.clases || horario.clases.length === 0)">
-    {{ 'tomaMaterias.messages.noScheduleToExport' | translate }}
-  </div>
-
-  <div class="horario-grid-wrapper desktop-only" *ngIf="!loading && !error && horario && horario.clases && horario.clases.length">
-    <table class="horario-grid">
-      <thead>
-        <tr>
-          <th>{{ 'tomaMaterias.table.time' | translate }}</th>
-          <th *ngFor="let dia of dias">{{ ('tomaMaterias.days.' + dia) | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let timeRow of timeRows">
-          <td class="time-cell">{{ timeRow }}</td>
-          <td *ngFor="let dia of dias" class="slot-cell">
-            <div class="slot-card" *ngFor="let clase of getCellItems(timeRow, dia)">
-              <div class="slot-card__materia">{{ clase.materia }}</div>
-              <div class="slot-card__meta" *ngIf="clase.paralelo || clase.aula">
-                {{ clase.paralelo ? (('tomaMaterias.table.parallel' | translate) + ' ' + clase.paralelo) : '' }}
-                <span *ngIf="clase.paralelo && clase.aula"> | </span>
-                {{ clase.aula ?? '' }}
-              </div>
-              <div class="slot-card__meta" *ngIf="clase.docente">{{ clase.docente }}</div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="horario-mobile-list mobile-only" *ngIf="!loading && !error && horario && horario.clases && horario.clases.length">
-    <ng-container *ngFor="let dia of dias">
-      <ng-container *ngIf="getClasesPorDia(dia) as clasesDelDia">
-        <div class="horario-day-card" *ngIf="clasesDelDia.length > 0">
-          <h4 class="horario-day-title">{{ ('tomaMaterias.days.' + dia) | translate }}</h4>
-          <div class="horario-class-item" *ngFor="let clase of clasesDelDia">
-            <div class="class-time">{{ clase.horaInicio }} - {{ clase.horaFin }}</div>
-            <div class="class-details">
-              <div class="class-name">{{ clase.materia }}</div>
-              <div class="class-meta" *ngIf="clase.paralelo || clase.aula">
-                {{ clase.paralelo ? (('tomaMaterias.table.parallel' | translate) + ' ' + clase.paralelo) : '' }}
-                <span *ngIf="clase.paralelo && clase.aula"> | </span>
-                {{ clase.aula ?? '' }}
-              </div>
-              <div class="class-meta" *ngIf="clase.docente">{{ clase.docente }}</div>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-    </ng-container>
-  </div>
   <div class="malla-progress" *ngIf="!loading && !error && totalMateriasMalla > 0">
     <div class="horario-section-title">
       <h3>{{ 'tomaMaterias.summary.title' | translate }}</h3>
