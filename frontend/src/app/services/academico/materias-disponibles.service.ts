@@ -11,6 +11,15 @@ export interface MateriaDisponible {
   semestreSugerido: number;
   estado: string | null;
   prerequisitosIds: number[];
+  ofertas?: OfertaMateriaSimple[];
+}
+
+export interface OfertaMateriaSimple {
+  id: number;
+  semestre: string;
+  paralelo: string;
+  docente: string;
+  aula: string;
 }
 
 @Injectable({
@@ -21,7 +30,7 @@ export class MateriasDisponiblesService {
 
   getMateriasDisponibles(mallaId: number, userId: number): Observable<MateriaDisponible[]> {
     return this.apiService.get<MateriaDisponible[]>(
-      `/api/materias/disponibles?mallaId=${mallaId}&userId=${userId}`
+      `/api/materias/disponibles/ofertas?mallaId=${mallaId}&userId=${userId}`
     );
   }
 }

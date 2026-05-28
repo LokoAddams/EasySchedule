@@ -1,6 +1,9 @@
 package com.easyschedule.backend.academico.malla.service;
 
 import com.easyschedule.backend.academico.malla.dto.MallaMateriaResponse;
+import com.easyschedule.backend.academico.malla.dto.MateriaDisponibleConOfertasResponse;
+import com.easyschedule.backend.academico.oferta_materia.dto.OfertaMateriaResponse;
+import com.easyschedule.backend.academico.oferta_materia.repository.OfertaMateriaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,9 +16,11 @@ import java.util.stream.Collectors;
 public class MallaDisponibilidadService {
 
     private final MallaService mallaService;
+    private final OfertaMateriaRepository ofertaMateriaRepository;
 
-    public MallaDisponibilidadService(MallaService mallaService) {
+    public MallaDisponibilidadService(MallaService mallaService, OfertaMateriaRepository ofertaMateriaRepository) {
         this.mallaService = mallaService;
+        this.ofertaMateriaRepository = ofertaMateriaRepository;
     }
 
     public List<MallaMateriaResponse> getMateriasDisponibles(Long mallaId, Long userId) {
@@ -66,5 +71,33 @@ public class MallaDisponibilidadService {
                 return !isCompletadaOCursando && effectiveInDegree.getOrDefault(m.id(), 0) <= 0;
             })
             .collect(Collectors.toList());
+    }
+
+    public List<MateriaDisponibleConOfertasResponse> getMateriasDisponiblesConOfertas(Long mallaId, Long userId) {
+        List<MallaMateriaResponse> disponibles = getMateriasDisponibles(mallaId, userId);
+        
+        return disponibles.stream().map(m -> {
+            List<OfertaMateriaResponse> ofertas = ofertaMateriaRepository.findByMateriaId(m.materiaId()).stream()
+                .map(o -> new OfertaMateriaResponse(
+                    o.getId(),
+                    o.getSemestre(),
+                    o.getParalelo(),
+                    o.getDocente(),
+                    o.getAula()
+                ))
+                .toList();
+            
+            return new MateriaDisponibleConOfertasResponse(
+                m.id(),
+                m.materiaId(),
+                m.codigoMateria(),
+                m.nombreMateria(),
+                m.creditos(),
+                m.semestreSugerido(),
+                m.estado(),
+                m.prerequisitosIds(),
+                ofertas
+            );
+        }).collect(Collectors.toList());
     }
 }

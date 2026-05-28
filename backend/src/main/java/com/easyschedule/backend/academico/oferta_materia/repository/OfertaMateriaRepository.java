@@ -13,6 +13,9 @@ public interface OfertaMateriaRepository extends JpaRepository<OfertaMateria, Lo
 
     List<OfertaMateria> findByMallaMateriaId(Long mallaMateriaId);
 
+    @Query(value = "SELECT o.* FROM ofertas o JOIN malla_materia mm ON o.malla_materia_id = mm.id WHERE mm.materia_id = :materiaId", nativeQuery = true)
+    List<OfertaMateria> findByMateriaId(@Param("materiaId") Long materiaId);
+
     Optional<OfertaMateria> findByMallaMateriaIdAndSemestreAndParalelo(
         Long mallaMateriaId,
         String semestre,
@@ -51,10 +54,7 @@ public interface OfertaMateriaRepository extends JpaRepository<OfertaMateria, Lo
                                 ON tme.oferta_id = o.id
                                 AND tme.user_id = :userId
             WHERE mm.malla_id = :mallaId
-                            AND (
-                                    (mm.semestre_sugerido = :semestreActual AND LOWER(eme.estado) = 'cursando')
-                                    OR LOWER(COALESCE(tme.estado, '')) IN ('inscrita', 'cursando')
-                            )
+                            AND LOWER(COALESCE(tme.estado, '')) IN ('inscrita', 'cursando')
             ORDER BY ma.nombre ASC, o.paralelo ASC, o.id ASC
             """,
         nativeQuery = true

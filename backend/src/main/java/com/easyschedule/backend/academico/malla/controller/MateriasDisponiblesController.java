@@ -1,6 +1,7 @@
 package com.easyschedule.backend.academico.malla.controller;
 
 import com.easyschedule.backend.academico.malla.dto.MallaMateriaResponse;
+import com.easyschedule.backend.academico.malla.dto.MateriaDisponibleConOfertasResponse;
 import com.easyschedule.backend.academico.malla.service.MallaDisponibilidadService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +25,12 @@ public class MateriasDisponiblesController {
             @RequestParam("mallaId") Long mallaId,
             @RequestParam("userId") Long userId) {
         return disponibilidadService.getMateriasDisponibles(mallaId, userId);
+    }
+
+    @GetMapping("/disponibles/ofertas")
+    public List<MateriaDisponibleConOfertasResponse> getMateriasDisponiblesConOfertas(
+            @RequestParam("mallaId") Long mallaId,
+            @RequestParam("userId") Long userId) {
+        return disponibilidadService.getMateriasDisponiblesConOfertas(mallaId, userId);
     }
 }

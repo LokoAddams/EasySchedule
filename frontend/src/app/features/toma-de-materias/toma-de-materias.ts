@@ -241,6 +241,14 @@ export class TomaDeMaterias implements OnInit {
     }
   }
 
+  protected getUniqueParalelos(ofertas: import('../../services/academico/materias-disponibles.service').OfertaMateriaSimple[] | undefined): string[] {
+    if (!ofertas || ofertas.length === 0) {
+      return [];
+    }
+    const paralelos = ofertas.map(o => o.paralelo);
+    return Array.from(new Set(paralelos)).sort();
+  }
+
   // --- Método de generación ---
 
   protected generarHorario(): void {
