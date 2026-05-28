@@ -8,7 +8,7 @@ describe('MallaCatalogoService', () => {
   let apiServiceSpy: jasmine.SpyObj<ApiService>;
 
   beforeEach(() => {
-    apiServiceSpy = jasmine.createSpyObj<ApiService>('ApiService', ['get']);
+    apiServiceSpy = jasmine.createSpyObj<ApiService>('ApiService', ['get', 'getBlob']);
     service = new MallaCatalogoService(apiServiceSpy);
   });
 
@@ -26,5 +26,13 @@ describe('MallaCatalogoService', () => {
     service.getMateriasPorMalla(16).subscribe();
 
     expect(apiServiceSpy.get).toHaveBeenCalledWith('/api/academico/mallas/16/materias');
+  });
+
+  it('calls graduation progress export endpoint', () => {
+    apiServiceSpy.getBlob.and.returnValue(of({} as any));
+
+    service.exportarAvanceGraduacion().subscribe();
+
+    expect(apiServiceSpy.getBlob).toHaveBeenCalledWith('/api/estudiantes/me/avance-graduacion/export');
   });
 });

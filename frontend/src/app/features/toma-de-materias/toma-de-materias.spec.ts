@@ -3,16 +3,16 @@ import { of, throwError } from 'rxjs';
 import { TomaDeMaterias } from './toma-de-materias';
 import { HorarioActualService, HorarioActualResponse } from '../../services/academico/horario-actual.service';
 import { ApiService } from '../../services/api.service';
-import { TomaSeleccionService } from '../../services/academico/toma-seleccion.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
 import { TranslateService } from '@ngx-translate/core';
+import { SeleccionTemporalService } from '../../services/academico/seleccion-temporal.service';
 
 describe('TomaDeMaterias', () => {
   let component: TomaDeMaterias;
   let horarioActualServiceSpy: jasmine.SpyObj<HorarioActualService>;
   let apiServiceSpy: jasmine.SpyObj<ApiService>;
-  let tomaSeleccionServiceSpy: jasmine.SpyObj<TomaSeleccionService>;
+  let seleccionTemporalServiceSpy: jasmine.SpyObj<SeleccionTemporalService>;
   let authSessionServiceSpy: jasmine.SpyObj<AuthSessionService>;
   let perfilServiceSpy: jasmine.SpyObj<PerfilService>;
   let translateServiceSpy: jasmine.SpyObj<TranslateService>;
@@ -26,7 +26,11 @@ describe('TomaDeMaterias', () => {
       'exportHorarioActualImage',
     ]);
     apiServiceSpy = jasmine.createSpyObj('ApiService', ['post', 'get', 'put', 'delete']);
-    tomaSeleccionServiceSpy = jasmine.createSpyObj('TomaSeleccionService', ['removerMateria', 'limpiar', 'agregarMateria']);
+    seleccionTemporalServiceSpy = jasmine.createSpyObj<SeleccionTemporalService>('SeleccionTemporalService', [
+      'listarSelecciones',
+      'removerSeleccion',
+      'limpiarSelecciones',
+    ]);
     authSessionServiceSpy = jasmine.createSpyObj<AuthSessionService>('AuthSessionService', ['getCurrentUsername']);
     perfilServiceSpy = jasmine.createSpyObj<PerfilService>('PerfilService', ['getPerfilByUsername']);
     translateServiceSpy = jasmine.createSpyObj<TranslateService>('TranslateService', ['instant']);
@@ -53,17 +57,16 @@ describe('TomaDeMaterias', () => {
     horarioActualServiceSpy.getHorarioActual.and.returnValue(of(mockResponse));
     authSessionServiceSpy.getCurrentUsername.and.returnValue(null);
     mallaCatalogoServiceSpy.getMateriasPorMalla.and.returnValue(of([]));
-
-    Object.defineProperty(tomaSeleccionServiceSpy, 'seleccion$', { value: of([]) });
+    seleccionTemporalServiceSpy.listarSelecciones.and.returnValue(of([]));
 
     component = new TomaDeMaterias(
       horarioActualServiceSpy,
       apiServiceSpy,
-      tomaSeleccionServiceSpy,
       authSessionServiceSpy,
       perfilServiceSpy,
       translateServiceSpy,
       mallaCatalogoServiceSpy,
+      seleccionTemporalServiceSpy,
     );
   });
 

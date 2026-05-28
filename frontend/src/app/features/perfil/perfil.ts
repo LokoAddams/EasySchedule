@@ -222,7 +222,7 @@ export class Perfil implements OnInit {
       nombre: this.editForm.controls.nombre.value.trim(),
       apellido: this.editForm.controls.apellido.value.trim(),
       email,
-      carnetIdentidad: this.editForm.controls.carnetIdentidad.value.trim(),
+      carnetIdentidad: this.normalizeCarnetIdentidadInput(this.editForm.controls.carnetIdentidad.value),
       fechaNacimiento: this.formatDateForApi(this.editForm.controls.fechaNacimiento.value),
       carrera,
       universidad,
@@ -369,6 +369,14 @@ export class Perfil implements OnInit {
 
           if (backendMessage.includes('carnet')) {
             this.toastService.error('perfil.error.carnetTaken');
+            return;
+          }
+        }
+
+        if (error.status === 400) {
+          const backendMessage = this.extractBackendMessage(error);
+          if (backendMessage.includes('carnet')) {
+            this.toastService.error('perfil.error.carnetInvalidFormat');
             return;
           }
         }
@@ -542,6 +550,10 @@ export class Perfil implements OnInit {
     return `${dateStruct.year}-${month}-${day}`;
   }
 
+  private normalizeCarnetIdentidadInput(value: string): string {
+    return value.trim().replace(/\s+/g, ' ').toUpperCase();
+  }
+
   protected getErrorMessageCarnet(): string {
     const control = this.editForm.controls.carnetIdentidad;
     
@@ -613,7 +625,29 @@ export class Perfil implements OnInit {
   }
 
   protected getErrorMessageApellido(): string {
-    return this.getErrorMessageNombre(); // Usa las mismas reglas que nombre
+    const control = this.editForm.controls.apellido;
+    
+    if (!control.touched || !control.errors) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return 'perfil.validation.required';
+    }
+
+    if (control.errors['nombreMinLength']) {
+      return 'perfil.validation.nombre.minLength';
+    }
+
+    if (control.errors['nombreMaxLength']) {
+      return 'perfil.validation.nombre.maxLength';
+    }
+
+    if (control.errors['nombreInvalidChars']) {
+      return 'perfil.validation.nombre.invalidChars';
+    }
+
+    return '';
   }
 
   protected getErrorMessageUsername(): string {

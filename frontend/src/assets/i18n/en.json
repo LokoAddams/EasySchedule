@@ -257,6 +257,15 @@
       "confirm": "Confirm import",
       "processing": "Processing...",
       "importSuccessToast": "Academic offers import completed successfully."
+    },
+    "export": {
+      "button": "Export progress",
+      "loading": "Exporting...",
+      "success": "Report downloaded successfully.",
+      "insufficientData": "There is not enough data to generate the report.",
+      "connectionError": "Could not connect to the server. Please try again.",
+      "downloadError": "Could not download the report. Please try again.",
+      "notAuthenticated": "Sign in to export your progress."
     }
   },
   "tomaMaterias": {
@@ -374,11 +383,11 @@
       "required": "This field is required.",
       "emailInvalid": "Invalid email format.",
       "carnet": {
-        "maxLength": "Identity card cannot exceed 8 characters.",
-        "invalidChars": "Identity card can only contain letters and numbers."
+        "maxLength": "Identity card cannot exceed 16 characters.",
+        "invalidChars": "Enter a valid Bolivian ID (e.g. 1234567, 1234567-1A or 1234567 LP)."
       },
       "nombre": {
-        "minLength": "Name must be at least 2 characters.",
+        "minLength": "Name must be at least 3 characters.",
         "maxLength": "Name cannot exceed 50 characters.",
         "invalidChars": "Name can only contain letters, spaces, and accents."
       },
@@ -441,7 +450,8 @@
       "mallaNotFound": "No curriculum was found for the selected career and university.",
       "usernameTaken": "That username is already in use.",
       "emailTaken": "That email is already registered.",
-      "carnetTaken": "That identity card is already in use."
+      "carnetTaken": "That identity card is already in use.",
+      "carnetInvalidFormat": "Invalid identity card format. Use a valid Bolivian ID."
     }
   },
   "registro": {

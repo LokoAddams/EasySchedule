@@ -210,7 +210,27 @@
       "noGroupsAvailable": "Esta materia no tiene grupos disponibles actualmente.",
       "takeSubject": "Tomar materia",
       "cancel": "Cancelar",
-      "addToSelection": "Agregar a seleccion"
+      "addToSelection": "Agregar a seleccion",
+      "added": "Materia agregada a tu seleccion temporal"
+    },
+    "selection": {
+      "added": "Materia agregada correctamente",
+      "errorAdd": "No se pudo agregar la materia",
+      "confirmClear": "¿Estás seguro de que deseas limpiar tu selección temporal?",
+      "cleared": "Selección temporal limpiada",
+      "errorClear": "Error al limpiar la selección",
+      "panelTitle": "Selección temporal",
+      "cancel": "Cancelar",
+      "goToToma": "Ir a Toma de materias"
+    },
+    "export": {
+      "button": "Exportar avance",
+      "loading": "Exportando...",
+      "success": "Reporte descargado correctamente.",
+      "insufficientData": "No existen datos suficientes para generar el reporte.",
+      "connectionError": "No se pudo conectar con el servidor. Intenta nuevamente.",
+      "downloadError": "No se pudo descargar el reporte. Intenta nuevamente.",
+      "notAuthenticated": "Inicia sesion para exportar tu avance."
     },
     "validation": {
       "universidadRequired": "Debes seleccionar una universidad.",
@@ -374,11 +394,11 @@
       "required": "Este campo es obligatorio.",
       "emailInvalid": "Formato de correo electrónico inválido.",
       "carnet": {
-        "maxLength": "El carnet de identidad no puede exceder 8 caracteres.",
-        "invalidChars": "El carnet de identidad solo puede contener letras y números."
+        "maxLength": "El carnet de identidad no puede exceder 16 caracteres.",
+        "invalidChars": "Ingresa un CI de Bolivia válido (ej: 1234567, 1234567-1A o 1234567 LP)."
       },
       "nombre": {
-        "minLength": "El nombre debe tener al menos 2 caracteres.",
+        "minLength": "El nombre debe tener al menos 3 caracteres.",
         "maxLength": "El nombre no puede exceder 50 caracteres.",
         "invalidChars": "El nombre solo puede contener letras, espacios y acentos."
       },
@@ -441,7 +461,8 @@
       "mallaNotFound": "No existe una malla con la carrera y universidad seleccionadas.",
       "usernameTaken": "Ese nombre de usuario ya está en uso.",
       "emailTaken": "Ese correo electrónico ya está registrado.",
-      "carnetTaken": "Ese carnet de identidad ya está en uso."
+      "carnetTaken": "Ese carnet de identidad ya está en uso.",
+      "carnetInvalidFormat": "Formato de carnet inválido. Usa un CI de Bolivia válido."
     }
   },
   "registro": {
