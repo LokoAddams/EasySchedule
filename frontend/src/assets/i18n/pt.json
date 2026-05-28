@@ -481,7 +481,9 @@
     "button": {
       "submit": "Cadastrar",
       "gotoLogin": "Entrar",
-      "backHome": "Voltar para o início"
+      "backHome": "Voltar para o início",
+      "google": "Cadastrar com Google",
+      "googleLoading": "Cadastrando com Google..."
     },
     "loading": "Registrando usuário...",
     "success": "Cadastro realizado com sucesso. Redirecionando...",
@@ -490,7 +492,13 @@
       "emailExists": "O email já está registrado",
       "invalidData": "Dados inválidos",
       "backendConnection": "Não foi possível conectar ao backend",
-      "server": "Erro no servidor. Tente novamente"
-    }
+      "server": "Erro no servidor. Tente novamente",
+      "googleUnavailable": "Não foi possível carregar o Cadastro com Google. Tente novamente.",
+      "googleCancelled": "Nenhuma credencial do Google recebida."
+    },
+    "divider": {
+      "or": "ou"
+    },
+    "googleCredentialReceived": "Credencial do Google recebida com sucesso."
   }
 }

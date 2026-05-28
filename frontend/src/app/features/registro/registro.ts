@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -13,6 +13,36 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ApiService } from '../../services/api.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { ToastService } from '../../core/services/toast.service';
+import { environment } from '../../../environments/environment';
+
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: {
+            client_id: string;
+            callback: (response: GoogleCredentialResponse) => void;
+          }) => void;
+          renderButton: (
+            parent: HTMLElement,
+            options: {
+              theme?: string;
+              size?: string;
+              text?: string;
+              shape?: string;
+              width?: number;
+            }
+          ) => void;
+        };
+      };
+    };
+  }
+}
+
+interface GoogleCredentialResponse {
+  credential?: string;
+}
 
 @Component({
   selector: 'app-registro',
@@ -26,13 +56,19 @@ import { ToastService } from '../../core/services/toast.service';
   templateUrl: './registro.html',
   styleUrls: ['./registro.scss']
 })
-export class Registro {
+export class Registro implements AfterViewInit {
 
   successMessageKey = '';
   errorMessageKey = '';
   loading = false;
   showPassword = false;
   showConfirmPassword = false;
+
+  googleLoading = false;
+  googleButtonReady = false;
+
+  @ViewChild('googleButtonContainer')
+  private googleButtonContainer?: ElementRef<HTMLDivElement>;
   private readonly primaryRegisterPath = '/api/estudiantes/registro';
   private readonly fallbackRegisterPath = '/api/registro';
 
@@ -44,6 +80,7 @@ export class Registro {
     private readonly authSessionService: AuthSessionService,
     private readonly router: Router,
     private readonly toastService: ToastService,
+    private readonly zone: NgZone,
   ) {
 
     this.form = this.fb.group({
@@ -53,6 +90,77 @@ export class Registro {
       confirmPassword: ['', Validators.required],
     }, { validators: this.passwordMatch });
 
+  }
+
+  ngAfterViewInit(): void {
+    this.loadGoogleSignInScript()
+      .then(() => this.renderGoogleButton())
+      .catch(() => {
+        this.toastService.error('registro.error.googleUnavailable');
+      });
+  }
+
+  private loadGoogleSignInScript(): Promise<void> {
+    if (window.google?.accounts?.id) {
+      return Promise.resolve();
+    }
+
+    const existingScript = document.getElementById('google-signin-client');
+
+    if (existingScript) {
+      return new Promise((resolve, reject) => {
+        existingScript.addEventListener('load', () => resolve(), { once: true });
+        existingScript.addEventListener('error', () => reject(), { once: true });
+      });
+    }
+
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.id = 'google-signin-client';
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject();
+
+      document.head.appendChild(script);
+    });
+  }
+
+  private renderGoogleButton(): void {
+    const container = this.googleButtonContainer?.nativeElement;
+
+    if (!container || !window.google?.accounts?.id) {
+      return;
+    }
+
+    window.google.accounts.id.initialize({
+      client_id: environment.googleClientId,
+      callback: (response: GoogleCredentialResponse) => {
+        this.zone.run(() => this.handleGoogleCredential(response));
+      },
+    });
+
+    container.innerHTML = '';
+
+    window.google.accounts.id.renderButton(container, {
+      theme: 'outline',
+      size: 'large',
+      text: 'signup_with',
+      shape: 'rectangular',
+      width: 320,
+    });
+
+    this.googleButtonReady = true;
+  }
+
+  private handleGoogleCredential(response: GoogleCredentialResponse): void {
+    if (!response.credential) {
+      this.toastService.error('registro.error.googleCancelled');
+      return;
+    }
+
+    this.toastService.success('registro.googleCredentialReceived');
   }
 
   passwordMatch(control: AbstractControl): ValidationErrors | null {

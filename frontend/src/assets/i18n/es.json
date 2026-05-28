@@ -491,7 +491,9 @@
     "button": {
       "submit": "Registrarse",
       "gotoLogin": "Iniciar sesión",
-      "backHome": "Volver al inicio"
+      "backHome": "Volver al inicio",
+      "google": "Registrarse con Google",
+      "googleLoading": "Registrándose con Google..."
     },
     "loading": "Registrando usuario...",
     "success": "Registro exitoso. Redirigiendo...",
@@ -500,8 +502,14 @@
       "emailExists": "El correo ya está registrado",
       "invalidData": "Datos inválidos",
       "backendConnection": "No se pudo conectar con el backend",
-      "server": "Error del servidor. Intenta nuevamente"
-    }
+      "server": "Error del servidor. Intenta nuevamente",
+      "googleUnavailable": "No se pudo cargar Google Sign-In. Intenta nuevamente.",
+      "googleCancelled": "No se recibió una credencial de Google."
+    },
+    "divider": {
+      "or": "o"
+    },
+    "googleCredentialReceived": "Credencial de Google recibida correctamente."
   },
     "Toma de materias":{
       "Materias disponibles": "Materias disponibles",

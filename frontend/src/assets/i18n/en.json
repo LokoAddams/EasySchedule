@@ -480,7 +480,9 @@
     "button": {
       "submit": "Sign Up",
       "gotoLogin": "Sign In",
-      "backHome": "Back to home"
+      "backHome": "Back to home",
+      "google": "Sign up with Google",
+      "googleLoading": "Signing up with Google..."
     },
     "loading": "Registering user...",
     "success": "Registration successful. Redirecting...",
@@ -489,8 +491,14 @@
       "emailExists": "Email is already registered",
       "invalidData": "Invalid data",
       "backendConnection": "Could not connect to backend",
-      "server": "Server error. Please try again"
-    }
+      "server": "Server error. Please try again",
+      "googleUnavailable": "Could not load Google Sign-In. Please try again.",
+      "googleCancelled": "No Google credential received."
+    },
+    "divider": {
+      "or": "or"
+    },
+    "googleCredentialReceived": "Google credential received successfully."
   },
   "Toma de materias":{
     "Materias disponibles": "Available courses",
