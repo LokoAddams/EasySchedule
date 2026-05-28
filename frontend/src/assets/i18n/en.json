@@ -398,6 +398,11 @@
       },
       "email": {
         "maxLength": "Email cannot exceed 100 characters."
+      },
+      "fechaNacimiento": {
+        "future": "Birth date cannot be in the future.",
+        "outOfRange": "Birth date must correspond to an age between 16 and 70 years.",
+        "invalid": "Enter a valid birth date."
       }
     },
     "success": {
