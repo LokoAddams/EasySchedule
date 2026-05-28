@@ -12,6 +12,7 @@ import com.easyschedule.backend.auth.dto.request.ChangePasswordRequest;
 import com.easyschedule.backend.auth.dto.request.LoginRequest;
 import com.easyschedule.backend.auth.dto.request.SignupRequest;
 import com.easyschedule.backend.auth.service.AuthService;
+import com.easyschedule.backend.auth.dto.request.GoogleLoginRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -53,6 +54,14 @@ public class AuthController {
         log.debug("[AUTH_LOGIN] request recibido | identifier={}", identifier);
         log.info("[AUTH_LOGIN] request recibido | identifier={}", identifier);
         return authService.login(request);
+    }
+    @PostMapping("/login/google")
+    public ResponseEntity<?> loginWithGoogle(@Valid @RequestBody GoogleLoginRequest request) {
+        log.debug(
+            "[AUTH_GOOGLE] request recibido | credentialPresent={}",
+            request.getCredential() != null && !request.getCredential().isBlank()
+        );
+        return authService.loginWithGoogle(request);
     }
 
     @PostMapping("/logout")
