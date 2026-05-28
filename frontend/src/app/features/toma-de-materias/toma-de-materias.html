@@ -28,7 +28,7 @@
       <div class="toma-schedule-nav-wrapper" *ngIf="horario && horario.clases && horario.clases.length">
 
         <!-- Navegación de horarios generados -->
-        <div class="toma-nav-arrows">
+        <div class="toma-nav-arrows" *ngIf="horariosGenerados && horariosGenerados.length > 0">
           <button
             class="toma-nav-btn"
             type="button"
@@ -105,7 +105,7 @@
           </ng-container>
         </div>
 
-        <!-- Opciones de Exportación -->
+        <!-- Opciones de Exportación y Aplicación -->
         <div class="horario-export">
           <label class="horario-export__label" for="export-format">{{ 'tomaMaterias.export.format' | translate }}</label>
           <select id="export-format" class="horario-export__select" [(ngModel)]="exportFormat">
@@ -117,10 +117,20 @@
             <span *ngIf="!exportLoading">{{ 'tomaMaterias.export.button' | translate }}</span>
             <span *ngIf="exportLoading">{{ 'tomaMaterias.export.generating' | translate }}</span>
           </button>
+          
+          <button class="horario-export__button" style="margin-left: 10px;" type="button" (click)="aplicarHorario()" [disabled]="isApplyingSchedule">
+            <span *ngIf="!isApplyingSchedule">Aplicar Horario</span>
+            <span *ngIf="isApplyingSchedule">Aplicando...</span>
+          </button>
         </div>
         <div class="horario-export__message" *ngIf="exportInfo">{{ exportInfo }}</div>
         <div class="horario-export__message horario-export__message--error" *ngIf="exportError">
           {{ exportError }}
+        </div>
+        
+        <div class="horario-export__message" *ngIf="applyScheduleSuccess" style="color: #2e7d32;">{{ applyScheduleSuccess }}</div>
+        <div class="horario-export__message horario-export__message--error" *ngIf="applyScheduleError">
+          {{ applyScheduleError }}
         </div>
 
       </div>
@@ -146,6 +156,8 @@
         class="toma-cancel-btn"
         type="button"
         id="btn-cancelar-generacion"
+        (click)="cancelarGeneracion()"
+        *ngIf="horariosGenerados && horariosGenerados.length > 0"
       >
         {{ 'tomaMaterias.generate.cancel' | translate }}
       </button>
@@ -157,7 +169,7 @@
           <li class="toma-prioridad-item" *ngFor="let p of prioridades; let i = index" cdkDrag>
             <div class="toma-prioridad-item-content">
               <label class="toma-prioridad-checkbox-wrapper">
-                <input type="checkbox" [(ngModel)]="p.activo" class="toma-prioridad-checkbox">
+                <input type="checkbox" [(ngModel)]="p.activo" (ngModelChange)="onPrioridadToggle(p)" class="toma-prioridad-checkbox">
                 <span class="toma-prioridad-label" [ngClass]="{'inactive': !p.activo}">{{ p.nombre }}</span>
               </label>
               

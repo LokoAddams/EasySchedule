@@ -9,5 +9,6 @@ public record ParaleloEstructuradoDTO(
     String paralelo,
     String docente,
     String aula,
-    List<ClaseBloqueDTO> bloques
+    List<ClaseBloqueDTO> bloques,
+    boolean esMateriaActual
 ) {}

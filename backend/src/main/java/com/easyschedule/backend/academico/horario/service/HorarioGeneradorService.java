@@ -21,14 +21,17 @@ public class HorarioGeneradorService {
 
     private final MallaDisponibilidadService mallaDisponibilidadService;
     private final OfertaMateriaRepository ofertaMateriaRepository;
+    private final HorarioRecomendadoService horarioRecomendadoService;
     private final ObjectMapper objectMapper;
 
     public HorarioGeneradorService(
             MallaDisponibilidadService mallaDisponibilidadService,
             OfertaMateriaRepository ofertaMateriaRepository,
+            HorarioRecomendadoService horarioRecomendadoService,
             ObjectMapper objectMapper) {
         this.mallaDisponibilidadService = mallaDisponibilidadService;
         this.ofertaMateriaRepository = ofertaMateriaRepository;
+        this.horarioRecomendadoService = horarioRecomendadoService;
         this.objectMapper = objectMapper;
     }
 
@@ -74,7 +77,8 @@ public class HorarioGeneradorService {
                         oferta.getParalelo(),
                         oferta.getDocente(),
                         oferta.getAula(),
-                        bloques
+                        bloques,
+                        false // esMateriaActual
                 ));
             }
 
@@ -89,7 +93,9 @@ public class HorarioGeneradorService {
 
         // 3. Algoritmo de Backtracking
         PriorityQueue<HorarioGeneradoResponse> mejoresHorarios = new PriorityQueue<>(Collections.reverseOrder()); // Max-Heap for the worst score at top
-        List<ParaleloEstructuradoDTO> combinacionActual = new ArrayList<>();
+        
+        HorarioActualResponse actualResponse = horarioRecomendadoService.getHorarioActualByUserId(request.userId());
+        List<ParaleloEstructuradoDTO> combinacionActual = mapActualToParalelos(actualResponse.clases());
         
         long startTime = System.currentTimeMillis();
         backtrack(0, materiasConParalelos, combinacionActual, mejoresHorarios, request.prioridades(), startTime);
@@ -287,6 +293,32 @@ public class HorarioGeneradorService {
         return diasConClase.size();
     }
 
+    private List<ParaleloEstructuradoDTO> mapActualToParalelos(List<HorarioClaseResponse> clases) {
+        if (clases == null || clases.isEmpty()) return new ArrayList<>();
+        List<ParaleloEstructuradoDTO> result = new ArrayList<>();
+        for (HorarioClaseResponse c : clases) {
+            List<ClaseBloqueDTO> bloques = new ArrayList<>();
+            if (c.dia() != null && c.horaInicio() != null && c.horaFin() != null) {
+                bloques.add(new ClaseBloqueDTO(
+                    c.dia(), 
+                    LocalTime.parse(c.horaInicio()), 
+                    LocalTime.parse(c.horaFin())
+                ));
+            }
+            result.add(new ParaleloEstructuradoDTO(
+                null, 
+                null, 
+                c.materia(), 
+                c.paralelo(), 
+                c.docente(), 
+                c.aula(), 
+                bloques,
+                true // esMateriaActual
+            ));
+        }
+        return result;
+    }
+
     private List<HorarioClaseResponse> mapToHorarioClase(List<ParaleloEstructuradoDTO> paralelos) {
         List<HorarioClaseResponse> res = new ArrayList<>();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
@@ -300,7 +332,9 @@ public class HorarioGeneradorService {
                         b.horaFin().format(dtf),
                         p.docente(),
                         p.aula(),
-                        null // creditos
+                        null, // creditos
+                        p.esMateriaActual(),
+                        p.idOferta()
                 ));
             }
         }

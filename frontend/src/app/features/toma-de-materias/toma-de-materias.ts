@@ -72,6 +72,11 @@ export class TomaDeMaterias implements OnInit {
   protected exportFormat = 'csv';
   protected exportError = '';
   protected exportInfo = '';
+  
+  protected isApplyingSchedule = false;
+  protected applyScheduleSuccess = '';
+  protected applyScheduleError = '';
+
   protected timeRows: string[] = [...this.timeRowsDefault];
   protected cellMap = new Map<string, HorarioClase[]>();
 
@@ -93,7 +98,7 @@ export class TomaDeMaterias implements OnInit {
   protected prioridades: PrioridadItem[] = [
     { nombre: 'Evitar primera hora (07:00)', enumValue: 'EVITAR_PRIMERA_HORA', activo: true },
     { nombre: 'Concentrar clases en la mañana', enumValue: 'CONCENTRAR_MANANA', activo: true },
-    { nombre: 'Concentrar clases en la tarde/noche', enumValue: 'CONCENTRAR_TARDE', activo: true },
+    { nombre: 'Concentrar clases en la tarde/noche', enumValue: 'CONCENTRAR_TARDE', activo: false },
     { nombre: 'Minimizar ventanas (horas huecas)', enumValue: 'MINIMIZAR_VENTANAS', activo: true },
     { nombre: 'Tener días libres', enumValue: 'TENER_DIAS_LIBRES', activo: true },
   ];
@@ -160,6 +165,24 @@ export class TomaDeMaterias implements OnInit {
   }
 
   // --- Métodos de prioridades ---
+
+  protected onPrioridadToggle(prioridad: PrioridadItem): void {
+    if (!prioridad.activo) {
+      return;
+    }
+
+    if (prioridad.enumValue === 'CONCENTRAR_MANANA') {
+      const tarde = this.prioridades.find(p => p.enumValue === 'CONCENTRAR_TARDE');
+      if (tarde) {
+        tarde.activo = false;
+      }
+    } else if (prioridad.enumValue === 'CONCENTRAR_TARDE') {
+      const manana = this.prioridades.find(p => p.enumValue === 'CONCENTRAR_MANANA');
+      if (manana) {
+        manana.activo = false;
+      }
+    }
+  }
 
   protected dropPrioridad(event: CdkDragDrop<PrioridadItem[]>): void {
     moveItemInArray(this.prioridades, event.previousIndex, event.currentIndex);
@@ -272,6 +295,22 @@ export class TomaDeMaterias implements OnInit {
         alert('Ocurrió un error al generar los horarios.');
       }
     });
+  }
+
+  protected cancelarGeneracion(): void {
+    this.horariosGenerados = [];
+    this.totalSchedules = 0;
+    this.currentScheduleIndex = 0;
+
+    // Desmarcar selecciones del panel lateral
+    this.materiasSeleccionMap.forEach(state => {
+      state.selected = false;
+      state.paralelo = 'any';
+      state.expanded = false;
+    });
+
+    // Restaurar el horario base
+    this.cargarHorarioYSelecciones();
   }
 
   // --- Métodos existentes ---
@@ -539,6 +578,59 @@ export class TomaDeMaterias implements OnInit {
         this.exportLoading = false;
         this.exportError = this.translateService.instant('tomaMaterias.messages.studentNotFound');
       },
+    });
+  }
+
+  protected aplicarHorario(): void {
+    if (this.isApplyingSchedule) {
+      return;
+    }
+
+    this.applyScheduleSuccess = '';
+    this.applyScheduleError = '';
+
+    if (!this.horario || !this.horario.clases || this.horario.clases.length === 0) {
+      this.applyScheduleError = 'No hay un horario para aplicar.';
+      return;
+    }
+
+    const ofertaIdsSet = new Set<number>();
+    for (const clase of this.horario.clases) {
+      if (clase.ofertaMateriaId) {
+        ofertaIdsSet.add(clase.ofertaMateriaId);
+      }
+    }
+
+    const ofertaIds = Array.from(ofertaIdsSet);
+    if (ofertaIds.length === 0) {
+      this.applyScheduleError = 'No se pudieron extraer las materias del horario.';
+      return;
+    }
+
+    this.isApplyingSchedule = true;
+    const payload = { ofertaIds };
+
+    this.apiService.post('/api/academico/toma-materias', payload).subscribe({
+      next: () => {
+        this.isApplyingSchedule = false;
+        this.applyScheduleSuccess = 'Materias registradas correctamente';
+        
+        // Clear selection to avoid conflicts
+        this.seleccionTemporalService.limpiarSelecciones().subscribe({
+          next: () => {
+            this.materiasSeleccionadas = [];
+            this.calcularTotalCreditos();
+            this.cargarHorarioYSelecciones();
+          },
+          error: () => {
+            this.cargarHorarioYSelecciones();
+          }
+        });
+      },
+      error: (err: HttpErrorResponse) => {
+        this.isApplyingSchedule = false;
+        this.applyScheduleError = this.extractApiErrorMessage(err) || 'Error al registrar el horario';
+      }
     });
   }
 

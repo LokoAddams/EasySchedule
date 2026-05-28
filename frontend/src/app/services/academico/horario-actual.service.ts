@@ -13,6 +13,8 @@ export interface HorarioClase {
   docente: string | null;
   aula: string | null;
   creditos: number | null;
+  esMateriaActual?: boolean;
+  ofertaMateriaId?: number;
 }
 
 export interface HorarioActualResponse {

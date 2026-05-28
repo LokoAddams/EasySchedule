@@ -8,6 +8,8 @@ public record HorarioClaseResponse(
     String horaFin,
     String docente,
     String aula,
-    Integer creditos
+    Integer creditos,
+    boolean esMateriaActual,
+    Long ofertaMateriaId
 ) {
 }
