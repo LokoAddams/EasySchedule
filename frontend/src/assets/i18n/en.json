@@ -322,7 +322,7 @@
       "toTake": "Credits to take (new selection):",
       "total": "Total credits:"
     },
-    "schedulePreview": "Schedule preview",
+    "schedulePreview": "Academic Schedule",
     "summary": {
       "title": "Progress summary",
       "totalSubjects": "Total subjects in curriculum",
@@ -362,6 +362,29 @@
     },
     "confirm": {
       "removeSubject": "Are you sure you want to deselect this subject?"
+    },
+    "generate": {
+      "button": "Generate",
+      "cancel": "Cancel",
+      "title": "Schedule Generation"
+    },
+    "priorities": {
+      "title": "Priorities",
+      "item": "Priority {{number}}"
+    },
+    "availableSubjects": {
+      "title": "Available Subjects",
+      "noSubjects": "No available subjects found.",
+      "loading": "Loading available subjects..."
+    },
+    "parallel": {
+      "any": "Any section",
+      "label": "Section {{number}}"
+    },
+    "scheduleNav": {
+      "previous": "Previous schedule",
+      "next": "Next schedule",
+      "counter": "Schedule {{current}} of {{total}}"
     }
   },
   "materia": {

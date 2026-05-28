@@ -1,8 +1,14 @@
+/* ===================================================================
+   TOMA DE MATERIAS — Two-Column Layout + Generation Panel
+   =================================================================== */
+
 .horario-page {
-	max-width: min(1450px, 96vw);
+	max-width: min(1500px, 98vw);
 	margin: 1.8rem auto;
 	padding: 0 1rem 2rem;
 }
+
+/* ── Header ── */
 
 .horario-header {
 	margin-bottom: 1.2rem;
@@ -98,8 +104,82 @@ h1 {
 	color: #7f271f;
 }
 
-.horario-grid-wrapper {
+/* ===================================================================
+   TWO-COLUMN LAYOUT
+   =================================================================== */
+
+.toma-two-col-layout {
+	display: grid;
+	grid-template-columns: 1fr 340px;
+	gap: 1.5rem;
 	margin-top: 1.2rem;
+	align-items: start;
+}
+
+/* ── Columna Izquierda: Horario ── */
+
+.toma-col-izquierda {
+	min-width: 0; /* prevent grid blowout */
+}
+
+/* ── Navegación de horarios ── */
+
+.toma-nav-arrows {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	margin-bottom: 0.85rem;
+	padding: 0.65rem 1rem;
+	border-radius: 14px;
+	background: linear-gradient(135deg, #eef2f8 0%, #dce4ee 100%);
+	border: 1px solid rgba(47, 79, 115, 0.12);
+}
+
+.toma-nav-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border: none;
+	border-radius: 50%;
+	background: #3f6383;
+	color: #f5f9ff;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+	box-shadow: 0 2px 6px rgba(39, 74, 105, 0.25);
+
+	&:hover:not(:disabled) {
+		background: #274a69;
+		transform: scale(1.08);
+		box-shadow: 0 4px 12px rgba(39, 74, 105, 0.35);
+	}
+
+	&:disabled {
+		opacity: 0.35;
+		cursor: not-allowed;
+		box-shadow: none;
+	}
+}
+
+.toma-nav-icon {
+	font-size: 0.85rem;
+	line-height: 1;
+}
+
+.toma-nav-counter {
+	font-family: 'Poppins', sans-serif;
+	font-weight: 600;
+	font-size: 0.95rem;
+	color: #1b2330;
+	letter-spacing: 0.01em;
+}
+
+/* ── Tabla horario ── */
+
+.horario-grid-wrapper {
 	overflow-x: auto;
 	border-radius: 20px;
 	border: 1px solid rgba(34, 53, 74, 0.25);
@@ -108,7 +188,7 @@ h1 {
 
 .horario-grid {
 	width: 100%;
-	min-width: 1024px;
+	min-width: 780px;
 	border-collapse: collapse;
 	table-layout: fixed;
 
@@ -116,9 +196,9 @@ h1 {
 		background: #3f6383;
 		color: #f5f9ff;
 		font-family: 'Poppins', sans-serif;
-		font-size: 1rem;
+		font-size: 0.9rem;
 		letter-spacing: 0.02em;
-		padding: 0.85rem 0.55rem;
+		padding: 0.75rem 0.4rem;
 		border-bottom: 2px solid rgba(24, 36, 52, 0.65);
 	}
 
@@ -130,39 +210,40 @@ h1 {
 }
 
 .time-cell {
-	width: 130px;
+	width: 110px;
 	background: #3f6383;
 	color: #f5f9ff;
 	text-align: center;
 	font-family: 'Poppins', sans-serif;
 	font-weight: 600;
-	padding: 0.8rem 0.45rem;
+	padding: 0.65rem 0.35rem;
+	font-size: 0.85rem;
 }
 
 .slot-cell {
 	background: #b9c0c9;
-	padding: 0.35rem;
-	min-height: 90px;
+	padding: 0.3rem;
+	min-height: 70px;
 }
 
 .slot-card {
 	background: #8298b5;
 	border-radius: 8px;
-	padding: 0.45rem 0.5rem;
-	margin-bottom: 0.3rem;
+	padding: 0.4rem 0.45rem;
+	margin-bottom: 0.25rem;
 	color: #112033;
 }
 
 .slot-card__materia {
 	font-family: 'Poppins', sans-serif;
-	font-size: 0.95rem;
+	font-size: 0.85rem;
 	font-weight: 700;
 	line-height: 1.25;
 }
 
 .slot-card__meta {
-	margin-top: 0.2rem;
-	font-size: 0.75rem;
+	margin-top: 0.15rem;
+	font-size: 0.7rem;
 }
 
 .horario-link {
@@ -172,8 +253,10 @@ h1 {
 	font-weight: 600;
 }
 
+/* ── Mobile list ── */
+
 .mobile-only {
-	display: none;
+	display: none !important;
 }
 
 .horario-mobile-list {
@@ -232,8 +315,448 @@ h1 {
 	margin-top: 0.15rem;
 }
 
+/* ===================================================================
+   COLUMNA DERECHA — PANEL DE GENERACIÓN (Sidebar)
+   =================================================================== */
+
+.toma-col-derecha {
+	position: sticky;
+	top: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.1rem;
+	max-height: calc(100vh - 3rem);
+	overflow-y: auto;
+	padding-right: 0.25rem;
+
+	/* Custom scrollbar */
+	&::-webkit-scrollbar {
+		width: 5px;
+	}
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: rgba(63, 99, 131, 0.25);
+		border-radius: 10px;
+	}
+}
+
+/* ── Botón Generar ── */
+
+.toma-generate-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.6rem;
+	width: 100%;
+	padding: 0.9rem 1.2rem;
+	border: none;
+	border-radius: 14px;
+	background: #274a69;
+	color: #fff;
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.15rem;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	cursor: pointer;
+	transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.2s ease;
+	box-shadow: 0 4px 16px rgba(39, 74, 105, 0.35), 0 2px 6px rgba(0, 0, 0, 0.1);
+	text-transform: uppercase;
+
+	&:hover {
+		transform: translateY(-2px) scale(1.02);
+		box-shadow: 0 6px 24px rgba(39, 74, 105, 0.45), 0 3px 10px rgba(0, 0, 0, 0.12);
+		filter: brightness(1.08);
+	}
+
+	&:active {
+		transform: translateY(0) scale(0.98);
+		box-shadow: 0 2px 8px rgba(39, 74, 105, 0.3);
+	}
+}
+
+/* ── Botón Cancelar ── */
+
+.toma-cancel-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: 0.6rem 1rem;
+	border: 2px solid rgba(39, 74, 105, 0.3);
+	border-radius: 12px;
+	background: transparent;
+	color: #274a69;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.95rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+	&:hover {
+		background: rgba(39, 74, 105, 0.08);
+		border-color: rgba(39, 74, 105, 0.5);
+	}
+
+	&:active {
+		background: rgba(39, 74, 105, 0.12);
+	}
+}
+
+/* ── Secciones del panel ── */
+
+.toma-panel-section {
+	background: #f7f9fc;
+	border: 1px solid rgba(47, 79, 115, 0.12);
+	border-radius: 14px;
+	padding: 1rem;
+}
+
+.toma-panel-section__title {
+	margin: 0 0 0.7rem;
+	font-family: 'Poppins', sans-serif;
+	font-size: 1rem;
+	font-weight: 700;
+	color: #1b2330;
+	padding-bottom: 0.45rem;
+	border-bottom: 2px solid rgba(63, 99, 131, 0.15);
+}
+
+/* ── Prioridades ── */
+
+.toma-prioridad-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.45rem;
+}
+
+.toma-prioridad-item {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	padding: 0.5rem 0.65rem;
+	border-radius: 10px;
+	background: #eef2f8;
+	border: 1px solid rgba(47, 79, 115, 0.08);
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.9rem;
+	color: #1b2330;
+	cursor: grab;
+	transition: background 0.2s ease, border-color 0.2s ease;
+
+	&:hover {
+		background: #e3eaf3;
+		border-color: rgba(47, 79, 115, 0.18);
+	}
+}
+
+.toma-prioridad-number {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.7rem;
+	height: 1.7rem;
+	border-radius: 50%;
+	background: #3f6383;
+	color: #f5f9ff;
+	font-weight: 700;
+	font-size: 0.8rem;
+	flex-shrink: 0;
+}
+
+.toma-prioridad-item-content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.toma-prioridad-checkbox-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	cursor: pointer;
+}
+
+.toma-prioridad-checkbox {
+	width: 1.15rem;
+	height: 1.15rem;
+	cursor: pointer;
+	accent-color: #3f6383;
+}
+
+.toma-prioridad-label {
+	font-weight: 500;
+	transition: opacity 0.2s;
+}
+
+.toma-prioridad-label.inactive {
+	opacity: 0.5;
+	text-decoration: line-through;
+}
+
+.toma-prioridad-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.3rem;
+}
+
+.btn-move {
+	background: none;
+	border: none;
+	font-size: 0.85rem;
+	color: #3f6383;
+	cursor: pointer;
+	padding: 0.2rem;
+	border-radius: 4px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.2s;
+
+	&:hover:not(:disabled) {
+		background: rgba(47, 79, 115, 0.1);
+	}
+
+	&:disabled {
+		opacity: 0.3;
+		cursor: not-allowed;
+	}
+}
+
+.drag-handle {
+	cursor: grab;
+	color: #7f93a6;
+	font-size: 1.2rem;
+	padding: 0.2rem 0.3rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	
+	&:active {
+		cursor: grabbing;
+	}
+}
+
+/* CDK Drag and Drop */
+.cdk-drag-preview {
+	box-sizing: border-box;
+	border-radius: 10px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+	background: #fff;
+	border: 1px solid rgba(47, 79, 115, 0.2);
+}
+
+.cdk-drag-placeholder {
+	opacity: 0;
+}
+
+.cdk-drag-animating {
+	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.toma-prioridad-list.cdk-drop-list-dragging .toma-prioridad-item:not(.cdk-drag-placeholder) {
+	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* ── Panel loading / empty ── */
+
+.toma-panel-loading,
+.toma-panel-empty {
+	padding: 0.7rem 0.5rem;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.88rem;
+	color: #5a6a7c;
+	text-align: center;
+}
+
+/* ── Materias Disponibles Cards ── */
+
+.toma-materias-disponibles-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.toma-materia-card {
+	border-radius: 12px;
+	border: 1.5px solid rgba(47, 79, 115, 0.15);
+	background: #fff;
+	overflow: hidden;
+	transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+
+	&:hover {
+		border-color: rgba(47, 79, 115, 0.3);
+		box-shadow: 0 2px 8px rgba(39, 74, 105, 0.08);
+	}
+}
+
+.toma-materia-card--selected {
+	border-color: #3f6383;
+	background: linear-gradient(135deg, #e8eef6 0%, #f0f4fa 100%);
+	box-shadow: 0 2px 10px rgba(39, 74, 105, 0.12);
+
+	&:hover {
+		border-color: #274a69;
+		box-shadow: 0 3px 14px rgba(39, 74, 105, 0.18);
+	}
+}
+
+.toma-materia-card__header {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	padding: 0.65rem 0.75rem;
+	cursor: pointer;
+	user-select: none;
+	transition: background 0.15s ease;
+
+	&:hover {
+		background: rgba(47, 79, 115, 0.04);
+	}
+}
+
+.toma-materia-card__check {
+	flex-shrink: 0;
+}
+
+.toma-materia-card__checkbox {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.35rem;
+	height: 1.35rem;
+	border-radius: 5px;
+	border: 2px solid rgba(47, 79, 115, 0.35);
+	background: #fff;
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: transparent;
+	transition: all 0.2s ease;
+}
+
+.toma-materia-card__checkbox--checked {
+	background: #3f6383;
+	border-color: #3f6383;
+	color: #fff;
+}
+
+.toma-materia-card__info {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.1rem;
+}
+
+.toma-materia-card__code {
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.7rem;
+	font-weight: 600;
+	color: #5a6a7c;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.toma-materia-card__name {
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.88rem;
+	font-weight: 600;
+	color: #1b2330;
+	line-height: 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.toma-materia-card__expand {
+	flex-shrink: 0;
+	width: 1.6rem;
+	height: 1.6rem;
+	border: none;
+	border-radius: 6px;
+	background: rgba(47, 79, 115, 0.08);
+	color: #3f6383;
+	font-size: 1rem;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.15s ease, transform 0.2s ease;
+
+	&:hover {
+		background: rgba(47, 79, 115, 0.15);
+	}
+
+	span {
+		display: inline-block;
+		transition: transform 0.25s ease;
+	}
+}
+
+.toma-expand-icon--open {
+	transform: rotate(180deg);
+}
+
+/* ── Acordeón Paralelos ── */
+
+.toma-materia-accordion {
+	padding: 0.55rem 0.75rem 0.7rem;
+	border-top: 1px solid rgba(47, 79, 115, 0.1);
+	background: rgba(238, 242, 248, 0.5);
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	animation: toma-accordion-open 0.2s ease-out;
+}
+
+@keyframes toma-accordion-open {
+	from {
+		opacity: 0;
+		max-height: 0;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+	to {
+		opacity: 1;
+		max-height: 200px;
+	}
+}
+
+.toma-paralelo-option {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.35rem 0.45rem;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.84rem;
+	color: #1b2330;
+	transition: background 0.15s ease;
+
+	&:hover {
+		background: rgba(47, 79, 115, 0.06);
+	}
+
+	input[type="radio"] {
+		accent-color: #28a745;
+		width: 1rem;
+		height: 1rem;
+		cursor: pointer;
+	}
+}
+
+/* ===================================================================
+   SECCIONES INFERIORES (existentes — refinadas)
+   =================================================================== */
+
 .toma-seleccion-container {
-	margin-top: 1.25rem;
+	margin-top: 1.5rem;
 	padding: 1.05rem;
 	border-radius: 14px;
 	border: 1px solid rgba(34, 53, 74, 0.2);
@@ -403,12 +926,14 @@ h1 {
 	font-size: 1.25rem;
 }
 
+/* ── Progress Summary ── */
+
 .malla-progress {
 	margin: 1.2rem 0 0;
 	padding: 1rem;
 
 	&__body {
-		margin-top: 0.75rem; // ← espacio entre título y contenido
+		margin-top: 0.75rem;
 		display: grid;
 		grid-template-columns: minmax(320px, 1fr) auto;
 		gap: 1.25rem;
@@ -469,13 +994,13 @@ h1 {
 
 	.circle-bg {
 		fill: none;
-		stroke: #edf1f4; /* light gray background segment */
+		stroke: #edf1f4;
 		stroke-width: 4.5;
 	}
 
 	.circle {
 		fill: none;
-		stroke: #28a745; /* green for completed */
+		stroke: #28a745;
 		stroke-width: 4.5;
 		stroke-linecap: round;
 		transition: stroke-dasharray 1s cubic-bezier(.22,.9,.3,1), stroke 0.6s ease;
@@ -488,8 +1013,6 @@ h1 {
 	transform-origin: center;
 	font-weight: 800;
 	}
-
-	/* Make the pie look like two-colored: green arc over gray background */
 }
 
 .malla-legend {
@@ -521,6 +1044,33 @@ h1 {
 	.legend-remaining { background: #e6e9ec; }
 }
 
+.horario-section-title h3 {
+	margin: 1rem 0 0;
+	font-family: 'Poppins', sans-serif;
+	font-size: clamp(1.45rem, 1.12rem + 0.9vw, 1.95rem);
+	color: #141b25;
+}
+
+/* ===================================================================
+   RESPONSIVE — Stacked layout below 960px
+   =================================================================== */
+
+@media (max-width: 960px) {
+	.toma-two-col-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.toma-col-derecha {
+		position: static;
+		max-height: none;
+		overflow-y: visible;
+	}
+
+	.horario-grid {
+		min-width: 780px;
+	}
+}
+
 @media (max-width: 880px) {
 	.malla-progress__body {
 		display: flex;
@@ -537,13 +1087,6 @@ h1 {
 
 	.malla-pie { width: 140px; height: 140px; }
 	.malla-progress__items { grid-template-columns: 1fr; }
-}
-
-.horario-section-title h3 {
-	margin: 1rem 0 0;
-	font-family: 'Poppins', sans-serif;
-	font-size: clamp(1.45rem, 1.12rem + 0.9vw, 1.95rem);
-	color: #141b25;
 }
 
 @media (max-width: 860px) {
@@ -564,14 +1107,14 @@ h1 {
 	}
 
 	.horario-grid {
-		min-width: 920px;
+		min-width: 720px;
 	}
 
 	.desktop-only {
-		display: none;
+		display: none !important;
 	}
 
 	.mobile-only {
-		display: flex;
+		display: flex !important;
 	}
 }

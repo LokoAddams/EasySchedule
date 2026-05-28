@@ -361,6 +361,28 @@
     },
     "confirm": {
       "removeSubject": "Tem certeza de que deseja desmarcar esta matéria?"
+    },
+    "generate": {
+      "button": "Gerar",
+      "title": "Geração de horário"
+    },
+    "priorities": {
+      "title": "Prioridades",
+      "item": "Prioridade {{number}}"
+    },
+    "availableSubjects": {
+      "title": "Disciplinas disponíveis",
+      "noSubjects": "Nenhuma disciplina disponível encontrada.",
+      "loading": "Carregando disciplinas disponíveis..."
+    },
+    "parallel": {
+      "any": "Qualquer turma",
+      "label": "Turma {{number}}"
+    },
+    "scheduleNav": {
+      "previous": "Horário anterior",
+      "next": "Próximo horário",
+      "counter": "Horário {{current}} de {{total}}"
     }
   },
   "materia": {

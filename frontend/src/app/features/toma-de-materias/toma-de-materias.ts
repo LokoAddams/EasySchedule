@@ -1,19 +1,31 @@
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 
 import {
   HorarioActualResponse,
   HorarioActualService,
   HorarioClase,
 } from '../../services/academico/horario-actual.service';
+import {
+  HorarioGeneradorService,
+  HorarioGeneradorRequest,
+  HorarioGeneradoResponse,
+  MateriaSeleccionadaRequest
+} from '../../services/academico/horario-generador.service';
+
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ApiService } from '../../services/api.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PerfilService } from '../perfil/perfil.service';
 import { MallaCatalogoService, MallaMateria } from '../../services/academico/malla-catalogo.service';
 import { SeleccionTemporalService } from '../../services/academico/seleccion-temporal.service';
+import {
+  MateriasDisponiblesService,
+  MateriaDisponible,
+} from '../../services/academico/materias-disponibles.service';
 
 export interface MateriaSeleccionada {
   id: number;
@@ -22,9 +34,21 @@ export interface MateriaSeleccionada {
   ofertaId: number;
 }
 
+export interface PrioridadItem {
+  nombre: string;
+  enumValue: string;
+  activo: boolean;
+}
+
+export interface MateriaSeleccionState {
+  selected: boolean;
+  paralelo: string;
+  expanded: boolean;
+}
+
 @Component({
   selector: 'app-toma-de-materias',
-  imports: [NgIf, NgFor, FormsModule, TranslatePipe],
+  imports: [NgIf, NgFor, NgClass, FormsModule, TranslatePipe, CdkDropList, CdkDrag, CdkDragHandle],
   templateUrl: './toma-de-materias.html',
   styleUrl: './toma-de-materias.scss',
 })
@@ -48,6 +72,11 @@ export class TomaDeMaterias implements OnInit {
   protected exportFormat = 'csv';
   protected exportError = '';
   protected exportInfo = '';
+  
+  protected isApplyingSchedule = false;
+  protected applyScheduleSuccess = '';
+  protected applyScheduleError = '';
+
   protected timeRows: string[] = [...this.timeRowsDefault];
   protected cellMap = new Map<string, HorarioClase[]>();
 
@@ -60,6 +89,23 @@ export class TomaDeMaterias implements OnInit {
   protected submitSuccess = '';
 
   private estudianteId: number | null = null;
+  private mallaId: number | null = null;
+
+  // --- Nuevas propiedades para el panel de generación ---
+  protected materiasDisponibles: MateriaDisponible[] = [];
+  protected materiasDisponiblesLoading = false;
+  protected materiasSeleccionMap = new Map<number, MateriaSeleccionState>();
+  protected prioridades: PrioridadItem[] = [
+    { nombre: 'Evitar primera hora (07:00)', enumValue: 'EVITAR_PRIMERA_HORA', activo: true },
+    { nombre: 'Concentrar clases en la mañana', enumValue: 'CONCENTRAR_MANANA', activo: true },
+    { nombre: 'Concentrar clases en la tarde/noche', enumValue: 'CONCENTRAR_TARDE', activo: false },
+    { nombre: 'Minimizar ventanas (horas huecas)', enumValue: 'MINIMIZAR_VENTANAS', activo: true },
+    { nombre: 'Tener días libres', enumValue: 'TENER_DIAS_LIBRES', activo: true },
+  ];
+  protected currentScheduleIndex = 0;
+  protected totalSchedules = 0;
+  protected horariosGenerados: HorarioGeneradoResponse[] = [];
+  protected isGenerating = false;
 
   constructor(
     private readonly horarioActualService: HorarioActualService,
@@ -69,6 +115,8 @@ export class TomaDeMaterias implements OnInit {
     private readonly translateService: TranslateService,
     private readonly mallaCatalogoService: MallaCatalogoService,
     private readonly seleccionTemporalService: SeleccionTemporalService,
+    private readonly materiasDisponiblesService: MateriasDisponiblesService,
+    private readonly horarioGeneradorService: HorarioGeneradorService,
   ) {}
 
   // Estadísticas de malla
@@ -83,6 +131,189 @@ export class TomaDeMaterias implements OnInit {
     this.cargarHorarioYSelecciones();
     this.cargarSeleccionesTemporales();
   }
+
+  // --- Métodos de navegación de horarios generados ---
+
+  protected prevSchedule(): void {
+    if (this.currentScheduleIndex > 0) {
+      this.currentScheduleIndex--;
+      this.renderScheduleIndex(this.currentScheduleIndex);
+    }
+  }
+
+  protected nextSchedule(): void {
+    if (this.currentScheduleIndex < this.totalSchedules - 1) {
+      this.currentScheduleIndex++;
+      this.renderScheduleIndex(this.currentScheduleIndex);
+    }
+  }
+
+  private renderScheduleIndex(index: number): void {
+    const generated = this.horariosGenerados[index];
+    if (generated) {
+      this.horario = {
+        universidad: null,
+        carrera: null,
+        malla: 'Horario Generado',
+        semestreOferta: 'Puntaje: ' + generated.puntajeTotal,
+        semestreActual: null,
+        clases: generated.clases,
+      };
+      this.buildGrid(this.horario.clases);
+      this.calcularCreditosHorario();
+    }
+  }
+
+  // --- Métodos de prioridades ---
+
+  protected onPrioridadToggle(prioridad: PrioridadItem): void {
+    if (!prioridad.activo) {
+      return;
+    }
+
+    if (prioridad.enumValue === 'CONCENTRAR_MANANA') {
+      const tarde = this.prioridades.find(p => p.enumValue === 'CONCENTRAR_TARDE');
+      if (tarde) {
+        tarde.activo = false;
+      }
+    } else if (prioridad.enumValue === 'CONCENTRAR_TARDE') {
+      const manana = this.prioridades.find(p => p.enumValue === 'CONCENTRAR_MANANA');
+      if (manana) {
+        manana.activo = false;
+      }
+    }
+  }
+
+  protected dropPrioridad(event: CdkDragDrop<PrioridadItem[]>): void {
+    moveItemInArray(this.prioridades, event.previousIndex, event.currentIndex);
+  }
+
+  protected movePrioridadUp(index: number, event: Event): void {
+    event.stopPropagation();
+    if (index > 0) {
+      moveItemInArray(this.prioridades, index, index - 1);
+    }
+  }
+
+  protected movePrioridadDown(index: number, event: Event): void {
+    event.stopPropagation();
+    if (index < this.prioridades.length - 1) {
+      moveItemInArray(this.prioridades, index, index + 1);
+    }
+  }
+
+  // --- Métodos de toggle de materias disponibles ---
+
+  protected toggleMateria(id: number): void {
+    const state = this.materiasSeleccionMap.get(id);
+    if (state) {
+      state.selected = !state.selected;
+      if (!state.selected) {
+        state.paralelo = 'any';
+        state.expanded = false;
+      }
+    }
+  }
+
+  protected toggleAccordion(id: number): void {
+    const state = this.materiasSeleccionMap.get(id);
+    if (state) {
+      state.expanded = !state.expanded;
+    }
+  }
+
+  protected isMateriaSelected(id: number): boolean {
+    return this.materiasSeleccionMap.get(id)?.selected ?? false;
+  }
+
+  protected isMateriaExpanded(id: number): boolean {
+    return this.materiasSeleccionMap.get(id)?.expanded ?? false;
+  }
+
+  protected getParalelo(id: number): string {
+    return this.materiasSeleccionMap.get(id)?.paralelo ?? 'any';
+  }
+
+  protected setParalelo(id: number, paralelo: string): void {
+    const state = this.materiasSeleccionMap.get(id);
+    if (state) {
+      state.paralelo = paralelo;
+    }
+  }
+
+  // --- Método de generación ---
+
+  protected generarHorario(): void {
+    if (!this.estudianteId || !this.mallaId) {
+      alert('Error: No se pudo obtener el ID del usuario o la malla.');
+      return;
+    }
+
+    const seleccionadas: MateriaSeleccionadaRequest[] = [];
+    this.materiasSeleccionMap.forEach((state, id) => {
+      if (state.selected) {
+        const paralelos: string[] = [];
+        if (state.paralelo !== 'any') {
+          paralelos.push(state.paralelo);
+        }
+        seleccionadas.push({ materiaId: id, paralelos });
+      }
+    });
+
+    if (seleccionadas.length === 0) {
+      alert('Por favor selecciona al menos una materia para generar el horario.');
+      return;
+    }
+
+    const prioridadesIds = this.prioridades
+      .filter(p => p.activo)
+      .map(p => p.enumValue);
+
+    const request: HorarioGeneradorRequest = {
+      userId: this.estudianteId,
+      mallaId: this.mallaId,
+      materiasSeleccionadas: seleccionadas,
+      prioridades: prioridadesIds
+    };
+
+    this.isGenerating = true;
+    this.horarioGeneradorService.generarHorarios(request).subscribe({
+      next: (horarios) => {
+        this.horariosGenerados = horarios;
+        this.totalSchedules = horarios.length;
+        this.currentScheduleIndex = 0;
+        this.isGenerating = false;
+        
+        if (this.totalSchedules > 0) {
+          this.renderScheduleIndex(0);
+        } else {
+          alert('No se pudo generar ningún horario viable con las materias y paralelos seleccionados.');
+        }
+      },
+      error: () => {
+        this.isGenerating = false;
+        alert('Ocurrió un error al generar los horarios.');
+      }
+    });
+  }
+
+  protected cancelarGeneracion(): void {
+    this.horariosGenerados = [];
+    this.totalSchedules = 0;
+    this.currentScheduleIndex = 0;
+
+    // Desmarcar selecciones del panel lateral
+    this.materiasSeleccionMap.forEach(state => {
+      state.selected = false;
+      state.paralelo = 'any';
+      state.expanded = false;
+    });
+
+    // Restaurar el horario base
+    this.cargarHorarioYSelecciones();
+  }
+
+  // --- Métodos existentes ---
 
   private cargarSeleccionesTemporales(): void {
     this.seleccionTemporalService.listarSelecciones().subscribe({
@@ -149,6 +380,28 @@ export class TomaDeMaterias implements OnInit {
       error: () => {
         // leave zeros on error
       }
+    });
+  }
+
+  private cargarMateriasDisponibles(mallaId: number, userId: number): void {
+    this.materiasDisponiblesLoading = true;
+    this.materiasDisponiblesService.getMateriasDisponibles(mallaId, userId).subscribe({
+      next: (materias) => {
+        this.materiasDisponibles = materias;
+        this.materiasSeleccionMap.clear();
+        for (const m of materias) {
+          this.materiasSeleccionMap.set(m.id, {
+            selected: false,
+            paralelo: 'any',
+            expanded: false,
+          });
+        }
+        this.materiasDisponiblesLoading = false;
+      },
+      error: () => {
+        this.materiasDisponibles = [];
+        this.materiasDisponiblesLoading = false;
+      },
     });
   }
 
@@ -328,6 +581,59 @@ export class TomaDeMaterias implements OnInit {
     });
   }
 
+  protected aplicarHorario(): void {
+    if (this.isApplyingSchedule) {
+      return;
+    }
+
+    this.applyScheduleSuccess = '';
+    this.applyScheduleError = '';
+
+    if (!this.horario || !this.horario.clases || this.horario.clases.length === 0) {
+      this.applyScheduleError = 'No hay un horario para aplicar.';
+      return;
+    }
+
+    const ofertaIdsSet = new Set<number>();
+    for (const clase of this.horario.clases) {
+      if (clase.ofertaMateriaId) {
+        ofertaIdsSet.add(clase.ofertaMateriaId);
+      }
+    }
+
+    const ofertaIds = Array.from(ofertaIdsSet);
+    if (ofertaIds.length === 0) {
+      this.applyScheduleError = 'No se pudieron extraer las materias del horario.';
+      return;
+    }
+
+    this.isApplyingSchedule = true;
+    const payload = { ofertaIds };
+
+    this.apiService.post('/api/academico/toma-materias', payload).subscribe({
+      next: () => {
+        this.isApplyingSchedule = false;
+        this.applyScheduleSuccess = 'Materias registradas correctamente';
+        
+        // Clear selection to avoid conflicts
+        this.seleccionTemporalService.limpiarSelecciones().subscribe({
+          next: () => {
+            this.materiasSeleccionadas = [];
+            this.calcularTotalCreditos();
+            this.cargarHorarioYSelecciones();
+          },
+          error: () => {
+            this.cargarHorarioYSelecciones();
+          }
+        });
+      },
+      error: (err: HttpErrorResponse) => {
+        this.isApplyingSchedule = false;
+        this.applyScheduleError = this.extractApiErrorMessage(err) || 'Error al registrar el horario';
+      }
+    });
+  }
+
   protected getCellItems(timeRow: string, dia: string): HorarioClase[] {
     return this.cellMap.get(this.cellKey(timeRow, dia)) ?? [];
   }
@@ -465,7 +771,13 @@ export class TomaDeMaterias implements OnInit {
     this.perfilService.getPerfilByUsername(username).subscribe({
       next: (perfil) => {
         this.estudianteId = perfil.id;
+        this.mallaId = perfil.mallaId ?? null;
         this.loadMallaProgress(perfil.mallaId ?? null);
+
+        // Cargar materias disponibles si tenemos mallaId y userId
+        if (this.mallaId && this.estudianteId) {
+          this.cargarMateriasDisponibles(this.mallaId, this.estudianteId);
+        }
       },
       error: () => {
         this.estudianteId = null;

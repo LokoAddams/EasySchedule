@@ -333,7 +333,7 @@
       "toTake": "Creditos a tomar (nueva seleccion):",
       "total": "Total de creditos:"
     },
-    "schedulePreview": "Vista previa de horario",
+    "schedulePreview": "Horario Académico",
     "summary": {
       "title": "Resumen de avance",
       "totalSubjects": "Total de materias en la malla",
@@ -373,6 +373,29 @@
     },
     "confirm": {
       "removeSubject": "¿Estas seguro de deseleccionar esta materia?"
+    },
+    "generate": {
+      "button": "Generar",
+      "cancel": "Cancelar",
+      "title": "Generación de horario"
+    },
+    "priorities": {
+      "title": "Prioridades",
+      "item": "Prioridad {{number}}"
+    },
+    "availableSubjects": {
+      "title": "Materias disponibles",
+      "noSubjects": "No se encontraron materias disponibles.",
+      "loading": "Cargando materias disponibles..."
+    },
+    "parallel": {
+      "any": "Cualquier paralelo",
+      "label": "Paralelo {{number}}"
+    },
+    "scheduleNav": {
+      "previous": "Horario anterior",
+      "next": "Horario siguiente",
+      "counter": "Horario {{current}} de {{total}}"
     }
   },
   "materia": {
