@@ -51,6 +51,8 @@ interface GoogleCredentialResponse {
 interface LoginResponse {
   token?: string;
   username?: string;
+  email?: string;
+  isAdmin?: boolean;
   expiresInSeconds?: number;
   message?: string;
 }
@@ -213,6 +215,8 @@ export class Registro implements AfterViewInit {
     );
 
     const username = typeof data.username === 'string' ? data.username.trim() : '';
+    const email = typeof data.email === 'string' ? data.email.trim().toLowerCase() : '';
+    const isAdmin = data.isAdmin === true;
 
     if (!username) {
       this.toastService.error('registro.error.googleGeneric');
@@ -220,9 +224,22 @@ export class Registro implements AfterViewInit {
       return;
     }
 
+    this.authSessionService.setCurrentUsername(username);
+    this.authSessionService.setCurrentEmail(email);
+    this.authSessionService.setAdmin(isAdmin);
+
+    if (isAdmin) {
+      this.authSessionService.setProfileCompleted(true);
+      await this.featureToggleService.loadFlags();
+      this.toastService.success('login.success.loggedIn');
+      this.router.navigate(['/admin/feature-toggles']);
+      return;
+    }
+
     const perfil = await firstValueFrom(this.perfilService.getPerfilByUsername(username));
 
     this.authSessionService.setCurrentUsername(perfil.username);
+    this.authSessionService.setCurrentEmail(perfil.email ?? email);
     this.authSessionService.setProfileCompleted(perfil.profileCompleted ?? false);
 
     await this.featureToggleService.loadFlags();

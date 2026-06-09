@@ -28,6 +28,8 @@
     "home": "Home",
     "malla": "Curriculum",
     "tomaMaterias": "Course Selection",
+    "featureToggles": "Feature Toggles",
+    "adminFeatureToggles": "Administration",
     "login": "Sign In",
     "signup": "Sign Up",
     "logout": "Log out",
@@ -41,6 +43,59 @@
     },
     "hints": {
       "chooseMalla": "Let's choose your University and Career!"
+    }
+  },
+  "adminFeatureToggles": {
+    "eyebrow": "Administration",
+    "title": "Feature toggles",
+    "description": "Enable or disable functionality available to users.",
+    "loading": "Loading feature toggles...",
+    "updatedAtUnavailable": "Unavailable",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "metadata": {
+      "key": "Key",
+      "updatedAt": "Updated"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "saving": "Saving...",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "cancel": "Cancel"
+    },
+    "confirm": {
+      "eyebrow": "Confirmation",
+      "close": "Close confirmation",
+      "activateTitle": "Activate feature",
+      "deactivateTitle": "Deactivate feature",
+      "activateMessage": "Do you want to activate \"{{name}}\" for all users?",
+      "deactivateMessage": "Do you want to deactivate \"{{name}}\" for all users?"
+    },
+    "toggles": {
+      "malla": {
+        "name": "Curriculum",
+        "description": "Controls access to curriculum management and visualization."
+      },
+      "tomaMaterias": {
+        "name": "Course selection",
+        "description": "Controls access to course selection and schedule modules."
+      },
+      "ofertasImport": {
+        "name": "Offer import",
+        "description": "Controls academic offer imports."
+      }
+    },
+    "success": {
+      "updated": "Feature toggle updated successfully."
+    },
+    "error": {
+      "update": "Could not update feature toggle: {{message}}",
+      "generic": "Could not complete the operation.",
+      "unauthorized": "You must sign in as an administrator.",
+      "forbidden": "Only the Admin user can manage feature toggles."
     }
   },
   "home": {

@@ -26,6 +26,7 @@ import com.easyschedule.backend.auth.dto.request.ChangePasswordRequest;
 import com.easyschedule.backend.auth.dto.request.SignupRequest;
 import com.easyschedule.backend.auth.models.User;
 import com.easyschedule.backend.auth.repositories.UserRepository;
+import com.easyschedule.backend.shared.admin.AdminUser;
 import com.easyschedule.backend.shared.exception.UserAlreadyExistsException;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -209,6 +210,33 @@ class AuthServiceTest {
         Map<?, ?> body = (Map<?, ?>) response.getBody();
         assertEquals("mock-token", body.get("token"));
         assertEquals("testuser", body.get("username"));
+        assertEquals("testuser@mail.com", body.get("email"));
+        assertEquals(false, body.get("isAdmin"));
+    }
+
+    @Test
+    void loginMarksConfiguredAdminUser() {
+        com.easyschedule.backend.auth.dto.request.LoginRequest loginRequest = new com.easyschedule.backend.auth.dto.request.LoginRequest();
+        loginRequest.setIdentifier(AdminUser.EMAIL);
+        loginRequest.setPassword(AdminUser.DEFAULT_PASSWORD);
+
+        User admin = new User(AdminUser.USERNAME, AdminUser.EMAIL, "hashed-password");
+        admin.setId(9L);
+
+        when(userRepository.findByUsernameIgnoreCase(AdminUser.EMAIL)).thenReturn(java.util.Optional.empty());
+        when(userRepository.findByEmailIgnoreCase(AdminUser.EMAIL)).thenReturn(java.util.Optional.of(admin));
+        when(encoder.matches(AdminUser.DEFAULT_PASSWORD, "hashed-password")).thenReturn(true);
+        when(sessionTokenService.issueToken(9L)).thenReturn("admin-token");
+        when(sessionTokenService.getTokenTtlSeconds()).thenReturn(3600L);
+
+        ResponseEntity<?> response = authService.login(loginRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Map<?, ?> body = (Map<?, ?>) response.getBody();
+        assertEquals("admin-token", body.get("token"));
+        assertEquals(AdminUser.USERNAME, body.get("username"));
+        assertEquals(AdminUser.EMAIL, body.get("email"));
+        assertEquals(true, body.get("isAdmin"));
     }
 
     @Test
@@ -310,6 +338,8 @@ class AuthServiceTest {
         Map<?, ?> body = (Map<?, ?>) response.getBody();
         assertEquals("internal-token", body.get("token"));
         assertEquals("newuser", body.get("username"));
+        assertEquals("newuser@mail.com", body.get("email"));
+        assertEquals(false, body.get("isAdmin"));
         assertEquals(3600L, body.get("expiresInSeconds"));
         assertEquals("Login con Google exitoso", body.get("message"));
 
@@ -352,6 +382,8 @@ class AuthServiceTest {
         Map<?, ?> body = (Map<?, ?>) response.getBody();
         assertEquals("internal-token", body.get("token"));
         assertEquals("existing", body.get("username"));
+        assertEquals("existing@mail.com", body.get("email"));
+        assertEquals(false, body.get("isAdmin"));
         assertEquals("google-123", existingUser.getGoogleId());
         assertEquals("GOOGLE", existingUser.getAuthProvider());
 

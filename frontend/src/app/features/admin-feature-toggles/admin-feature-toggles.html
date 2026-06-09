@@ -1,0 +1,100 @@
+<section class="feature-admin">
+  <header class="feature-admin__header">
+    <div>
+      <p class="feature-admin__eyebrow">{{ 'adminFeatureToggles.eyebrow' | translate }}</p>
+      <h1>{{ 'adminFeatureToggles.title' | translate }}</h1>
+      <p>{{ 'adminFeatureToggles.description' | translate }}</p>
+    </div>
+
+    <button type="button" class="feature-admin__refresh" (click)="loadToggles()" [disabled]="loading">
+      {{ 'adminFeatureToggles.actions.refresh' | translate }}
+    </button>
+  </header>
+
+  <div *ngIf="loading" class="feature-admin__state">
+    {{ 'adminFeatureToggles.loading' | translate }}
+  </div>
+
+  <div *ngIf="!loading && error" class="feature-admin__state feature-admin__state--error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="feature-admin__list">
+    <article *ngFor="let toggle of toggles" class="feature-card">
+      <div class="feature-card__content">
+        <div class="feature-card__title-row">
+          <h2>{{ toggleNameKey(toggle) | translate }}</h2>
+          <span
+            class="feature-card__status"
+            [ngClass]="toggle.active ? 'feature-card__status--active' : 'feature-card__status--inactive'"
+          >
+            {{ (toggle.active ? 'adminFeatureToggles.status.active' : 'adminFeatureToggles.status.inactive') | translate }}
+          </span>
+        </div>
+
+        <p>{{ toggleDescriptionKey(toggle) | translate }}</p>
+        <small>
+          {{ 'adminFeatureToggles.metadata.key' | translate }}: {{ toggle.key }} |
+          {{ 'adminFeatureToggles.metadata.updatedAt' | translate }}: {{ formatUpdatedAt(toggle.updatedAt) }}
+        </small>
+      </div>
+
+      <button
+        type="button"
+        class="feature-card__toggle"
+        [disabled]="isSaving(toggle)"
+        (click)="updateToggle(toggle)"
+      >
+        {{ (isSaving(toggle) ? 'adminFeatureToggles.actions.saving' : toggleActionKey(toggle)) | translate }}
+      </button>
+    </article>
+  </div>
+</section>
+
+<div class="feature-confirm" *ngIf="pendingUpdate">
+  <div class="feature-confirm__backdrop" aria-hidden="true"></div>
+  <section
+    class="feature-confirm__dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="feature-confirm-title"
+  >
+    <header class="feature-confirm__header">
+      <p class="feature-confirm__eyebrow">{{ 'adminFeatureToggles.confirm.eyebrow' | translate }}</p>
+      <button
+        type="button"
+        class="feature-confirm__close"
+        (click)="cancelToggleUpdate()"
+        [disabled]="!!savingKey"
+        [attr.aria-label]="'adminFeatureToggles.confirm.close' | translate"
+      >
+        ×
+      </button>
+    </header>
+
+    <h2 id="feature-confirm-title">{{ pendingTitleKey() | translate }}</h2>
+    <p class="feature-confirm__message">
+      {{ pendingMessageKey() | translate: { name: pendingToggleName() } }}
+    </p>
+
+    <footer class="feature-confirm__actions">
+      <button
+        type="button"
+        class="feature-confirm__button feature-confirm__button--ghost"
+        (click)="cancelToggleUpdate()"
+        [disabled]="!!savingKey"
+      >
+        {{ 'adminFeatureToggles.actions.cancel' | translate }}
+      </button>
+      <button
+        type="button"
+        class="feature-confirm__button feature-confirm__button--primary"
+        [ngClass]="pendingUpdate.active ? 'feature-confirm__button--activate' : 'feature-confirm__button--deactivate'"
+        (click)="confirmToggleUpdate()"
+        [disabled]="!!savingKey"
+      >
+        {{ (savingKey ? 'adminFeatureToggles.actions.saving' : pendingActionKey()) | translate }}
+      </button>
+    </footer>
+  </section>
+</div>

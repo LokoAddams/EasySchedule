@@ -28,6 +28,8 @@
     "home": "Inicio",
     "malla": "Malla",
     "tomaMaterias": "Toma de Materias",
+    "featureToggles": "Feature Toggles",
+    "adminFeatureToggles": "Administración",
     "login": "Iniciar sesión",
     "signup": "Registrarse",
     "logout": "Cerrar sesión",
@@ -41,6 +43,59 @@
     },
     "hints": {
       "chooseMalla": "¡Elijamos tu Universidad y Carrera!"
+    }
+  },
+  "adminFeatureToggles": {
+    "eyebrow": "Administración",
+    "title": "Feature toggles",
+    "description": "Activa o desactiva funcionalidades disponibles para los usuarios.",
+    "loading": "Cargando feature toggles...",
+    "updatedAtUnavailable": "No disponible",
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "metadata": {
+      "key": "Clave",
+      "updatedAt": "Actualizado"
+    },
+    "actions": {
+      "refresh": "Actualizar",
+      "saving": "Guardando...",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "cancel": "Cancelar"
+    },
+    "confirm": {
+      "eyebrow": "Confirmación",
+      "close": "Cerrar confirmación",
+      "activateTitle": "Activar funcionalidad",
+      "deactivateTitle": "Desactivar funcionalidad",
+      "activateMessage": "¿Deseas activar \"{{name}}\" para todos los usuarios?",
+      "deactivateMessage": "¿Deseas desactivar \"{{name}}\" para todos los usuarios?"
+    },
+    "toggles": {
+      "malla": {
+        "name": "Malla curricular",
+        "description": "Controla el acceso a la gestión y visualización de mallas curriculares."
+      },
+      "tomaMaterias": {
+        "name": "Toma de materias",
+        "description": "Controla el acceso al módulo de toma de materias y horarios."
+      },
+      "ofertasImport": {
+        "name": "Importación de ofertas",
+        "description": "Controla la importación de ofertas académicas."
+      }
+    },
+    "success": {
+      "updated": "Feature toggle actualizado correctamente."
+    },
+    "error": {
+      "update": "No se pudo actualizar el feature toggle: {{message}}",
+      "generic": "No se pudo completar la operación.",
+      "unauthorized": "Debes iniciar sesión como administrador.",
+      "forbidden": "Solo el usuario Admin puede administrar feature toggles."
     }
   },
   "home": {
