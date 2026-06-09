@@ -9,6 +9,18 @@
       "codePT": "PT"
     }
   },
+  "confirmModal": {
+    "title": "Confirmar acción",
+    "defaultTitle": "¿Estás seguro?",
+    "defaultMessage": "Esta acción no se puede deshacer.",
+    "confirm": "Sí, confirmar",
+    "cancel": "Cancelar",
+    "changeMalla": "Al cambiar de malla se perderá el progreso de la malla anterior. ¿Deseas continuar?",
+    "changeUniversidad": "Al cambiar de universidad se perderá la configuración actual. ¿Deseas continuar?",
+    "clearSelection": "¿Estás seguro de que deseas limpiar tu selección temporal?",
+    "importMalla": "Se importará una nueva malla curricular. Esta acción creará registros en el sistema. ¿Deseas continuar?",
+    "importOfertas": "Se importarán las ofertas académicas para la malla actual. Esta acción creará o actualizará registros. ¿Deseas continuar?"
+  },
   "toast": {
     "dismiss": "Cerrar aviso"
   },
