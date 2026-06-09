@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MallaMateriaRepository extends JpaRepository<MallaMateria, Long> {
+	List<MallaMateria> findByMallaIdOrderBySemestreSugeridoAsc(Long mallaId);
+
 	List<MallaMateria> findByMallaIdAndMateriaActiveTrueOrderBySemestreSugeridoAsc(Long mallaId);
 
 	Optional<MallaMateria> findByMallaIdAndMateriaId(Long mallaId, Long materiaId);
