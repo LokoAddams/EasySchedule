@@ -168,7 +168,7 @@
       type="button"
       class="offers-button"
       [disabled]="hasCriticalErrors || preview.length === 0 || processing"
-      (click)="confirmImport()"
+      (click)="onConfirmImportClick()"
     >
       <span *ngIf="!processing">
         {{ 'malla.offers.confirm' | translate }}
@@ -180,3 +180,11 @@
     </button>
   </footer>
 </section>
+
+<app-confirm-modal
+  *ngIf="showConfirmModal"
+  title="confirmModal.defaultTitle"
+  message="confirmModal.importOfertas"
+  (confirm)="confirmImport()"
+  (cancel)="cancelConfirm()"
+></app-confirm-modal>
