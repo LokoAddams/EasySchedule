@@ -17,6 +17,7 @@ import {
   OfertaImportSummaryResponse,
   OfertaImportWarningResponse,
 } from '../../../services/academico/oferta-import.service';
+import { ConfirmModal } from '../../../shared/ui/confirm-modal/confirm-modal';
 
 interface OfertaArchivoRow {
   rowNumber: number;
@@ -62,7 +63,7 @@ interface LocalImportWarning {
 
 @Component({
   selector: 'app-importar-ofertas-modal',
-  imports: [NgIf, NgFor, NgClass, TranslatePipe],
+  imports: [NgIf, NgFor, NgClass, TranslatePipe, ConfirmModal],
   templateUrl: './importar-ofertas-modal.html',
   styleUrl: './importar-ofertas-modal.scss',
 })
@@ -85,6 +86,8 @@ export class ImportarOfertasModal {
   protected processing = false;
   protected completed = false;
   protected totalRowsRead = 0;
+  protected showConfirmModal = false;
+  protected readingFile = false;
 
   protected requiredColumns = [
     'codigo_materia',
@@ -128,7 +131,9 @@ export class ImportarOfertasModal {
       return;
     }
 
+    this.readingFile = true;
     const content = await file.text();
+    this.readingFile = false;
     this.processCsv(content);
   }
 
@@ -144,7 +149,26 @@ export class ImportarOfertasModal {
     this.closeModal.emit();
   }
 
+  protected onConfirmImportClick(): void {
+    if (
+      this.mallaId === null ||
+      this.selectedFile === null ||
+      this.hasCriticalErrors ||
+      this.preview.length === 0 ||
+      this.processing
+    ) {
+      return;
+    }
+    this.showConfirmModal = true;
+  }
+
+  protected cancelConfirm(): void {
+    this.showConfirmModal = false;
+  }
+
   protected async confirmImport(): Promise<void> {
+    this.showConfirmModal = false;
+
     if (
       this.mallaId === null ||
       this.selectedFile === null ||

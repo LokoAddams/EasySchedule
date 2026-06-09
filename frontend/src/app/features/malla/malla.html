@@ -83,7 +83,11 @@
 
     <div class="malla-card" *ngIf="!loadingUniversidades && !loadUniversidadesError && step !== 'resumen'">
       <ng-container *ngIf="editMode !== 'malla'">
-        <label class="malla-label" for="universidad-select">{{ 'malla.universidad.label' | translate }}</label>
+        <div *ngIf="universidades.length === 0" class="malla-card malla-card--empty" style="margin-top:0; padding:0.8rem;">
+          <p>{{ 'malla.empty.universidades' | translate }}</p>
+        </div>
+        <ng-container *ngIf="universidades.length > 0">
+          <label class="malla-label" for="universidad-select">{{ 'malla.universidad.label' | translate }}</label>
         <select
           id="universidad-select"
           class="malla-select"
@@ -126,6 +130,7 @@
           <button type="button" class="malla-button malla-button--ghost" (click)="cancelarCrearUniversidad()">Cancelar</button>
         </div>
       </ng-container>
+      </ng-container>
 
       <div *ngIf="editMode === 'malla' && mallaChangeWarningVisible" class="malla-warning">
         <strong>{{ 'malla.warning.title' | translate }}</strong>
@@ -133,7 +138,11 @@
       </div>
 
       <div *ngIf="(step === 'carrera' || step === 'malla') && editMode !== 'malla'" class="malla-section">
-        <label class="malla-label" for="carrera-select">{{ 'malla.carrera.label' | translate }}</label>
+        <div *ngIf="carreras.length === 0 && !loadingCarreras" class="malla-card malla-card--empty" style="margin-top:0; padding:0.8rem;">
+          <p>{{ 'malla.empty.carreras' | translate }}</p>
+        </div>
+        <ng-container *ngIf="carreras.length > 0">
+          <label class="malla-label" for="carrera-select">{{ 'malla.carrera.label' | translate }}</label>
         <select
           id="carrera-select"
           class="malla-select"
@@ -176,10 +185,15 @@
           </button>
           <button type="button" class="malla-button malla-button--ghost" (click)="cancelarCrearCarrera()">Cancelar</button>
         </div>
+      </ng-container>
       </div>
 
       <div *ngIf="step === 'malla'" class="malla-section">
-        <label class="malla-label" for="malla-select">{{ 'malla.malla.label' | translate }}</label>
+        <div *ngIf="mallas.length === 0 && !loadingMallas" class="malla-card malla-card--empty" style="margin-top:0; padding:0.8rem;">
+          <p>{{ 'malla.empty.mallas' | translate }}</p>
+        </div>
+        <ng-container *ngIf="mallas.length > 0">
+          <label class="malla-label" for="malla-select">{{ 'malla.malla.label' | translate }}</label>
         <select
           id="malla-select"
           class="malla-select"
@@ -215,6 +229,7 @@
                                  <button type="button" class="malla-button malla-button--ghost" (click)="openImportModal()">
           {{ 'malla.actions.uploadMalla' | translate }}
         </button>
+      </ng-container>
 
 
       </div>
@@ -483,9 +498,10 @@
       <footer class="malla-modal__footer" *ngIf="!loadingDetalle">
         <button class="malla-button malla-button--ghost" (click)="closeModal()">{{ 'malla.modal.cancel' | translate }}</button>
         <button class="malla-button malla-button--save"
-                [disabled]="!selectedOfertaId || !materiaDetalle || materiaDetalle.gruposDisponibles.length === 0"
+                [disabled]="!selectedOfertaId || !materiaDetalle || materiaDetalle.gruposDisponibles.length === 0 || loadingSelecciones"
                 (click)="confirmarSeleccionModal()">
-          {{ 'malla.modal.addToSelection' | translate }}
+          <span *ngIf="loadingSelecciones">{{ 'malla.selection.saving' | translate }}</span>
+          <span *ngIf="!loadingSelecciones">{{ 'malla.modal.addToSelection' | translate }}</span>
         </button>
       </footer>
     </div>
@@ -503,6 +519,9 @@
 
     <div class="malla-floating-panel__content" *ngIf="panelExpanded">
       <div class="malla-selection-list">
+        <div *ngIf="loadingSelecciones" class="malla-field-help" style="padding: 0.5rem 0;">
+          {{ 'malla.selection.loading' | translate }}
+        </div>
         <div class="malla-selection-item" *ngFor="let item of seleccionesTemporales">
           <div class="malla-selection-item__info">
             <span class="malla-selection-item__name">{{ item.materiaNombre }}</span>
