@@ -1323,7 +1323,14 @@ Reglas obligatorias:
     }
   }
 
+  protected canImportMalla(): boolean {
+    return !!this.importFile && !this.importLoading && !!this.importMallaName.trim() && this.isValidImportVersion();
+  }
+
   public onImportMallaClick(): void {
+    if (!this.canImportMalla()) {
+      return;
+    }
     this.pendingConfirmAction = 'importMalla';
     this.confirmModalTitle = 'confirmModal.defaultTitle';
     this.confirmModalMessage = 'confirmModal.importMalla';

@@ -614,7 +614,7 @@
         </button>
         <button class="malla-button malla-button--save" 
                 (click)="onImportMallaClick()" 
-                [disabled]="!importFile || importLoading || !importMallaName || !isValidImportVersion()">
+                [disabled]="!canImportMalla()">
           <span *ngIf="importLoading">{{ 'malla.import.importing' | translate }}</span>
           <span *ngIf="!importLoading">{{ 'malla.import.import' | translate }}</span>
         </button>

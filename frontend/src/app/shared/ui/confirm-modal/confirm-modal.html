@@ -1,24 +1,30 @@
-<div class="confirm-overlay">
-  <div class="confirm-modal">
-    <header class="confirm-modal__header">
-      <div>
-        <p class="confirm-modal__eyebrow">{{ 'confirmModal.title' | translate }}</p>
-        <h3>{{ title | translate }}</h3>
-      </div>
-      <button type="button" class="confirm-modal__close" (click)="onCancel()">&times;</button>
-    </header>
+<div class="confirm-overlay" (click)="onCancel()"></div>
 
-    <div class="confirm-modal__body">
-      <p>{{ message | translate }}</p>
+<div
+  class="confirm-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="confirm-title"
+  aria-describedby="confirm-message"
+>
+  <header class="confirm-modal__header">
+    <div>
+      <p class="confirm-modal__eyebrow">{{ 'confirmModal.title' | translate }}</p>
+      <h3 id="confirm-title">{{ title | translate }}</h3>
     </div>
+    <button #focusTrapStart type="button" class="confirm-modal__close" (click)="onCancel()">&times;</button>
+  </header>
 
-    <footer class="confirm-modal__footer">
-      <button type="button" class="confirm-btn confirm-btn--ghost" (click)="onCancel()">
-        {{ cancelLabel | translate }}
-      </button>
-      <button type="button" class="confirm-btn confirm-btn--danger" (click)="onConfirm()">
-        {{ confirmLabel | translate }}
-      </button>
-    </footer>
+  <div class="confirm-modal__body">
+    <p id="confirm-message">{{ message | translate }}</p>
   </div>
+
+  <footer class="confirm-modal__footer">
+    <button type="button" class="confirm-btn confirm-btn--ghost" (click)="onCancel()" [disabled]="processing">
+      {{ cancelLabel | translate }}
+    </button>
+    <button #confirmBtn #focusTrapEnd type="button" class="confirm-btn confirm-btn--danger" (click)="onConfirm()" [disabled]="processing">
+      {{ confirmLabel | translate }}
+    </button>
+  </footer>
 </div>
