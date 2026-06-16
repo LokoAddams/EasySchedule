@@ -1,17 +1,19 @@
 package com.easyschedule.backend.academico.oferta_materia.controller;
 
 import com.easyschedule.backend.academico.oferta_materia.dto.OfertaDetalleResponse;
+import com.easyschedule.backend.academico.oferta_materia.dto.OfertaMateriaListResponse;
 import com.easyschedule.backend.academico.oferta_materia.service.OfertaMateriaService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.easyschedule.backend.academico.oferta_materia.dto.Importacion.OfertaImportResultResponse;
 import com.easyschedule.backend.academico.oferta_materia.service.OfertaMateriaImportService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/academico/ofertas")
@@ -31,6 +33,26 @@ public class OfertaMateriaController {
     @GetMapping("/detalles/{mallaMateriaId}")
     public OfertaDetalleResponse getDetallesMateria(@PathVariable("mallaMateriaId") Long mallaMateriaId) {
         return ofertaMateriaService.getDetalleParaInscripcion(mallaMateriaId);
+    }
+
+    @GetMapping("/listar")
+    public List<OfertaMateriaListResponse> listarOfertas(
+        @RequestParam("mallaId") Long mallaId,
+        @RequestParam(value = "search", required = false) String search,
+        @RequestParam(value = "semestre", required = false) String semestre,
+        @RequestParam(value = "paralelo", required = false) String paralelo
+    ) {
+        return ofertaMateriaService.listarOfertas(mallaId, search, semestre, paralelo);
+    }
+
+    @GetMapping("/semestres")
+    public List<String> listarSemestres(@RequestParam("mallaId") Long mallaId) {
+        return ofertaMateriaService.listarSemestres(mallaId);
+    }
+
+    @GetMapping("/paralelos")
+    public List<String> listarParalelos(@RequestParam("mallaId") Long mallaId) {
+        return ofertaMateriaService.listarParalelos(mallaId);
     }
 
     @PostMapping(value = "/importar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -4,6 +4,7 @@ import com.easyschedule.backend.academico.malla.model.MallaMateria;
 import com.easyschedule.backend.academico.malla.repository.MallaMateriaRepository;
 import com.easyschedule.backend.academico.materia.repository.PrerequisitoRepository;
 import com.easyschedule.backend.academico.oferta_materia.dto.OfertaDetalleResponse;
+import com.easyschedule.backend.academico.oferta_materia.dto.OfertaMateriaListResponse;
 import com.easyschedule.backend.academico.oferta_materia.dto.OfertaMateriaResponse;
 import com.easyschedule.backend.academico.oferta_materia.model.OfertaMateria;
 import com.easyschedule.backend.academico.oferta_materia.repository.OfertaMateriaRepository;
@@ -52,6 +53,41 @@ public class OfertaMateriaService {
             prerequisitosNombres,
             ofertas
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<OfertaMateriaListResponse> listarOfertas(
+        Long mallaId,
+        String search,
+        String semestre,
+        String paralelo
+    ) {
+        String searchValue = (search != null && !search.isBlank()) ? search.trim() : null;
+        String semestreValue = (semestre != null && !semestre.isBlank()) ? semestre.trim() : null;
+        String paraleloValue = (paralelo != null && !paralelo.isBlank()) ? paralelo.trim() : null;
+
+        return ofertaMateriaRepository.findOfertasByFilters(mallaId, searchValue, semestreValue, paraleloValue)
+            .stream()
+            .map(row -> new OfertaMateriaListResponse(
+                row.getId(),
+                row.getCodigoMateria(),
+                row.getNombreMateria(),
+                row.getSemestre(),
+                row.getParalelo(),
+                row.getDocente(),
+                row.getAula()
+            ))
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> listarSemestres(Long mallaId) {
+        return ofertaMateriaRepository.findDistinctSemestresByMallaId(mallaId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> listarParalelos(Long mallaId) {
+        return ofertaMateriaRepository.findDistinctParalelosByMallaId(mallaId);
     }
 
     private OfertaMateriaResponse toResponse(OfertaMateria o) {
