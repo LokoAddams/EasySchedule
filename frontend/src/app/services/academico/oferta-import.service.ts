@@ -34,6 +34,16 @@ export interface OfertaImportPreviewResponse {
   horarios: OfertaImportHorarioResponse[];
 }
 
+export interface OfertaListResponse {
+  id: number;
+  codigoMateria: string;
+  nombreMateria: string;
+  semestre: string;
+  paralelo: string;
+  docente: string;
+  aula: string;
+}
+
 export interface OfertaImportSummaryResponse {
   totalRows: number;
   offersCreated: number;
@@ -64,6 +74,35 @@ export class OfertaImportService {
     return this.apiService.post<OfertaImportResultResponse, FormData>(
       `/api/academico/ofertas/importar?mallaId=${mallaId}`,
       formData,
+    );
+  }
+
+  listarOfertas(
+    mallaId: number,
+    search?: string,
+    semestre?: string,
+    paralelo?: string,
+  ): Observable<OfertaListResponse[]> {
+    const params = new URLSearchParams();
+    params.set('mallaId', String(mallaId));
+    if (search) params.set('search', search);
+    if (semestre) params.set('semestre', semestre);
+    if (paralelo) params.set('paralelo', paralelo);
+
+    return this.apiService.get<OfertaListResponse[]>(
+      `/api/academico/ofertas/listar?${params.toString()}`,
+    );
+  }
+
+  listarSemestres(mallaId: number): Observable<string[]> {
+    return this.apiService.get<string[]>(
+      `/api/academico/ofertas/semestres?mallaId=${mallaId}`,
+    );
+  }
+
+  listarParalelos(mallaId: number): Observable<string[]> {
+    return this.apiService.get<string[]>(
+      `/api/academico/ofertas/paralelos?mallaId=${mallaId}`,
     );
   }
 }

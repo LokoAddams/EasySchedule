@@ -26,6 +26,7 @@ import { TourHintsService } from '../../services/tour-hints.service';
 import { SeleccionTemporalService, SeleccionTemporalResponse } from '../../services/academico/seleccion-temporal.service';
 
 import { ImportarOfertasModal } from './importar-ofertas-modal/importar-ofertas-modal';
+import { GestionarOfertas } from './gestionar-ofertas/gestionar-ofertas';
 
 type SeleccionStep = 'universidad' | 'carrera' | 'malla' | 'resumen';
 type EditMode = 'universidad' | 'malla' | null;
@@ -46,6 +47,7 @@ interface SeleccionSnapshot {
     TranslatePipe,
     NgbPopoverModule,
     ImportarOfertasModal,
+    GestionarOfertas,
   ],
   templateUrl: './malla.html',
   styleUrl: './malla.scss',
@@ -103,6 +105,7 @@ export class Malla implements OnInit, OnDestroy {
 
   protected ofertasImportEnabled = true;
   protected showImportarOfertasModal = false;
+  protected showGestionarOfertasModal = false;
 
   protected showActualizarModal = false;
   protected selectedMateriaIdActualizar: number | null = null;
@@ -832,6 +835,14 @@ Reglas obligatorias:
 
   protected closeImportarOfertasModal(): void {
     this.showImportarOfertasModal = false;
+  }
+
+  protected onGestionarOfertasClick(): void {
+    this.showGestionarOfertasModal = true;
+  }
+
+  protected closeGestionarOfertasModal(): void {
+    this.showGestionarOfertasModal = false;
   }
 
   protected onOfertasImportFinished(): void {
