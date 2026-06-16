@@ -175,12 +175,24 @@ describe('Malla component logic', () => {
     expect((component as any).selectedMallaId).toBe(3);
   });
 
-  it('enables university change flow and resets dependent selectors', () => {
+  it('shows confirmation modal before university change', () => {
     (component as any).selectedUniversidadId = 1;
     (component as any).selectedCarreraId = 2;
     (component as any).selectedMallaId = 3;
 
     (component as any).onCambiarUniversidadClick();
+
+    expect((component as any).showConfirmModal).toBeTrue();
+    expect((component as any).pendingConfirmAction).toBe('changeUniversidad');
+  });
+
+  it('executes university change flow after confirmation', () => {
+    (component as any).selectedUniversidadId = 1;
+    (component as any).selectedCarreraId = 2;
+    (component as any).selectedMallaId = 3;
+
+    (component as any).onCambiarUniversidadClick();
+    (component as any).onConfirmAction();
 
     expect((component as any).editMode).toBe('universidad');
     expect((component as any).step).toBe('universidad');
