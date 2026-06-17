@@ -25,7 +25,7 @@ class FeatureToggleServiceTest {
     void updateStatusRefreshesUpdatedAt() {
         FeatureToggleService service = new FeatureToggleService(
             featureToggleRepository,
-            new FeatureFlagsConfig(true, true, true)
+            new FeatureFlagsConfig(true, true)
         );
         OffsetDateTime previousUpdatedAt = OffsetDateTime.now().minusDays(1);
         FeatureToggle toggle = new FeatureToggle(

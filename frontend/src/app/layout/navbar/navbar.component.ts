@@ -19,7 +19,6 @@ import { TourHintsService } from '../../services/tour-hints.service';
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   protected mallaEnabled = false;
-  protected tomaMateriasEnabled = false;
   protected currentLanguage: string = 'es';
   private flagsSubscription?: Subscription;
   private profileCompletedSubscription?: Subscription;
@@ -44,7 +43,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.flagsSubscription = this.featureToggleService.flags$.subscribe((flags) => {
       this.mallaEnabled = flags.malla;
-      this.tomaMateriasEnabled = flags.tomaMaterias;
     });
 
     void this.featureToggleService.loadFlags();

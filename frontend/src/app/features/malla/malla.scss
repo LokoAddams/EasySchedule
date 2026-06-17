@@ -138,6 +138,10 @@
   border: 1px solid rgba(47, 79, 115, 0.25);
   background: transparent;
   color: var(--color-blue-dark);
+
+  &:hover:not(:disabled) {
+    color: #fff;
+  }
 }
 
 .malla-section {

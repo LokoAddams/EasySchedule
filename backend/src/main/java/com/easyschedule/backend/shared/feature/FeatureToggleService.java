@@ -11,7 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 public class FeatureToggleService {
 
     private static final String MALLA = "malla";
-    private static final String TOMA_MATERIAS = "tomaMaterias";
     private static final String OFERTAS_IMPORT = "ofertasImport";
 
     private final FeatureToggleRepository featureToggleRepository;
@@ -27,7 +26,6 @@ public class FeatureToggleService {
         ensureDefaultToggles();
         return new FeatureFlagsDTO(
             isEnabled(MALLA),
-            isEnabled(TOMA_MATERIAS),
             isEnabled(OFERTAS_IMPORT)
         );
     }
@@ -112,12 +110,6 @@ public class FeatureToggleService {
                 "Malla curricular",
                 "Controla el acceso a la gestion y visualizacion de mallas curriculares.",
                 featureFlagsConfig.isMalla()
-            ),
-            new FeatureToggleDefinition(
-                TOMA_MATERIAS,
-                "Toma de materias",
-                "Controla el acceso al modulo de toma de materias y horarios.",
-                featureFlagsConfig.isTomaMaterias()
             ),
             new FeatureToggleDefinition(
                 OFERTAS_IMPORT,

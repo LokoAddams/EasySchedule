@@ -21,7 +21,7 @@ export const routes: Routes = [
   },
   {
     path: 'toma-de-materias',
-    canActivate: [authGuard, featureGuard('tomaMaterias'), profileCompletedGuard],
+    canActivate: [authGuard, profileCompletedGuard],
     loadChildren: () =>
       import('./features/toma-de-materias/toma-de-materias.routes').then(
         (m) => m.TOMA_DE_MATERIAS_ROUTES,

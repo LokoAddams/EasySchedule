@@ -19,7 +19,7 @@
          #mallaPopover="ngbPopover"
       >{{ 'navbar.malla' | translate }}</a>
     </li>
-    <li *ngIf="isLoggedIn() && !isAdmin() && tomaMateriasEnabled">
+    <li *ngIf="isLoggedIn() && !isAdmin()">
       <a routerLink="/toma-de-materias" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
          [ngbPopover]="tourStep3Template"
          triggers="manual"

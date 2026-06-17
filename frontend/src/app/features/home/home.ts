@@ -34,8 +34,6 @@ export class Home {
       return;
     }
 
-    if (this.featureToggleService.isEnabled('tomaMaterias')) {
-      void this.router.navigate(['/toma-de-materias']);
-    }
+    void this.router.navigate(['/toma-de-materias']);
   }
 }

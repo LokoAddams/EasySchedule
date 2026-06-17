@@ -6,7 +6,6 @@ import { environment } from '../../environments/environment';
 
 export interface FeatureFlags {
   malla: boolean;
-  tomaMaterias: boolean;
   ofertasImport: boolean;
 }
 
@@ -26,7 +25,6 @@ export interface FeatureToggle {
 export class FeatureToggleService {
   private flags: FeatureFlags = {
     malla: false,
-    tomaMaterias: false,
     ofertasImport: true,
   };
   private readonly flagsSubject = new BehaviorSubject<FeatureFlags>(this.flags);
