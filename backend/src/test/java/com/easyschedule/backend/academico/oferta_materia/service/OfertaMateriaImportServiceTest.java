@@ -98,8 +98,8 @@ class OfertaMateriaImportServiceTest {
         assertThat(saved.getFechaActualizacion()).isNotNull();
         assertThat(saved.getHorarioJson()).contains("\"dia\":\"Lunes\"");
         assertThat(saved.getHorarioJson()).contains("\"dia\":\"Miercoles\"");
-        assertThat(saved.getHorarioJson()).contains("\"inicio\":\"08:00\"");
-        assertThat(saved.getHorarioJson()).contains("\"fin\":\"09:30\"");
+        assertThat(saved.getHorarioJson()).contains("\"horaInicio\":\"08:00\"");
+        assertThat(saved.getHorarioJson()).contains("\"horaFin\":\"09:30\"");
     }
 
     @Test
@@ -136,8 +136,8 @@ class OfertaMateriaImportServiceTest {
         assertThat(existingOffer.getDocente()).isEqualTo("Ing. Valeria Alvarez");
         assertThat(existingOffer.getAula()).isEqualTo("LAB-306");
         assertThat(existingOffer.getHorarioJson()).contains("\"dia\":\"Viernes\"");
-        assertThat(existingOffer.getHorarioJson()).contains("\"inicio\":\"10:00\"");
-        assertThat(existingOffer.getHorarioJson()).contains("\"fin\":\"12:00\"");
+        assertThat(existingOffer.getHorarioJson()).contains("\"horaInicio\":\"10:00\"");
+        assertThat(existingOffer.getHorarioJson()).contains("\"horaFin\":\"12:00\"");
         assertThat(existingOffer.getFechaActualizacion()).isNotNull();
     }
 

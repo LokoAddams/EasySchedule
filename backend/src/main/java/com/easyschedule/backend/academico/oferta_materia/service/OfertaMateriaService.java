@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.easyschedule.backend.academico.oferta_materia.dto.OfertaMateriaUpdateRequest;
+import com.easyschedule.backend.academico.oferta_materia.dto.OfertaMateriaEdicionResponse;
 import com.easyschedule.backend.academico.oferta_materia.dto.HorarioDto;
 import java.time.LocalTime;
 import java.util.List;
@@ -91,6 +92,33 @@ public class OfertaMateriaService {
     @Transactional(readOnly = true)
     public List<String> listarSemestres(Long mallaId) {
         return ofertaMateriaRepository.findDistinctSemestresByMallaId(mallaId);
+    }
+
+    @Transactional(readOnly = true)
+    public OfertaMateriaEdicionResponse obtenerParaEdicion(Long id) {
+        OfertaMateria oferta = ofertaMateriaRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Oferta no encontrada"));
+            
+        MallaMateria mm = mallaMateriaRepository.findById(oferta.getMallaMateriaId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "MallaMateria no encontrada"));
+            
+        List<HorarioDto> horarios;
+        try {
+            horarios = objectMapper.readValue(oferta.getHorarioJson(), new TypeReference<List<HorarioDto>>() {});
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error deserializando horarios");
+        }
+        
+        return new OfertaMateriaEdicionResponse(
+            oferta.getId(),
+            mm.getMateria().getCodigo(),
+            mm.getMateria().getNombre(),
+            oferta.getParalelo(),
+            oferta.getSemestre(),
+            oferta.getDocente(),
+            oferta.getAula(),
+            horarios
+        );
     }
 
     @Transactional(readOnly = true)

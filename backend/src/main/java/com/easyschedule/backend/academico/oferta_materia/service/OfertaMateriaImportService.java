@@ -728,8 +728,8 @@ public class OfertaMateriaImportService {
 
     private record HorarioJsonBlock(
         String dia,
-        String inicio,
-        String fin
+        String horaInicio,
+        String horaFin
     ) {
     }
 
