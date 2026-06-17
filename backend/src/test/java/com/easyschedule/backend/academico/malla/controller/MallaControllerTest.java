@@ -5,9 +5,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.easyschedule.backend.academico.malla.dto.MallaEditRequest;
+import com.easyschedule.backend.academico.malla.dto.MallaEditResponse;
 import com.easyschedule.backend.academico.malla.dto.MallaImportRequest;
 import com.easyschedule.backend.academico.malla.dto.MallaImportResponse;
 import com.easyschedule.backend.academico.malla.dto.MallaMateriaResponse;
@@ -113,5 +116,36 @@ class MallaControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getMallaEditableReturnsEditableSubjects() throws Exception {
+        MateriaImportRequest materia = new MateriaImportRequest("SIS101", "Algoritmos", 1, 4, List.of());
+        when(mallaImportService.getMallaEditable(44L))
+            .thenReturn(new MallaEditResponse(44L, "Malla 2026", "2026", 10L, List.of(materia)));
+
+        mockMvc.perform(get("/api/academico/mallas/44/edicion"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.mallaId").value(44))
+            .andExpect(jsonPath("$.materias[0].codigo").value("SIS101"));
+
+        verify(mallaImportService).getMallaEditable(44L);
+    }
+
+    @Test
+    void actualizarMallaReturnsUpdatedEditableSubjects() throws Exception {
+        MateriaImportRequest materia = new MateriaImportRequest("SIS101", "Algoritmos", 1, 4, List.of());
+        MallaEditRequest request = new MallaEditRequest(List.of(materia));
+
+        when(mallaImportService.actualizarMalla(any(Long.class), any(MallaEditRequest.class)))
+            .thenReturn(new MallaEditResponse(44L, "Malla 2026", "2026", 10L, List.of(materia)));
+
+        mockMvc.perform(put("/api/academico/mallas/44/edicion")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.materias[0].nombre").value("Algoritmos"));
+
+        verify(mallaImportService).actualizarMalla(any(Long.class), any(MallaEditRequest.class));
     }
 }

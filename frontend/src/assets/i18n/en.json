@@ -9,6 +9,18 @@
       "codePT": "PT"
     }
   },
+  "confirmModal": {
+    "title": "Confirm action",
+    "defaultTitle": "Are you sure?",
+    "defaultMessage": "This action cannot be undone.",
+    "confirm": "Yes, confirm",
+    "cancel": "Cancel",
+    "changeMalla": "Changing the curriculum will reset your progress from the previous one. Do you want to continue?",
+    "changeUniversidad": "Changing the university will discard the current configuration. Do you want to continue?",
+    "clearSelection": "Are you sure you want to clear your temporary selection?",
+    "importMalla": "A new curriculum will be imported. This action will create records in the system. Do you want to continue?",
+    "importOfertas": "Academic offers will be imported for the current curriculum. This action will create or update records. Do you want to continue?"
+  },
   "toast": {
     "dismiss": "Close notification"
   },
@@ -28,6 +40,8 @@
     "home": "Home",
     "malla": "Curriculum",
     "tomaMaterias": "Course Selection",
+    "featureToggles": "Feature Toggles",
+    "adminFeatureToggles": "Administration",
     "login": "Sign In",
     "signup": "Sign Up",
     "logout": "Log out",
@@ -41,6 +55,59 @@
     },
     "hints": {
       "chooseMalla": "Let's choose your University and Career!"
+    }
+  },
+  "adminFeatureToggles": {
+    "eyebrow": "Administration",
+    "title": "Feature toggles",
+    "description": "Enable or disable functionality available to users.",
+    "loading": "Loading feature toggles...",
+    "updatedAtUnavailable": "Unavailable",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "metadata": {
+      "key": "Key",
+      "updatedAt": "Updated"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "saving": "Saving...",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "cancel": "Cancel"
+    },
+    "confirm": {
+      "eyebrow": "Confirmation",
+      "close": "Close confirmation",
+      "activateTitle": "Activate feature",
+      "deactivateTitle": "Deactivate feature",
+      "activateMessage": "Do you want to activate \"{{name}}\" for all users?",
+      "deactivateMessage": "Do you want to deactivate \"{{name}}\" for all users?"
+    },
+    "toggles": {
+      "malla": {
+        "name": "Curriculum",
+        "description": "Controls access to curriculum management and visualization."
+      },
+      "tomaMaterias": {
+        "name": "Course selection",
+        "description": "Controls access to course selection and schedule modules."
+      },
+      "ofertasImport": {
+        "name": "Offer import",
+        "description": "Controls academic offer imports."
+      }
+    },
+    "success": {
+      "updated": "Feature toggle updated successfully."
+    },
+    "error": {
+      "update": "Could not update feature toggle: {{message}}",
+      "generic": "Could not complete the operation.",
+      "unauthorized": "You must sign in as an administrator.",
+      "forbidden": "Only the Admin user can manage feature toggles."
     }
   },
   "home": {
@@ -137,6 +204,7 @@
       "changeStatusSingle": "Update course status",
       "importOffers": "Import Offers",
       "manageOffers": "Manage Offers",
+      "editMalla": "Edit curriculum",
       "uploadMalla": "Upload new curriculum"
     },
     "import": {
@@ -169,6 +237,41 @@
       "import": "Import curriculum",
       "cancel": "Cancel",
       "success": "Curriculum imported successfully. Imported {{count}} subjects and {{prerequisitos}} prerequisites."
+    },
+    "edit": {
+      "eyebrow": "Curriculum editing",
+      "title": "Edit {{malla}}",
+      "loading": "Loading editable curriculum...",
+      "version": "Version {{version}}",
+      "loadCsv": "Load corrected CSV",
+      "addSubject": "Add subject",
+      "csvLoaded": "CSV loaded: {{file}}",
+      "code": "Code",
+      "name": "Subject",
+      "semester": "Semester",
+      "credits": "Credits",
+      "prerequisites": "Prerequisites",
+      "prerequisitesPlaceholder": "Ex: MAT101;PHY101",
+      "remove": "Remove",
+      "help": "Enter prerequisites as subject codes separated by semicolons. Saving replaces the current curriculum structure.",
+      "save": "Save curriculum",
+      "saving": "Saving...",
+      "success": "Curriculum updated successfully.",
+      "errorLoad": "Could not load the editable curriculum.",
+      "errorSave": "Could not save the curriculum.",
+      "errorAtLeastOne": "The curriculum must contain at least one subject.",
+      "errorCsvOnly": "Only CSV files are allowed.",
+      "errorCsvRead": "Could not read the CSV file.",
+      "errorCsvEmpty": "The CSV does not contain subjects.",
+      "errorCsvColumns": "Line {{line}} does not have the required columns.",
+      "errorCsvNumbers": "Line {{line}} has invalid semester or credits.",
+      "errorRequiredFields": "Code and name are required for every subject.",
+      "errorSemester": "Semester must be between 1 and 50.",
+      "errorCredits": "Credits must be between 1 and 99.",
+      "errorDuplicateCode": "Code {{code}} is duplicated.",
+      "errorUnknownPrereq": "Prerequisite {{code}} does not exist in the curriculum.",
+      "errorSelfPrereq": "A subject cannot be its own prerequisite.",
+      "errorPrereqSemester": "Prerequisites must belong to previous semesters."
     },
     "error": {
       "loadUniversidades": "Could not load available universities.",

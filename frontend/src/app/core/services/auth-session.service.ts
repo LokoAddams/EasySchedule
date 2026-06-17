@@ -6,6 +6,8 @@ import { Subject } from 'rxjs';
 })
 export class AuthSessionService {
   private readonly usernameStorageKey = 'easySchedule.currentUsername';
+  private readonly emailStorageKey = 'easySchedule.currentEmail';
+  private readonly adminStorageKey = 'easySchedule.isAdmin';
   private readonly tokenStorageKey = 'easySchedule.token';
   private readonly tokenExpiresAtStorageKey = 'easySchedule.tokenExpiresAt';
   private readonly profileCompletedStorageKey = 'easySchedule.profileCompleted';
@@ -21,6 +23,20 @@ export class AuthSessionService {
     }
 
     localStorage.setItem(this.usernameStorageKey, trimmedUsername);
+  }
+
+  setCurrentEmail(email: string): void {
+    const trimmedEmail = email.trim().toLowerCase();
+
+    if (!trimmedEmail) {
+      return;
+    }
+
+    localStorage.setItem(this.emailStorageKey, trimmedEmail);
+  }
+
+  setAdmin(isAdmin: boolean): void {
+    localStorage.setItem(this.adminStorageKey, String(isAdmin));
   }
 
   setAuthToken(token: string, expiresInSeconds = 3600): void {
@@ -90,11 +106,28 @@ export class AuthSessionService {
     return trimmedUsername || null;
   }
 
+  getCurrentEmail(): string | null {
+    const email = localStorage.getItem(this.emailStorageKey);
+
+    if (!email) {
+      return null;
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+    return trimmedEmail || null;
+  }
+
+  isAdmin(): boolean {
+    return this.isLoggedIn() && localStorage.getItem(this.adminStorageKey) === 'true';
+  }
+
   clearSession(): void {
     localStorage.removeItem(this.tokenStorageKey);
     localStorage.removeItem('token');
     localStorage.removeItem(this.tokenExpiresAtStorageKey);
     localStorage.removeItem(this.usernameStorageKey);
+    localStorage.removeItem(this.emailStorageKey);
+    localStorage.removeItem(this.adminStorageKey);
     localStorage.removeItem(this.profileCompletedStorageKey);
   }
 }

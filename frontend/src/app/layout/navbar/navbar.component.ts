@@ -114,7 +114,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected isProfileCompleted(): boolean {
     return this.authSessionService.isProfileCompleted();
   }
-  
+
+  protected isAdmin(): boolean {
+    return this.authSessionService.isAdmin();
+  }
+
   protected isCurrentLanguage(lang: string): boolean {
     return this.currentLanguage === lang;
   }
