@@ -245,6 +245,11 @@
       "cancel": "Cancelar",
       "success": "Malla importada exitosamente. Se importaron {{count}} materias y {{prerequisitos}} prerrequisitos."
     },
+    "empty": {
+      "universidades": "No hay universidades disponibles. Puedes crear una nueva universidad usando el botón \"+ Nueva universidad\".",
+      "carreras": "No hay carreras registradas para esta universidad. Puedes crear una nueva carrera usando el botón \"+ Nueva carrera\".",
+      "mallas": "No hay mallas curriculares disponibles para esta carrera. Puedes subir una nueva malla usando el botón \"Subir nueva malla\"."
+    },
     "edit": {
       "eyebrow": "Edición de malla",
       "title": "Editar {{malla}}",
@@ -284,7 +289,8 @@
       "loadUniversidades": "No se pudieron cargar las universidades disponibles.",
       "loadCarreras": "No se pudieron cargar las carreras para esta universidad.",
       "loadMallas": "No se pudieron cargar las mallas para esta carrera.",
-      "saveSeleccion": "No se pudo guardar la seleccion academica. Intenta nuevamente."
+      "saveSeleccion": "No se pudo guardar la seleccion academica. Intenta nuevamente.",
+      "loadSeleccionActual": "No se pudo restaurar tu selección académica guardada."
     },
     "universidad": {
       "label": "Universidad",
@@ -335,7 +341,10 @@
       "errorClear": "Error al limpiar la selección",
       "panelTitle": "Selección temporal",
       "cancel": "Cancelar",
-      "goToToma": "Ir a Toma de materias"
+      "goToToma": "Ir a Toma de materias",
+      "loading": "Cargando selección temporal...",
+      "errorLoad": "No se pudieron cargar las selecciones temporales.",
+      "saving": "Agregando..."
     },
     "export": {
       "button": "Exportar avance",
@@ -390,6 +399,11 @@
       "cancel": "Cancelar",
       "confirm": "Confirmar importación",
       "processing": "Procesando...",
+      "readingFile": "Leyendo archivo...",
+      "nothingToImport": "No hay ofertas válidas para importar. Revisa los errores e intenta de nuevo.",
+      "noValidOffers": "No se encontraron ofertas válidas en el archivo.",
+      "confirmTitle": "Confirmar importación",
+      "confirmMessage": "Se importarán {{count}} ofertas con {{blocks}} bloques de horario. ¿Deseas continuar?",
       "importSuccessToast": "Importación de ofertas completada correctamente."
     },
     "manageOffers": {

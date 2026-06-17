@@ -277,7 +277,8 @@
       "loadUniversidades": "Could not load available universities.",
       "loadCarreras": "Could not load careers for this university.",
       "loadMallas": "Could not load curricula for this career.",
-      "saveSeleccion": "Could not save the academic selection. Please try again."
+      "saveSeleccion": "Could not save the academic selection. Please try again.",
+      "loadSeleccionActual": "Could not restore your saved academic selection."
     },
     "universidad": {
       "label": "University",
@@ -331,6 +332,19 @@
       "cancel": "Cancel",
       "addToSelection": "Add to selection"
     },
+    "selection": {
+      "added": "Subject added successfully",
+      "errorAdd": "Could not add subject",
+      "confirmClear": "Are you sure you want to clear your temporary selection?",
+      "cleared": "Temporary selection cleared",
+      "errorClear": "Error clearing selection",
+      "panelTitle": "Temporary Selection",
+      "cancel": "Cancel",
+      "goToToma": "Go to Course Selection",
+      "loading": "Loading temporary selection...",
+      "errorLoad": "Could not load temporary selections.",
+      "saving": "Adding..."
+    },
     "UpdateCourse": {
       "title": "Course status",
       "subtitle": "Study plan",
@@ -352,6 +366,11 @@
       "save": "Update Subject",
       "saving": "Updating..."
     },
+    "empty": {
+      "universidades": "No universities available. You can create a new university using the \"+ New university\" button.",
+      "carreras": "No careers registered for this university. You can create a new career using the \"+ New career\" button.",
+      "mallas": "No curricula available for this career. You can upload a new curriculum using the \"Upload new curriculum\" button."
+    },
     "offers": {
       "eyebrow": "Academic offers",
       "title": "Import academic offers",
@@ -370,6 +389,11 @@
       "cancel": "Cancel",
       "confirm": "Confirm import",
       "processing": "Processing...",
+      "readingFile": "Reading file...",
+      "nothingToImport": "No valid offers to import. Check the errors and try again.",
+      "noValidOffers": "No valid offers found in the file.",
+      "confirmTitle": "Confirm import",
+      "confirmMessage": "{{count}} offers with {{blocks}} schedule blocks will be imported. Do you wish to continue?",
       "importSuccessToast": "Academic offers import completed successfully."
     },
     "manageOffers": {

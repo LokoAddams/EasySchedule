@@ -87,6 +87,7 @@ export class ImportarOfertasModal {
   protected completed = false;
   protected totalRowsRead = 0;
   protected showConfirmModal = false;
+  protected readingFile = false;
 
   protected requiredColumns = [
     'codigo_materia',
@@ -130,7 +131,9 @@ export class ImportarOfertasModal {
       return;
     }
 
+    this.readingFile = true;
     const content = await file.text();
+    this.readingFile = false;
     this.processCsv(content);
   }
 
@@ -156,8 +159,11 @@ export class ImportarOfertasModal {
     ) {
       return;
     }
-
     this.showConfirmModal = true;
+  }
+
+  protected cancelConfirm(): void {
+    this.showConfirmModal = false;
   }
 
   protected async confirmImport(): Promise<void> {
@@ -205,10 +211,6 @@ export class ImportarOfertasModal {
 
       this.processing = false;
     }
-  }
-
-  protected cancelConfirm(): void {
-    this.showConfirmModal = false;
   }
 
   private applyBackendResult(result: OfertaImportResultResponse): void {

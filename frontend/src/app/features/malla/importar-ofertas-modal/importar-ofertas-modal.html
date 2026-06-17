@@ -70,6 +70,12 @@
       </button>
     </section>
 
+    <section class="offers-panel" *ngIf="readingFile">
+      <div class="offers-loading">
+        {{ 'malla.offers.readingFile' | translate }}
+      </div>
+    </section>
+
     <section class="offers-panel" *ngIf="errors.length > 0">
       <h3>
         {{ 'malla.offers.errorsTitle' | translate }}
@@ -95,6 +101,12 @@
       <div class="offers-message offers-message--warning" *ngFor="let warning of warnings">
         Fila {{ warning.rowNumber }} — {{ warning.field }}: {{ warning.reason }}
       </div>
+    </section>
+
+    <section class="offers-panel" *ngIf="selectedFile && !readingFile && preview.length === 0 && errors.length === 0">
+      <p class="offers-empty">
+        {{ 'malla.offers.noValidOffers' | translate }}
+      </p>
     </section>
 
     <section class="offers-panel" *ngIf="preview.length > 0">

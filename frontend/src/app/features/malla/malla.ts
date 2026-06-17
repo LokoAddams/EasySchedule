@@ -848,14 +848,14 @@ Reglas obligatorias:
         this.loadingDetalle = false;
       },
       error: () => {
-        alert(this.translateService.instant('malla.modal.detailLoadError'));
+        this.toastService.error('malla.modal.detailLoadError');
         this.closeModal();
       },
     });
   }
 
   protected confirmarSeleccionModal(): void {
-    if (!this.materiaDetalle || !this.selectedOfertaId) {
+    if (!this.materiaDetalle || !this.selectedOfertaId || this.loadingSelecciones) {
       return;
     }
 
@@ -877,12 +877,16 @@ Reglas obligatorias:
   }
 
   protected async cargarSeleccionesTemporales(): Promise<void> {
+    this.loadingSelecciones = true;
     try {
       const selecciones = await firstValueFrom(this.seleccionTemporalService.listarSelecciones());
       this.seleccionesTemporales = selecciones;
       this.showFloatingPanel = selecciones.length > 0;
     } catch (error) {
       console.error('Error loading temporal selections', error);
+      this.toastService.error('malla.selection.errorLoad');
+    } finally {
+      this.loadingSelecciones = false;
     }
   }
 
@@ -1082,6 +1086,7 @@ Reglas obligatorias:
 
       void this.loadMaterias(this.selectedMallaId);
     } catch {
+      this.toastService.error('malla.error.loadSeleccionActual');
     }
   }
 
