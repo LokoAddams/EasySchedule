@@ -39,7 +39,7 @@
   <section class="malla-page">
     <header class="malla-page__header">
       <h1>{{ 'malla.title' | translate }}</h1>
-      <p>{{ 'malla.description' | translate }}</p>
+      <p *ngIf="step === 'universidad'">{{ 'malla.description' | translate }}</p>
 
       <div class="malla-page__actions" *ngIf="step === 'resumen'"
            [ngbPopover]="tourStep4" triggers="manual" placement="bottom" popoverClass="hint-popover" #popoverStep4="ngbPopover">
