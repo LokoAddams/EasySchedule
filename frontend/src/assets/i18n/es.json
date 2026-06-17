@@ -193,6 +193,7 @@
     "loadingUniversidades": "Cargando universidades...",
     "loadingCarreras": "Cargando carreras...",
     "loadingMallas": "Cargando mallas...",
+    "loadingMaterias": "Cargando materias...",
     "retry": "Reintentar",
     "steps": {
       "universidad": "Universidad",
@@ -331,6 +332,7 @@
       "takeSubject": "Tomar materia",
       "cancel": "Cancelar",
       "addToSelection": "Agregar a seleccion",
+      "closeAria": "Cerrar modal de importación",
       "added": "Materia agregada a tu seleccion temporal"
     },
     "selection": {
