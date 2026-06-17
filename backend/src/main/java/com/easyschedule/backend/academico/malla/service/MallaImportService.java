@@ -219,6 +219,7 @@ public class MallaImportService {
         List<Prerequisito> currentPrerequisitos = prerequisitoRepository
             .findByMallaMateria_Malla_IdOrPrerequisito_Malla_Id(mallaId, mallaId);
         prerequisitoRepository.deleteAll(currentPrerequisitos);
+        prerequisitoRepository.flush();
 
         Map<String, MallaMateria> updatedByCode = new LinkedHashMap<>();
         Set<Long> keptMallaMateriaIds = new HashSet<>();

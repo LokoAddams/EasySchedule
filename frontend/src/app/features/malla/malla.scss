@@ -123,6 +123,10 @@
   color: #2b3442;
   margin-top: 0;
   line-height: 1.05;
+
+  &:hover:not(:disabled) {
+    color: #fff;
+  }
 }
 
 .malla-button--save {
@@ -497,6 +501,14 @@
 
 .malla-modal--edit-malla {
   width: min(1180px, 98vw);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .malla-modal__body {
+    overflow-y: auto;
+    flex: 1;
+  }
 }
 
 .malla-modal__header {

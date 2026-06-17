@@ -11,6 +11,8 @@ import {
   OfertaMateriaUpdateRequest 
 } from '../../../services/academico/oferta-import.service';
 
+import { ToastService } from '../../../core/services/toast.service';
+
 @Component({
   selector: 'app-gestionar-ofertas',
   imports: [NgIf, NgFor, FormsModule, TranslatePipe],
@@ -37,7 +39,10 @@ export class GestionarOfertas implements OnInit {
   protected isValidating = false;
   protected isSaving = false;
 
-  constructor(private readonly ofertaImportService: OfertaImportService) {}
+  constructor(
+    private readonly ofertaImportService: OfertaImportService,
+    private readonly toastService: ToastService
+  ) {}
 
   async ngOnInit(): Promise<void> {
     if (this.mallaId === null) return;
@@ -150,11 +155,29 @@ export class GestionarOfertas implements OnInit {
     };
   }
 
+  private hasValidTimeRanges(): boolean {
+    if (!this.editingOferta || !this.editingOferta.horarios) return true;
+    for (const horario of this.editingOferta.horarios) {
+      if (horario.horaInicio && horario.horaFin) {
+        if (horario.horaInicio >= horario.horaFin) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   protected async validarEdicion(): Promise<void> {
     if (!this.editingOferta) return;
     this.isValidating = true;
     this.editErrorMsg = '';
     this.editSuccessMsg = '';
+
+    if (!this.hasValidTimeRanges()) {
+      this.editErrorMsg = 'El horario de fin debe ser posterior al horario de inicio.';
+      this.isValidating = false;
+      return;
+    }
     
     try {
       await firstValueFrom(this.ofertaImportService.validarActualizacion(
@@ -174,12 +197,19 @@ export class GestionarOfertas implements OnInit {
     this.isSaving = true;
     this.editErrorMsg = '';
     this.editSuccessMsg = '';
+
+    if (!this.hasValidTimeRanges()) {
+      this.editErrorMsg = 'El horario de fin debe ser posterior al horario de inicio.';
+      this.isSaving = false;
+      return;
+    }
     
     try {
       await firstValueFrom(this.ofertaImportService.actualizarOferta(
         this.editingOferta.id, 
         this.buildUpdateRequest()
       ));
+      this.toastService.success('Oferta académica actualizada exitosamente');
       this.cerrarEdicion();
       await this.loadOfertas();
     } catch (e: any) {

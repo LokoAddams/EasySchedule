@@ -5,9 +5,11 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class TourHintsService {
-  // Observable para controlar si el popover de "Toma de Materias" debe estar abierto
   private tomaMateriasPopoverOpen$ = new BehaviorSubject<boolean>(false);
   tomaMateriasPopoverOpen = this.tomaMateriasPopoverOpen$.asObservable();
+
+  private tourStepRequest$ = new BehaviorSubject<number | null>(null);
+  tourStepRequest = this.tourStepRequest$.asObservable();
 
   openTomaMateriasPopover(): void {
     this.tomaMateriasPopoverOpen$.next(true);
@@ -15,5 +17,9 @@ export class TourHintsService {
 
   closeTomaMateriasPopover(): void {
     this.tomaMateriasPopoverOpen$.next(false);
+  }
+
+  requestTourStep(step: number): void {
+    this.tourStepRequest$.next(step);
   }
 }

@@ -42,8 +42,8 @@ interface MallaEditRow {
   rowId: number;
   codigo: string;
   nombre: string;
-  semestre: number;
-  creditos: number;
+  semestre: number | null;
+  creditos: number | null;
   prerequisitos: string;
 }
 
@@ -102,7 +102,15 @@ export class Malla implements OnInit, OnDestroy {
 
   private flagsSubscription?: Subscription;
   private routerEventsSubscription?: Subscription;
+  protected importMallaSaving = false;
+  protected showImportConfirm = false;
+
+  protected currentTourStep = 0;
+
+  private routeSubscription: Subscription | undefined;
+  private featureToggleSubscription: Subscription | undefined;
   private tomaSeleccionSubscription?: Subscription;
+  private tourHintsSubscription?: Subscription;
   private previousSelectionSnapshot: SeleccionSnapshot | null = null;
   private materiasLoadedForMallaId: number | null = null;
 
@@ -337,15 +345,15 @@ Reglas obligatorias:
 
   protected addEditMallaRow(): void {
     this.editMallaRows = [
-      ...this.editMallaRows,
       {
         rowId: this.nextEditRowId++,
         codigo: '',
         nombre: '',
-        semestre: 1,
-        creditos: 4,
+        semestre: null,
+        creditos: null,
         prerequisitos: '',
       },
+      ...this.editMallaRows,
     ];
   }
 
@@ -1445,6 +1453,7 @@ Reglas obligatorias:
   }
 
   protected siguienteTour(step: number): void {
+    this.currentTourStep = step;
     this.popoverStep1?.close();
     this.popoverStep2?.close();
     this.popoverStep4?.close();
@@ -1470,9 +1479,29 @@ Reglas obligatorias:
   }
 
   protected finalizarTour(): void {
+    this.currentTourStep = 0;
     this.cerrarTodosLosPopovers();
     localStorage.setItem(this.getTourStorageKey(), 'true');
     this.persistirTourCompletado();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.currentTourStep > 0 && this.currentTourStep <= 4) {
+      const target = event.target as HTMLElement;
+      
+      // Si hizo click en un botón para avanzar o dentro del popover, ignoramos (el botón ya hace el avance)
+      if (target.closest('.popover') || target.closest('.hint-popover')) {
+        return;
+      }
+      
+      // Si hizo click fuera, avanzamos el tour automáticamente
+      if (this.currentTourStep < 4) {
+        this.siguienteTour(this.currentTourStep + 1);
+      } else {
+        this.finalizarTour();
+      }
+    }
   }
 
   protected toggleCrearUniversidad(): void {
