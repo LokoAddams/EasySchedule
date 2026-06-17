@@ -4,8 +4,8 @@
 
 .horario-page {
 	max-width: min(1500px, 98vw);
-	margin: 1.8rem auto;
-	padding: 0 1rem 2rem;
+	margin: clamp(1rem, 2vw, 1.8rem) auto;
+	padding: 0 clamp(0.75rem, 2vw, 1rem) 2rem;
 }
 
 /* ── Header ── */
@@ -45,7 +45,7 @@ h1 {
 
 .horario-export__button {
 	padding: 0.5rem 1rem;
-	border-radius: 12px;
+	border-radius: 8px;
 	border: none;
 	background: #274a69;
 	color: #f5f9ff;
@@ -63,15 +63,15 @@ h1 {
 .horario-export__message {
 	margin-top: 0.6rem;
 	padding: 0.6rem 0.8rem;
-	border-radius: 10px;
+	border-radius: 8px;
 	background: #e8eef4;
 	color: #1c3047;
 	font-family: 'Poppins', sans-serif;
 }
 
 .horario-export__message--error {
-	background: #fff0ed;
-	color: #7f271f;
+	background: var(--color-error-bg);
+	color: var(--color-error);
 }
 
 .horario-chip {
@@ -93,15 +93,15 @@ h1 {
 .horario-state {
 	margin-top: 1rem;
 	padding: 0.8rem 1rem;
-	border-radius: 10px;
+	border-radius: 8px;
 	background: #e8eef4;
 	color: #1c3047;
 	font-family: 'Poppins', sans-serif;
 }
 
 .horario-state--error {
-	background: #fff0ed;
-	color: #7f271f;
+	background: var(--color-error-bg);
+	color: var(--color-error);
 }
 
 /* ===================================================================
@@ -110,7 +110,7 @@ h1 {
 
 .toma-two-col-layout {
 	display: grid;
-	grid-template-columns: 1fr 340px;
+	grid-template-columns: minmax(0, 1fr) minmax(300px, 340px);
 	gap: 1.5rem;
 	margin-top: 1.2rem;
 	align-items: start;
@@ -131,7 +131,7 @@ h1 {
 	gap: 1rem;
 	margin-bottom: 0.85rem;
 	padding: 0.65rem 1rem;
-	border-radius: 14px;
+	border-radius: 8px;
 	background: linear-gradient(135deg, #eef2f8 0%, #dce4ee 100%);
 	border: 1px solid rgba(47, 79, 115, 0.12);
 }
@@ -181,7 +181,7 @@ h1 {
 
 .horario-grid-wrapper {
 	overflow-x: auto;
-	border-radius: 20px;
+	border-radius: 8px;
 	border: 1px solid rgba(34, 53, 74, 0.25);
 	background: #dce1e8;
 }
@@ -269,7 +269,7 @@ h1 {
 .horario-day-card {
 	background: #dce1e8;
 	border: 1px solid rgba(34, 53, 74, 0.25);
-	border-radius: 14px;
+	border-radius: 8px;
 	overflow: hidden;
 }
 
@@ -352,7 +352,7 @@ h1 {
 	width: 100%;
 	padding: 0.9rem 1.2rem;
 	border: none;
-	border-radius: 14px;
+	border-radius: 8px;
 	background: #274a69;
 	color: #fff;
 	font-family: 'Poppins', sans-serif;
@@ -385,7 +385,7 @@ h1 {
 	width: 100%;
 	padding: 0.6rem 1rem;
 	border: 2px solid rgba(39, 74, 105, 0.3);
-	border-radius: 12px;
+	border-radius: 8px;
 	background: transparent;
 	color: #274a69;
 	font-family: 'Poppins', sans-serif;
@@ -409,8 +409,9 @@ h1 {
 .toma-panel-section {
 	background: #f7f9fc;
 	border: 1px solid rgba(47, 79, 115, 0.12);
-	border-radius: 14px;
-	padding: 1rem;
+	border-radius: 8px;
+	padding: clamp(0.85rem, 2vw, 1rem);
+	box-shadow: 0 8px 20px rgba(16, 32, 52, 0.05);
 }
 
 .toma-panel-section__title {
@@ -439,7 +440,7 @@ h1 {
 	align-items: center;
 	gap: 0.65rem;
 	padding: 0.5rem 0.65rem;
-	border-radius: 10px;
+	border-radius: 8px;
 	background: #eef2f8;
 	border: 1px solid rgba(47, 79, 115, 0.08);
 	font-family: 'Poppins', sans-serif;
@@ -473,6 +474,8 @@ h1 {
 	align-items: center;
 	justify-content: space-between;
 	width: 100%;
+	gap: 0.5rem;
+	min-width: 0;
 }
 
 .toma-prioridad-checkbox-wrapper {
@@ -492,6 +495,7 @@ h1 {
 .toma-prioridad-label {
 	font-weight: 500;
 	transition: opacity 0.2s;
+	overflow-wrap: anywhere;
 }
 
 .toma-prioridad-label.inactive {
@@ -583,7 +587,7 @@ h1 {
 }
 
 .toma-materia-card {
-	border-radius: 12px;
+	border-radius: 8px;
 	border: 1.5px solid rgba(47, 79, 115, 0.15);
 	background: #fff;
 	overflow: hidden;
@@ -668,9 +672,7 @@ h1 {
 	font-weight: 600;
 	color: #1b2330;
 	line-height: 1.3;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	overflow-wrap: anywhere;
 }
 
 .toma-materia-card__expand {
@@ -758,7 +760,7 @@ h1 {
 .toma-seleccion-container {
 	margin-top: 1.5rem;
 	padding: 1.05rem;
-	border-radius: 14px;
+	border-radius: 8px;
 	border: 1px solid rgba(34, 53, 74, 0.2);
 	background: #ece8d8;
 }
@@ -856,21 +858,21 @@ h1 {
 .toma-feedback {
 	margin-top: 0.75rem;
 	padding: 0.6rem 0.8rem;
-	border-radius: 10px;
+	border-radius: 8px;
 	font-family: 'Poppins', sans-serif;
 	font-size: 0.92rem;
 }
 
 .toma-feedback--success {
-	background: #e9f7ef;
+	background: var(--color-success-bg);
 	border: 1px solid rgba(31, 104, 63, 0.32);
-	color: #1f683f;
+	color: var(--color-success);
 }
 
 .toma-feedback--error {
-	background: #fff0ed;
+	background: var(--color-error-bg);
 	border: 1px solid rgba(127, 39, 31, 0.3);
-	color: #7f271f;
+	color: var(--color-error);
 }
 
 .toma-divider {
@@ -896,7 +898,7 @@ h1 {
 	justify-content: space-between;
 	align-items: center;
 	padding: 0.8rem 1.2rem;
-	border-radius: 12px;
+	border-radius: 8px;
 	background: #f5f7fb;
 	border: 1px solid rgba(47, 79, 115, 0.15);
 	font-family: 'Poppins', sans-serif;
@@ -1064,6 +1066,7 @@ h1 {
 		position: static;
 		max-height: none;
 		overflow-y: visible;
+		padding-right: 0;
 	}
 
 	.horario-grid {
@@ -1116,5 +1119,41 @@ h1 {
 
 	.mobile-only {
 		display: flex !important;
+	}
+}
+
+@media (max-width: 560px) {
+	.horario-export,
+	.toma-nav-arrows,
+	.toma-seleccion-header,
+	.toma-creditos-item {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.horario-export__select,
+	.horario-export__button,
+	.toma-generate-btn,
+	.toma-cancel-btn,
+	.malla-button {
+		width: 100%;
+	}
+
+	.toma-prioridad-item {
+		align-items: flex-start;
+	}
+
+	.toma-prioridad-item-content {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.materia-tag {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.toma-creditos-item {
+		gap: 0.35rem;
 	}
 }
