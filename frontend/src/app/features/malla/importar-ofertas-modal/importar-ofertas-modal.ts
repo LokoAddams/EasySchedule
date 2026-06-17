@@ -213,10 +213,6 @@ export class ImportarOfertasModal {
     }
   }
 
-  protected cancelConfirm(): void {
-    this.showConfirmModal = false;
-  }
-
   private applyBackendResult(result: OfertaImportResultResponse): void {
     this.summary = result.summary;
     this.errors = result.errors.map((error: OfertaImportErrorResponse) => ({
