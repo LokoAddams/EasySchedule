@@ -77,6 +77,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe(() => {
       this.closeLanguageMenu();
+      this.closeMobileMenu();
     });
   }
 
@@ -94,6 +95,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (!clickedInside && this.languageMenuRef?.nativeElement?.open) {
       this.closeLanguageMenu();
     }
+  }
+
+  protected isMobileMenuOpen = false;
+
+  protected toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  protected closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
   }
 
   protected setLanguage(lang: string): void {
