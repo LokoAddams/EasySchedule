@@ -26,6 +26,7 @@ import { TourHintsService } from '../../services/tour-hints.service';
 import { SeleccionTemporalService, SeleccionTemporalResponse } from '../../services/academico/seleccion-temporal.service';
 
 import { ImportarOfertasModal } from './importar-ofertas-modal/importar-ofertas-modal';
+import { GestionarOfertas } from './gestionar-ofertas/gestionar-ofertas';
 import { ConfirmModal } from '../../shared/ui/confirm-modal/confirm-modal';
 
 type SeleccionStep = 'universidad' | 'carrera' | 'malla' | 'resumen';
@@ -56,6 +57,7 @@ interface MallaEditRow {
     TranslatePipe,
     NgbPopoverModule,
     ImportarOfertasModal,
+    GestionarOfertas,
     ConfirmModal,
   ],
   templateUrl: './malla.html',
@@ -114,6 +116,7 @@ export class Malla implements OnInit, OnDestroy {
 
   protected ofertasImportEnabled = true;
   protected showImportarOfertasModal = false;
+  protected showGestionarOfertasModal = false;
 
   protected showActualizarModal = false;
   protected selectedMateriaIdActualizar: number | null = null;
@@ -965,6 +968,14 @@ Reglas obligatorias:
 
   protected closeImportarOfertasModal(): void {
     this.showImportarOfertasModal = false;
+  }
+
+  protected onGestionarOfertasClick(): void {
+    this.showGestionarOfertasModal = true;
+  }
+
+  protected closeGestionarOfertasModal(): void {
+    this.showGestionarOfertasModal = false;
   }
 
   protected onOfertasImportFinished(): void {

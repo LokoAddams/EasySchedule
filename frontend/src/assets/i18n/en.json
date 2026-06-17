@@ -203,6 +203,7 @@
       "changeStatus": "Update course status",
       "changeStatusSingle": "Update course status",
       "importOffers": "Import Offers",
+      "manageOffers": "Manage Offers",
       "editMalla": "Edit curriculum",
       "uploadMalla": "Upload new curriculum"
     },
@@ -370,6 +371,24 @@
       "confirm": "Confirm import",
       "processing": "Processing...",
       "importSuccessToast": "Academic offers import completed successfully."
+    },
+    "manageOffers": {
+      "title": "Manage academic offers",
+      "searchLabel": "Search",
+      "searchPlaceholder": "Search by subject code or name",
+      "semestreLabel": "Semester",
+      "allSemestres": "All semesters",
+      "paraleloLabel": "Section",
+      "allParalelos": "All sections",
+      "clearFilters": "Clear filters",
+      "loading": "Loading offers...",
+      "emptyResults": "No offers found for the selected filters.",
+      "colCode": "Code",
+      "colSubject": "Subject",
+      "colSemestre": "Semester",
+      "colParalelo": "Section",
+      "colDocente": "Teacher",
+      "colAula": "Classroom"
     },
     "export": {
       "button": "Export progress",

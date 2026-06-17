@@ -210,6 +210,7 @@
       "changeStatus": "Actualizar estado de materias",
       "changeStatusSingle": "Actualizar estado de materia",
       "importOffers": "Importar Ofertas",
+      "manageOffers": "Gestionar Ofertas",
       "editMalla": "Editar malla",
       "uploadMalla": "Subir nueva malla"
     },
@@ -390,6 +391,24 @@
       "confirm": "Confirmar importación",
       "processing": "Procesando...",
       "importSuccessToast": "Importación de ofertas completada correctamente."
+    },
+    "manageOffers": {
+      "title": "Gestionar ofertas académicas",
+      "searchLabel": "Buscar",
+      "searchPlaceholder": "Buscar por código o nombre de materia",
+      "semestreLabel": "Semestre",
+      "allSemestres": "Todos los semestres",
+      "paraleloLabel": "Paralelo",
+      "allParalelos": "Todos los paralelos",
+      "clearFilters": "Limpiar filtros",
+      "loading": "Cargando ofertas...",
+      "emptyResults": "No se encontraron ofertas para los filtros seleccionados.",
+      "colCode": "Código",
+      "colSubject": "Materia",
+      "colSemestre": "Semestre",
+      "colParalelo": "Paralelo",
+      "colDocente": "Docente",
+      "colAula": "Aula"
     },
     "prerequisito": {
       "button": " Añadir prerrequisito",

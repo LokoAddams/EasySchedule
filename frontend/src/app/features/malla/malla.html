@@ -46,6 +46,9 @@
 
         <button type="button" class="malla-button malla-button--outline" *ngIf="ofertasImportEnabled" [disabled]="materias.length === 0" (click)="onImportarOfertasClick()">
         {{ 'malla.actions.importOffers' | translate }}
+        </button>
+        <button type="button" class="malla-button malla-button--outline" [disabled]="materias.length === 0" (click)="onGestionarOfertasClick()">
+          {{ 'malla.actions.manageOffers' | translate }}
         </button>   
         <button
           type="button"
@@ -729,6 +732,11 @@
     (closeModal)="closeImportarOfertasModal()"
     (importFinished)="onOfertasImportFinished()"
   ></app-importar-ofertas-modal>
+  <app-gestionar-ofertas
+    *ngIf="showGestionarOfertasModal"
+    [mallaId]="selectedMallaId"
+    (closeModal)="closeGestionarOfertasModal()"
+  ></app-gestionar-ofertas>
 
   <app-confirm-modal
     *ngIf="showConfirmModal"

@@ -1,0 +1,229 @@
+.go-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(18, 23, 34, 0.42);
+}
+
+.go-modal {
+  position: fixed;
+  inset: 4vh 50%;
+  z-index: 1001;
+  width: min(980px, 94vw);
+  max-height: 92vh;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  border: 1px solid rgba(47, 79, 115, 0.24);
+  background: #f7f3e7;
+  box-shadow: 0 18px 48px rgba(17, 24, 39, 0.24);
+  overflow: hidden;
+}
+
+.go-modal__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.3rem 1.4rem;
+  border-bottom: 1px solid rgba(47, 79, 115, 0.18);
+
+  h2 {
+    margin: 0;
+    color: var(--color-blue-dark);
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+.go-modal__eyebrow {
+  margin: 0 0 0.25rem;
+  color: #3f6383;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.go-modal__close {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(47, 79, 115, 0.24);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-blue-dark);
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.go-modal__body {
+  overflow: auto;
+  padding: 1.2rem 1.4rem;
+}
+
+.go-filters {
+  margin-bottom: 1rem;
+  border: 1px solid rgba(47, 79, 115, 0.18);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 1rem;
+}
+
+.go-filters__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.go-filters__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 160px;
+  flex: 1;
+}
+
+.go-filters__label {
+  color: var(--color-blue-dark);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.go-input {
+  border: 1px solid rgba(47, 79, 115, 0.24);
+  border-radius: 10px;
+  background: #fff;
+  padding: 0.5rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: #2b3442;
+  outline: none;
+
+  &:focus {
+    border-color: var(--color-blue-dark);
+  }
+}
+
+.go-input--select {
+  cursor: pointer;
+}
+
+.go-filters__actions {
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 1px;
+}
+
+.go-loading {
+  padding: 2rem 0;
+  text-align: center;
+  color: #3f6383;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.go-empty {
+  padding: 2rem 0;
+  text-align: center;
+  color: rgba(18, 23, 34, 0.72);
+  font-style: italic;
+}
+
+.go-table-wrap {
+  overflow-x: auto;
+}
+
+.go-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    color: var(--color-blue-dark);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border-bottom: 2px solid rgba(47, 79, 115, 0.18);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid rgba(47, 79, 115, 0.1);
+    font-size: 0.9rem;
+    color: #2b3442;
+  }
+
+  tbody tr:hover {
+    background: rgba(47, 79, 115, 0.04);
+  }
+}
+
+.go-table__code {
+  font-family: Consolas, 'Courier New', monospace;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.go-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.4rem;
+  border-top: 1px solid rgba(47, 79, 115, 0.18);
+  background: #f7f3e7;
+}
+
+.go-button {
+  border: 0;
+  border-radius: 10px;
+  background: var(--color-blue-dark);
+  color: #fff;
+  padding: 0.55rem 1rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.go-button--ghost {
+  border: 1px solid rgba(47, 79, 115, 0.24);
+  background: transparent;
+  color: var(--color-blue-dark);
+}
+
+@media (max-width: 720px) {
+  .go-modal {
+    inset: 2vh 50%;
+    width: 96vw;
+    max-height: 96vh;
+  }
+
+  .go-modal__header,
+  .go-modal__footer {
+    padding: 1rem;
+  }
+
+  .go-modal__body {
+    padding: 1rem;
+  }
+
+  .go-modal__footer {
+    flex-direction: column;
+  }
+
+  .go-filters__row {
+    flex-direction: column;
+  }
+
+  .go-button {
+    width: 100%;
+  }
+}

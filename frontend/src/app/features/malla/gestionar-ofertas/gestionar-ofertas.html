@@ -1,0 +1,112 @@
+<div class="go-modal-backdrop" (click)="cancel()"></div>
+
+<section class="go-modal" role="dialog" aria-modal="true">
+  <header class="go-modal__header">
+    <div>
+      <p class="go-modal__eyebrow">
+        {{ 'malla.offers.eyebrow' | translate }}
+      </p>
+      <h2>{{ 'malla.manageOffers.title' | translate }}</h2>
+    </div>
+    <button type="button" class="go-modal__close" (click)="cancel()">×</button>
+  </header>
+
+  <div class="go-modal__body">
+    <section class="go-filters">
+      <div class="go-filters__row">
+        <div class="go-filters__group">
+          <label class="go-filters__label" for="go-search">{{ 'malla.manageOffers.searchLabel' | translate }}</label>
+          <input
+            id="go-search"
+            class="go-input"
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()"
+            [placeholder]="'malla.manageOffers.searchPlaceholder' | translate"
+          />
+        </div>
+
+        <div class="go-filters__group">
+          <label class="go-filters__label" for="go-semestre">{{ 'malla.manageOffers.semestreLabel' | translate }}</label>
+          <select
+            id="go-semestre"
+            class="go-input go-input--select"
+            [(ngModel)]="selectedSemestre"
+            (ngModelChange)="onFilterChange()"
+          >
+            <option value="">{{ 'malla.manageOffers.allSemestres' | translate }}</option>
+            <option *ngFor="let sem of semestres" [value]="sem">{{ sem }}</option>
+          </select>
+        </div>
+
+        <div class="go-filters__group">
+          <label class="go-filters__label" for="go-paralelo">{{ 'malla.manageOffers.paraleloLabel' | translate }}</label>
+          <select
+            id="go-paralelo"
+            class="go-input go-input--select"
+            [(ngModel)]="selectedParalelo"
+            (ngModelChange)="onFilterChange()"
+          >
+            <option value="">{{ 'malla.manageOffers.allParalelos' | translate }}</option>
+            <option *ngFor="let p of paralelos" [value]="p">{{ p }}</option>
+          </select>
+        </div>
+
+        <div class="go-filters__actions">
+          <button
+            type="button"
+            class="go-button go-button--ghost"
+            (click)="clearFilters()"
+            [disabled]="!searchTerm && !selectedSemestre && !selectedParalelo"
+          >
+            {{ 'malla.manageOffers.clearFilters' | translate }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="go-results">
+      <div *ngIf="loading" class="go-loading">
+        {{ 'malla.manageOffers.loading' | translate }}
+      </div>
+
+      <div
+        *ngIf="!loading && loaded && ofertas.length === 0"
+        class="go-empty"
+      >
+        <p>{{ 'malla.manageOffers.emptyResults' | translate }}</p>
+      </div>
+
+      <div class="go-table-wrap" *ngIf="!loading && ofertas.length > 0">
+        <table class="go-table">
+          <thead>
+            <tr>
+              <th>{{ 'malla.manageOffers.colCode' | translate }}</th>
+              <th>{{ 'malla.manageOffers.colSubject' | translate }}</th>
+              <th>{{ 'malla.manageOffers.colSemestre' | translate }}</th>
+              <th>{{ 'malla.manageOffers.colParalelo' | translate }}</th>
+              <th>{{ 'malla.manageOffers.colDocente' | translate }}</th>
+              <th>{{ 'malla.manageOffers.colAula' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let o of ofertas">
+              <td class="go-table__code">{{ o.codigoMateria }}</td>
+              <td>{{ o.nombreMateria }}</td>
+              <td>{{ o.semestre }}</td>
+              <td>{{ o.paralelo }}</td>
+              <td>{{ o.docente }}</td>
+              <td>{{ o.aula }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <footer class="go-modal__footer">
+    <button type="button" class="go-button go-button--ghost" (click)="cancel()">
+      {{ 'malla.offers.cancel' | translate }}
+    </button>
+  </footer>
+</section>
