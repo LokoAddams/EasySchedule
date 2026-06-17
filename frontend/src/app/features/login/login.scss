@@ -15,7 +15,7 @@
   .registro-shell {
     width: min(1200px, 100%);
     min-height: min(92vh, 740px);
-    border-radius: 24px;
+    border-radius: 8px;
     overflow: hidden;
     display: grid;
     grid-template-columns: 1.07fr 1fr;
@@ -47,7 +47,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2.4rem 2.1rem;
+    padding: clamp(1.8rem, 3vw, 2.4rem) clamp(1.25rem, 3vw, 2.1rem);
     background: var(--color-sand);
   }
 
@@ -179,7 +179,7 @@
   }
   
   input {
-    height: 2.1rem;
+    min-height: 2.35rem;
     padding: 0 0.8rem;
     border-radius: 0.62rem;
     border: 1px solid #1e1e1e;
@@ -198,9 +198,9 @@
   .btn-primary,
   .btn-secondary {
     align-self: center;
-    width: 14rem;
+    width: min(100%, 14rem);
     min-height: 2.8rem;
-    border-radius: 0.75rem;
+    border-radius: 8px;
     border: none;
     text-decoration: none;
     display: inline-flex;
@@ -294,6 +294,8 @@
     text-align: center;
     margin-top: 0.24rem;
     font-size: 0.82rem;
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
   }
   
   .loading {
@@ -301,10 +303,12 @@
   }
   
   .success-message {
-    color: #1f6d39;
+    background: var(--color-success-bg);
+    color: var(--color-success);
   }
   
   .error-message {
+    background: var(--color-error-bg);
     color: var(--color-error);
   }
   
@@ -333,7 +337,7 @@
     }
   
     .registro-panel {
-      padding: 1.6rem 1.25rem 2rem;
+      padding: 1.8rem 1.25rem 2rem;
     }
 
     .panel-back-link {

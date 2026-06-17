@@ -1,7 +1,7 @@
 .malla-page {
   max-width: min(1500px, 96vw);
-  margin: 2rem auto;
-  padding: 0 1.2rem 2rem;
+  margin: clamp(1rem, 2vw, 2rem) auto;
+  padding: 0 clamp(0.75rem, 2vw, 1.2rem) 2rem;
 }
 
 .malla-page__header {
@@ -62,14 +62,15 @@
 
 .malla-card {
   margin-top: 1rem;
-  border: 1px solid rgba(47, 79, 115, 0.22);
-  border-radius: 12px;
-  background: #fff;
-  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface-strong);
+  padding: clamp(0.85rem, 2vw, 1rem);
+  box-shadow: 0 8px 20px rgba(16, 32, 52, 0.06);
 }
 
 .malla-card--error {
-  background: #fff7f7;
+  background: var(--color-error-bg);
   border-color: rgba(159, 32, 23, 0.25);
 }
 
@@ -100,6 +101,14 @@
   padding: 0.5rem 0.9rem;
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #22395a;
+    box-shadow: var(--shadow-soft);
+    transform: translateY(-1px);
+  }
 
   &:disabled {
     opacity: 0.55;
@@ -136,18 +145,18 @@
 .malla-warning {
   margin-top: 1rem;
   padding: 0.75rem 0.85rem;
-  border-radius: 10px;
-  border: 1px solid rgba(163, 32, 23, 0.28);
-  background: #fff3ef;
+  border-radius: 8px;
+  border: 1px solid rgba(138, 90, 0, 0.28);
+  background: var(--color-warning-bg);
 
   strong {
-    color: #7e2018;
+    color: var(--color-warning);
     font-family: 'Poppins', sans-serif;
   }
 
   p {
     margin: 0.4rem 0 0;
-    color: #7e2018;
+    color: var(--color-warning);
   }
 }
 
@@ -160,18 +169,18 @@
 
 .malla-field-error {
   margin-top: 0.4rem;
-  color: #a32017;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .malla-resumen {
   margin-top: 1rem;
-  border: 1px solid rgba(47, 79, 115, 0.22);
-  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
   background:
     radial-gradient(circle at 88% 14%, rgba(110, 140, 179, 0.14), transparent 36%),
     #f7f3e7;
-  padding: 1.2rem;
+  padding: clamp(1rem, 2.2vw, 1.2rem);
 }
 
 .malla-resumen__universidad {
@@ -254,7 +263,7 @@
 .malla-board__column {
   background: #fbfbfd;
   border: 1px solid rgba(47, 79, 115, 0.12);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -290,6 +299,7 @@
 
   &:hover {
     transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(47, 79, 115, 0.12);
   }
 }
 
@@ -664,6 +674,11 @@
     grid-row: auto;
     justify-self: start;
     margin-top: 0.75rem;
+    width: 100%;
+
+    .malla-button {
+      width: 100%;
+    }
   }
 
   .malla-modal {
@@ -683,6 +698,7 @@
   .malla-legend {
     padding: 0.75rem;
     gap: 1rem;
+    justify-content: flex-start;
   }
 }
 
@@ -1107,4 +1123,3 @@
     }
   }
 }
-
