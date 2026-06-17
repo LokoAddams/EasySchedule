@@ -171,9 +171,11 @@ export class LoginComponent implements AfterViewInit {
       await this.finishAuthenticatedLogin(data);
     } catch (error: any) {
       const status = Number(error?.status ?? 0);
-      const messageKey = status === 401
-        ? 'login.error.googleInvalid'
-        : 'login.error.googleGeneric';
+      const messageKey = status === 0
+        ? 'login.error.backendConnection'
+        : status === 401
+          ? 'login.error.googleInvalid'
+          : 'login.error.googleGeneric';
 
       this.toastService.error(messageKey);
       this.authSessionService.clearSession();
@@ -246,9 +248,11 @@ export class LoginComponent implements AfterViewInit {
 
     } catch (error: any) {
       const status = Number(error?.status ?? 0);
-      const messageKey = status === 401
-        ? 'login.error.invalidCredentials'
-        : 'login.error.generic';
+      const messageKey = status === 0
+        ? 'login.error.backendConnection'
+        : status === 401
+          ? 'login.error.invalidCredentials'
+          : 'login.error.generic';
       this.toastService.error(messageKey);
       this.authSessionService.clearSession();
     } finally {

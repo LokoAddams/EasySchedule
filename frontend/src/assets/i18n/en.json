@@ -122,7 +122,8 @@
     },
     "error": {
       "invalidCredentials": "Invalid credentials",
-      "generic": "Unexpected error",
+      "generic": "We could not complete sign-in. Please try again.",
+      "backendConnection": "We could not reach the service right now. Please try again in a few minutes.",
       "googleUnavailable": "Could not load Google Sign-In. Please try again.",
       "googleCancelled": "No Google credential received.",
       "googleInvalid": "Could not sign in with Google. Please try again.",
@@ -567,7 +568,7 @@
       "emailExists": "Email is already registered",
       "weakPassword": "Password does not meet security policy",
       "invalidData": "Invalid data",
-      "backendConnection": "Could not connect to backend",
+      "backendConnection": "We could not reach the service right now. Please try again in a few minutes.",
       "server": "Server error. Please try again",
       "googleUnavailable": "Could not load Google Sign-In. Please try again.",
       "googleCancelled": "No Google credential received.",

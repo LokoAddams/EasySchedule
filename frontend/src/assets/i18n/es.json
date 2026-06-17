@@ -122,7 +122,8 @@
   },
   "error": {
     "invalidCredentials": "Credenciales inválidas",
-    "generic": "Error inesperado",
+    "generic": "No pudimos completar el inicio de sesión. Intenta nuevamente.",
+    "backendConnection": "No pudimos conectar con el servicio en este momento. Intenta nuevamente en unos minutos.",
     "googleUnavailable": "No se pudo cargar Google Sign-In. Intenta nuevamente.",
     "googleCancelled": "No se recibió una credencial de Google.",
     "googleInvalid": "No se pudo iniciar sesión con Google. Intenta nuevamente.",
@@ -578,7 +579,7 @@
       "emailExists": "El correo ya está registrado",
       "weakPassword": "La contraseña no cumple la política de seguridad",
       "invalidData": "Datos inválidos",
-      "backendConnection": "No se pudo conectar con el backend",
+      "backendConnection": "No pudimos conectar con el servicio en este momento. Intenta nuevamente en unos minutos.",
       "server": "Error del servidor. Intenta nuevamente",
       "googleUnavailable": "No se pudo cargar Google Sign-In. Intenta nuevamente.",
       "googleCancelled": "No se recibió una credencial de Google.",

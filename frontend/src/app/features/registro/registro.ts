@@ -195,9 +195,11 @@ export class Registro implements AfterViewInit {
       await this.finishGoogleAuthenticatedFlow(data);
     } catch (error: any) {
       const status = Number(error?.status ?? 0);
-      const messageKey = status === 401
-        ? 'registro.error.googleInvalid'
-        : 'registro.error.googleGeneric';
+      const messageKey = status === 0
+        ? 'registro.error.backendConnection'
+        : status === 401
+          ? 'registro.error.googleInvalid'
+          : 'registro.error.googleGeneric';
 
       this.toastService.error(messageKey);
       this.authSessionService.clearSession();
