@@ -42,8 +42,8 @@ interface MallaEditRow {
   rowId: number;
   codigo: string;
   nombre: string;
-  semestre: number;
-  creditos: number;
+  semestre: number | null;
+  creditos: number | null;
   prerequisitos: string;
 }
 
@@ -337,15 +337,15 @@ Reglas obligatorias:
 
   protected addEditMallaRow(): void {
     this.editMallaRows = [
-      ...this.editMallaRows,
       {
         rowId: this.nextEditRowId++,
         codigo: '',
         nombre: '',
-        semestre: 1,
-        creditos: 4,
+        semestre: null,
+        creditos: null,
         prerequisitos: '',
       },
+      ...this.editMallaRows,
     ];
   }
 

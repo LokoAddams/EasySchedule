@@ -501,6 +501,14 @@
 
 .malla-modal--edit-malla {
   width: min(1180px, 98vw);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .malla-modal__body {
+    overflow-y: auto;
+    flex: 1;
+  }
 }
 
 .malla-modal__header {
