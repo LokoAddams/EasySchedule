@@ -1,0 +1,65 @@
+<section class="feature-toggle-page">
+  <header class="feature-toggle-header">
+    <p class="feature-toggle-eyebrow">{{ 'featureToggles.eyebrow' | translate }}</p>
+    <h1>{{ 'featureToggles.title' | translate }}</h1>
+    <p>{{ 'featureToggles.description' | translate }}</p>
+  </header>
+
+  <div class="feature-toggle-state" *ngIf="loading">
+    {{ 'featureToggles.loading' | translate }}
+  </div>
+
+  <div class="feature-toggle-state feature-toggle-state--error" *ngIf="error && !loading">
+    {{ 'featureToggles.loadError' | translate }}
+  </div>
+
+  <div class="feature-toggle-list" *ngIf="!loading">
+    <article
+      class="feature-toggle-card"
+      *ngFor="let toggle of toggleDefinitions; trackBy: trackToggle"
+      [ngClass]="{ 'feature-toggle-card--active': isEnabled(toggle.name) }"
+    >
+      <div class="feature-toggle-card__content">
+        <div class="feature-toggle-card__title-row">
+          <h2>{{ toggle.labelKey | translate }}</h2>
+          <span
+            class="feature-toggle-badge"
+            [ngClass]="{
+              'feature-toggle-badge--active': isEnabled(toggle.name),
+              'feature-toggle-badge--inactive': !isEnabled(toggle.name)
+            }"
+          >
+            {{
+              (isEnabled(toggle.name)
+                ? 'featureToggles.status.active'
+                : 'featureToggles.status.inactive') | translate
+            }}
+          </span>
+        </div>
+
+        <p>{{ toggle.descriptionKey | translate }}</p>
+
+        <span class="feature-toggle-saving" *ngIf="isSaving(toggle.name)">
+          {{ 'featureToggles.saving' | translate }}
+        </span>
+      </div>
+
+      <label class="feature-toggle-switch">
+        <input
+          type="checkbox"
+          [checked]="isEnabled(toggle.name)"
+          [disabled]="isSaving(toggle.name)"
+          (change)="onToggleChange(toggle.name, $event)"
+        />
+        <span
+          class="feature-toggle-switch__track"
+          role="switch"
+          [attr.aria-checked]="isEnabled(toggle.name)"
+          [attr.aria-label]="toggle.labelKey | translate"
+        >
+          <span class="feature-toggle-switch__thumb"></span>
+        </span>
+      </label>
+    </article>
+  </div>
+</section>

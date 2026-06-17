@@ -28,6 +28,11 @@
          #tomaMateriasPopover="ngbPopover"
       >{{ 'navbar.tomaMaterias' | translate }}</a>
     </li>
+    <li *ngIf="isLoggedIn()">
+      <a routerLink="/feature-toggles" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        {{ 'navbar.featureToggles' | translate }}
+      </a>
+    </li>
   </ul>
 
   <div class="navbar__actions">

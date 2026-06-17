@@ -40,6 +40,7 @@
     "home": "Inicio",
     "malla": "Malla",
     "tomaMaterias": "Toma de Materias",
+    "featureToggles": "Toggles",
     "login": "Iniciar sesión",
     "signup": "Registrarse",
     "logout": "Cerrar sesión",
@@ -94,6 +95,37 @@
        "copyright": "Derechos de autor @ 2026 EasyScheduleCompany. Todos los derechos reservados"
     }
   },
+"featureToggles": {
+  "eyebrow": "Administración",
+  "title": "Feature toggles",
+  "description": "Consulta y actualiza el estado actual de las funcionalidades disponibles en EasySchedule.",
+  "loading": "Cargando feature toggles...",
+  "saving": "Guardando cambio...",
+  "loadError": "No se pudo cargar el estado de los feature toggles.",
+  "status": {
+    "active": "Activo",
+    "inactive": "Inactivo"
+  },
+  "items": {
+    "malla": {
+      "name": "Malla curricular",
+      "description": "Controla el acceso a configuración académica, carreras, mallas y avance curricular."
+    },
+    "tomaMaterias": {
+      "name": "Toma de materias",
+      "description": "Controla el flujo de selección, generación y visualización de horarios académicos."
+    },
+    "ofertasImport": {
+      "name": "Importación de ofertas",
+      "description": "Controla la carga masiva de ofertas académicas para una malla."
+    }
+  },
+  "toast": {
+    "loadError": "No se pudo cargar el estado de los toggles.",
+    "updateSuccess": "Feature toggle actualizado.",
+    "updateError": "No se pudo actualizar. Se restauró el estado anterior."
+  }
+},
 "login": {
   "title": "Iniciar sesión",
   "label": {

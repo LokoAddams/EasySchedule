@@ -28,6 +28,7 @@
     "home": "Início",
     "malla": "Currículo",
     "tomaMaterias": "Seleção de Disciplinas",
+    "featureToggles": "Toggles",
     "login": "Entrar",
     "signup": "Cadastrar-se",
     "logout": "Sair",
@@ -80,6 +81,37 @@
       "phone": "+591 64363462",
       "address": "Av. America Nª9832",
       "copyright": "Direitos autorais @ 2026 EasyScheduleCompany. Todos os direitos reservados"
+    }
+  },
+  "featureToggles": {
+    "eyebrow": "Administração",
+    "title": "Feature toggles",
+    "description": "Consulte e atualize o estado atual das funcionalidades disponíveis no EasySchedule.",
+    "loading": "Carregando feature toggles...",
+    "saving": "Salvando alteração...",
+    "loadError": "Não foi possível carregar o estado dos feature toggles.",
+    "status": {
+      "active": "Ativo",
+      "inactive": "Inativo"
+    },
+    "items": {
+      "malla": {
+        "name": "Currículo",
+        "description": "Controla o acesso à configuração acadêmica, cursos, currículos e progresso curricular."
+      },
+      "tomaMaterias": {
+        "name": "Seleção de disciplinas",
+        "description": "Controla seleção de disciplinas, geração de horários e visualização de horários acadêmicos."
+      },
+      "ofertasImport": {
+        "name": "Importação de ofertas",
+        "description": "Controla a carga em massa de ofertas acadêmicas para um currículo."
+      }
+    },
+    "toast": {
+      "loadError": "Não foi possível carregar o estado dos toggles.",
+      "updateSuccess": "Feature toggle atualizado.",
+      "updateError": "Não foi possível atualizar. O estado anterior foi restaurado."
     }
   },
   "login": {

@@ -40,6 +40,7 @@
     "home": "Home",
     "malla": "Curriculum",
     "tomaMaterias": "Course Selection",
+    "featureToggles": "Toggles",
     "login": "Sign In",
     "signup": "Sign Up",
     "logout": "Log out",
@@ -92,6 +93,37 @@
       "phone": "+591 64363462",
       "address": "America Ave. Nª9832",
       "copyright": "Copyright @ 2026 EasyScheduleCompany. All rights reserved"
+    }
+  },
+  "featureToggles": {
+    "eyebrow": "Administration",
+    "title": "Feature toggles",
+    "description": "Review and update the current state of EasySchedule features.",
+    "loading": "Loading feature toggles...",
+    "saving": "Saving change...",
+    "loadError": "Could not load feature toggle status.",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "items": {
+      "malla": {
+        "name": "Curriculum",
+        "description": "Controls access to academic setup, careers, curricula, and curriculum progress."
+      },
+      "tomaMaterias": {
+        "name": "Course selection",
+        "description": "Controls course selection, schedule generation, and academic schedule views."
+      },
+      "ofertasImport": {
+        "name": "Offer import",
+        "description": "Controls bulk loading of academic offers for a curriculum."
+      }
+    },
+    "toast": {
+      "loadError": "Could not load toggle status.",
+      "updateSuccess": "Feature toggle updated.",
+      "updateError": "Could not update. The previous state was restored."
     }
   },
   "login": {

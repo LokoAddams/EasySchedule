@@ -33,6 +33,14 @@ export const routes: Routes = [
       import('./features/perfil/perfil.routes').then((m) => m.PERFIL_ROUTES),
   },
   {
+    path: 'feature-toggles',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./features/feature-toggles/feature-toggles.routes').then(
+        (m) => m.FEATURE_TOGGLES_ROUTES,
+      ),
+  },
+  {
     path: 'login',
     canActivate: [guestGuard],
     loadChildren: () =>
