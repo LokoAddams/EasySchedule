@@ -22,6 +22,8 @@ public interface OfertaMateriaRepository extends JpaRepository<OfertaMateria, Lo
         String paralelo
     );
 
+    List<OfertaMateria> findByAulaAndSemestreAndIdNot(String aula, String semestre, Long id);
+
     interface OfertaListRow {
         Long getId();
         String getCodigoMateria();

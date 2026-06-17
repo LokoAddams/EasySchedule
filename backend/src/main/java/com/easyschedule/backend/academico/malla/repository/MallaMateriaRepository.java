@@ -11,4 +11,6 @@ public interface MallaMateriaRepository extends JpaRepository<MallaMateria, Long
 	List<MallaMateria> findByMallaIdAndMateriaActiveTrueOrderBySemestreSugeridoAsc(Long mallaId);
 
 	Optional<MallaMateria> findByMallaIdAndMateriaId(Long mallaId, Long materiaId);
+
+	Optional<MallaMateria> findByMallaIdAndMateria_Codigo(Long mallaId, String codigo);
 }

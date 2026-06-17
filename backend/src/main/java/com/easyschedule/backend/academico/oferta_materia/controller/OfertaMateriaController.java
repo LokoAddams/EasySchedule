@@ -12,7 +12,11 @@ import com.easyschedule.backend.academico.oferta_materia.dto.Importacion.OfertaI
 import com.easyschedule.backend.academico.oferta_materia.service.OfertaMateriaImportService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+import com.easyschedule.backend.academico.oferta_materia.dto.OfertaMateriaUpdateRequest;
 import java.util.List;
 
 @RestController
@@ -61,5 +65,23 @@ public class OfertaMateriaController {
         @RequestParam("file") MultipartFile file
     ) {
         return ofertaMateriaImportService.importCsv(mallaId, file);
+    }
+
+    @PostMapping("/{id}/validar")
+    public ResponseEntity<Void> validarActualizacion(
+        @PathVariable("id") Long id,
+        @RequestBody OfertaMateriaUpdateRequest request
+    ) {
+        ofertaMateriaService.validarActualizacion(id, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> actualizarOferta(
+        @PathVariable("id") Long id,
+        @RequestBody OfertaMateriaUpdateRequest request
+    ) {
+        ofertaMateriaService.actualizarOferta(id, request);
+        return ResponseEntity.ok().build();
     }
 }
