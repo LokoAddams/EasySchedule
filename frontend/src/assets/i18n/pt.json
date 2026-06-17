@@ -245,7 +245,18 @@
       "noGroupsAvailable": "Esta matéria não possui grupos disponíveis no momento.",
       "takeSubject": "Tomar matéria",
       "cancel": "Cancelar",
-      "addToSelection": "Adicionar à seleção"
+      "addToSelection": "Adicionar à seleção",
+      "closeAria": "Fechar modal de importação"
+    },
+    "selection": {
+      "added": "Matéria adicionada com sucesso",
+      "errorAdd": "Não foi possível adicionar a matéria",
+      "confirmClear": "Tem certeza de que deseja limpar sua seleção temporária?",
+      "cleared": "Seleção temporária limpa",
+      "errorClear": "Erro ao limpar a seleção",
+      "panelTitle": "Seleção temporária",
+      "cancel": "Cancelar",
+      "goToToma": "Ir para Seleção de Disciplinas"
     },
     "offers": {
       "eyebrow": "Ofertas acadêmicas",

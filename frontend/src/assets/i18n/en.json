@@ -186,6 +186,7 @@
     },
     "loadingCarreras": "Loading careers...",
     "loadingMallas": "Loading curricula...",
+    "loadingMaterias": "Loading subjects...",
     "steps": {
       "universidad": "University",
       "carrera": "Career",
@@ -225,7 +226,18 @@
       "noGroupsAvailable": "This subject currently has no available groups.",
       "takeSubject": "Take subject",
       "cancel": "Cancel",
-      "addToSelection": "Add to selection"
+      "addToSelection": "Add to selection",
+      "closeAria": "Close import modal"
+    },
+    "selection": {
+      "added": "Subject added successfully",
+      "errorAdd": "Could not add the subject",
+      "confirmClear": "Are you sure you want to clear your temporary selection?",
+      "cleared": "Temporary selection cleared",
+      "errorClear": "Error clearing the selection",
+      "panelTitle": "Temporary selection",
+      "cancel": "Cancel",
+      "goToToma": "Go to Course Selection"
     },
     "UpdateCourse": {
       "title": "Course status",
