@@ -110,6 +110,7 @@ export class Malla implements OnInit, OnDestroy {
   private routeSubscription: Subscription | undefined;
   private featureToggleSubscription: Subscription | undefined;
   private tomaSeleccionSubscription?: Subscription;
+  private tourHintsSubscription?: Subscription;
   private previousSelectionSnapshot: SeleccionSnapshot | null = null;
   private materiasLoadedForMallaId: number | null = null;
 

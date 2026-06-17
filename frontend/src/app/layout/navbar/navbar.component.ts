@@ -146,4 +146,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected closeTourPopover(): void {
     this.tourHintsService.closeTomaMateriasPopover();
   }
+
+  protected requestTourStep(step: number): void {
+    this.tourHintsService.requestTourStep(step);
+  }
 }

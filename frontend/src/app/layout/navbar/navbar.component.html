@@ -102,9 +102,15 @@
       <p style="margin-bottom: 0.75rem; line-height: 1.5;">
         ¡<strong>Armemos tu horario</strong>! Selecciona tus materias y construye tu horario del semestre.
       </p>
-      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-        <button type="button" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0; border: 1px solid rgba(34, 57, 90, 0.25); background-color: transparent; border-radius: 6px; color: #22395a; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; transition: background-color 0.2s ease;" (click)="closeTourPopover()">No volver a mostrar</button>
-        <button type="button" style="padding: 0.25rem 0.6rem; font-size: 0.78rem; margin: 0; border: none; background-color: var(--color-blue); color: white; border-radius: 6px; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; transition: background-color 0.2s ease;" (click)="closeTourPopover()">¡Entendido!</button>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem;">
+        <span style="font-size: 0.75rem; color: #6f89ad; font-weight: 700; font-family: 'Poppins', sans-serif;">3/4</span>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" style="padding: 0.25rem 0.5rem; font-size: 0.78rem; margin: 0; border: none; background-color: transparent; border-radius: 6px; color: #22395a; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif;" (click)="closeTourPopover()">Cerrar</button>
+          <div style="display: flex; gap: 0.25rem;">
+            <button type="button" style="padding: 0.25rem 0.5rem; font-size: 0.78rem; margin: 0; border: 1px solid var(--color-blue); background-color: transparent; color: var(--color-blue); border-radius: 6px; font-weight: 700; cursor: pointer; min-width: 32px;" (click)="requestTourStep(2)">&lt;</button>
+            <button type="button" style="padding: 0.25rem 0.5rem; font-size: 0.78rem; margin: 0; border: none; background-color: var(--color-blue); color: white; border-radius: 6px; font-weight: 700; cursor: pointer; min-width: 32px;" (click)="requestTourStep(4)">&gt;</button>
+          </div>
+        </div>
       </div>
     </div>
   </ng-template>
