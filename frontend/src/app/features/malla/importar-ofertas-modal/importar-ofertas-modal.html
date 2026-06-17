@@ -195,9 +195,8 @@
 
 <app-confirm-modal
   *ngIf="showConfirmModal"
-  [title]="'malla.offers.confirmTitle' | translate"
-  [message]="'malla.offers.confirmMessage' | translate: { count: preview.length, blocks: scheduleBlocksCount }"
-  confirmLabel="Importar"
+  title="confirmModal.defaultTitle"
+  message="confirmModal.importOfertas"
   (confirm)="confirmImport()"
   (cancel)="cancelConfirm()"
 ></app-confirm-modal>

@@ -13,6 +13,16 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS feature_toggles (
+    id BIGSERIAL PRIMARY KEY,
+    feature_key VARCHAR(80) NOT NULL,
+    name VARCHAR(120) NOT NULL,
+    description VARCHAR(300) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_feature_toggles_key UNIQUE (feature_key)
+);
+
 CREATE TABLE IF NOT EXISTS universidades (
     id BIGSERIAL PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL UNIQUE,
@@ -188,6 +198,7 @@ CREATE INDEX IF NOT EXISTS idx_estado_user_id ON estado_materia_estudiante(user_
 CREATE INDEX IF NOT EXISTS idx_estado_malla_materia_id ON estado_materia_estudiante(malla_materia_id);
 CREATE INDEX IF NOT EXISTS idx_horarios_user_id ON horarios_recomendados(user_id);
 CREATE INDEX IF NOT EXISTS idx_horarios_json_gin ON horarios_recomendados USING GIN (json_resultado);
+CREATE INDEX IF NOT EXISTS idx_feature_toggles_key ON feature_toggles(feature_key);
 
 INSERT INTO universidades (nombre, codigo, active)
 VALUES

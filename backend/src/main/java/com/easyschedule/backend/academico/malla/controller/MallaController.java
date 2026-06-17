@@ -1,5 +1,7 @@
 package com.easyschedule.backend.academico.malla.controller;
 
+import com.easyschedule.backend.academico.malla.dto.MallaEditRequest;
+import com.easyschedule.backend.academico.malla.dto.MallaEditResponse;
 import com.easyschedule.backend.academico.malla.dto.MallaImportRequest;
 import com.easyschedule.backend.academico.malla.dto.MallaImportResponse;
 import com.easyschedule.backend.academico.malla.dto.MallaResponse;
@@ -42,6 +44,40 @@ public class MallaController {
     public List<MallaMateriaResponse> findMateriasByMalla(@PathVariable("mallaId") Long mallaId, Principal principal) {
         Long userId = getAuthenticatedUserId(principal);
         return mallaService.findMateriasByMalla(mallaId, userId);
+    }
+
+    @GetMapping("/{mallaId}/edicion")
+    public MallaEditResponse getMallaEditable(@PathVariable("mallaId") Long mallaId) {
+        try {
+            return mallaImportService.getMallaEditable(mallaId);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @PutMapping("/{mallaId}/edicion")
+    public MallaEditResponse actualizarMalla(
+            @PathVariable("mallaId") Long mallaId,
+            @RequestBody MallaEditRequest request) {
+        try {
+            return mallaImportService.actualizarMalla(mallaId, request);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Error de validacion al actualizar malla {}: {}", mallaId, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @PutMapping("/{mallaId}/edicion/importar")
+    public MallaEditResponse actualizarMallaDesdeArchivo(
+            @PathVariable("mallaId") Long mallaId,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            MallaImportRequest parsed = fileParserService.parseFile(file);
+            return mallaImportService.actualizarMalla(mallaId, new MallaEditRequest(parsed.materias()));
+        } catch (IllegalArgumentException e) {
+            logger.warn("Error de validacion al actualizar malla desde archivo {}: {}", mallaId, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     private Long getAuthenticatedUserId(Principal principal) {

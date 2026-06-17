@@ -9,6 +9,18 @@
       "codePT": "PT"
     }
   },
+  "confirmModal": {
+    "title": "Confirmar acción",
+    "defaultTitle": "¿Estás seguro?",
+    "defaultMessage": "Esta acción no se puede deshacer.",
+    "confirm": "Sí, confirmar",
+    "cancel": "Cancelar",
+    "changeMalla": "Al cambiar de malla se perderá el progreso de la malla anterior. ¿Deseas continuar?",
+    "changeUniversidad": "Al cambiar de universidad se perderá la configuración actual. ¿Deseas continuar?",
+    "clearSelection": "¿Estás seguro de que deseas limpiar tu selección temporal?",
+    "importMalla": "Se importará una nueva malla curricular. Esta acción creará registros en el sistema. ¿Deseas continuar?",
+    "importOfertas": "Se importarán las ofertas académicas para la malla actual. Esta acción creará o actualizará registros. ¿Deseas continuar?"
+  },
   "toast": {
     "dismiss": "Cerrar aviso"
   },
@@ -28,6 +40,8 @@
     "home": "Inicio",
     "malla": "Malla",
     "tomaMaterias": "Toma de Materias",
+    "featureToggles": "Feature Toggles",
+    "adminFeatureToggles": "Administración",
     "login": "Iniciar sesión",
     "signup": "Registrarse",
     "logout": "Cerrar sesión",
@@ -41,6 +55,59 @@
     },
     "hints": {
       "chooseMalla": "¡Elijamos tu Universidad y Carrera!"
+    }
+  },
+  "adminFeatureToggles": {
+    "eyebrow": "Administración",
+    "title": "Feature toggles",
+    "description": "Activa o desactiva funcionalidades disponibles para los usuarios.",
+    "loading": "Cargando feature toggles...",
+    "updatedAtUnavailable": "No disponible",
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "metadata": {
+      "key": "Clave",
+      "updatedAt": "Actualizado"
+    },
+    "actions": {
+      "refresh": "Actualizar",
+      "saving": "Guardando...",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "cancel": "Cancelar"
+    },
+    "confirm": {
+      "eyebrow": "Confirmación",
+      "close": "Cerrar confirmación",
+      "activateTitle": "Activar funcionalidad",
+      "deactivateTitle": "Desactivar funcionalidad",
+      "activateMessage": "¿Deseas activar \"{{name}}\" para todos los usuarios?",
+      "deactivateMessage": "¿Deseas desactivar \"{{name}}\" para todos los usuarios?"
+    },
+    "toggles": {
+      "malla": {
+        "name": "Malla curricular",
+        "description": "Controla el acceso a la gestión y visualización de mallas curriculares."
+      },
+      "tomaMaterias": {
+        "name": "Toma de materias",
+        "description": "Controla el acceso al módulo de toma de materias y horarios."
+      },
+      "ofertasImport": {
+        "name": "Importación de ofertas",
+        "description": "Controla la importación de ofertas académicas."
+      }
+    },
+    "success": {
+      "updated": "Feature toggle actualizado correctamente."
+    },
+    "error": {
+      "update": "No se pudo actualizar el feature toggle: {{message}}",
+      "generic": "No se pudo completar la operación.",
+      "unauthorized": "Debes iniciar sesión como administrador.",
+      "forbidden": "Solo el usuario Admin puede administrar feature toggles."
     }
   },
   "home": {
@@ -143,6 +210,8 @@
       "changeStatus": "Actualizar estado de materias",
       "changeStatusSingle": "Actualizar estado de materia",
       "importOffers": "Importar Ofertas",
+      "manageOffers": "Gestionar Ofertas",
+      "editMalla": "Editar malla",
       "uploadMalla": "Subir nueva malla"
     },
     "import": {
@@ -180,6 +249,41 @@
       "universidades": "No hay universidades disponibles. Puedes crear una nueva universidad usando el botón \"+ Nueva universidad\".",
       "carreras": "No hay carreras registradas para esta universidad. Puedes crear una nueva carrera usando el botón \"+ Nueva carrera\".",
       "mallas": "No hay mallas curriculares disponibles para esta carrera. Puedes subir una nueva malla usando el botón \"Subir nueva malla\"."
+    },
+    "edit": {
+      "eyebrow": "Edición de malla",
+      "title": "Editar {{malla}}",
+      "loading": "Cargando malla editable...",
+      "version": "Versión {{version}}",
+      "loadCsv": "Cargar CSV corregido",
+      "addSubject": "Agregar materia",
+      "csvLoaded": "CSV cargado: {{file}}",
+      "code": "Código",
+      "name": "Materia",
+      "semester": "Semestre",
+      "credits": "Créditos",
+      "prerequisites": "Prerrequisitos",
+      "prerequisitesPlaceholder": "Ej: MAT101;FIS101",
+      "remove": "Quitar",
+      "help": "Escribe los prerrequisitos como códigos separados por punto y coma. Al guardar se reemplazará la estructura actual de la malla.",
+      "save": "Guardar malla",
+      "saving": "Guardando...",
+      "success": "Malla actualizada correctamente.",
+      "errorLoad": "No se pudo cargar la malla editable.",
+      "errorSave": "No se pudo guardar la malla.",
+      "errorAtLeastOne": "La malla debe tener al menos una materia.",
+      "errorCsvOnly": "Solo se permite cargar archivos CSV.",
+      "errorCsvRead": "No se pudo leer el archivo CSV.",
+      "errorCsvEmpty": "El CSV no contiene materias.",
+      "errorCsvColumns": "La línea {{line}} no tiene las columnas requeridas.",
+      "errorCsvNumbers": "La línea {{line}} tiene semestre o créditos inválidos.",
+      "errorRequiredFields": "Código y nombre son obligatorios en todas las materias.",
+      "errorSemester": "El semestre debe estar entre 1 y 50.",
+      "errorCredits": "Los créditos deben estar entre 1 y 99.",
+      "errorDuplicateCode": "El código {{code}} está duplicado.",
+      "errorUnknownPrereq": "El prerrequisito {{code}} no existe en la malla.",
+      "errorSelfPrereq": "Una materia no puede ser prerrequisito de sí misma.",
+      "errorPrereqSemester": "Los prerrequisitos deben pertenecer a semestres anteriores."
     },
     "error": {
       "loadUniversidades": "No se pudieron cargar las universidades disponibles.",
@@ -301,6 +405,24 @@
       "confirmTitle": "Confirmar importación",
       "confirmMessage": "Se importarán {{count}} ofertas con {{blocks}} bloques de horario. ¿Deseas continuar?",
       "importSuccessToast": "Importación de ofertas completada correctamente."
+    },
+    "manageOffers": {
+      "title": "Gestionar ofertas académicas",
+      "searchLabel": "Buscar",
+      "searchPlaceholder": "Buscar por código o nombre de materia",
+      "semestreLabel": "Semestre",
+      "allSemestres": "Todos los semestres",
+      "paraleloLabel": "Paralelo",
+      "allParalelos": "Todos los paralelos",
+      "clearFilters": "Limpiar filtros",
+      "loading": "Cargando ofertas...",
+      "emptyResults": "No se encontraron ofertas para los filtros seleccionados.",
+      "colCode": "Código",
+      "colSubject": "Materia",
+      "colSemestre": "Semestre",
+      "colParalelo": "Paralelo",
+      "colDocente": "Docente",
+      "colAula": "Aula"
     },
     "prerequisito": {
       "button": " Añadir prerrequisito",

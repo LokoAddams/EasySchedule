@@ -485,6 +485,10 @@
   width: min(420px, 96vw);
 }
 
+.malla-modal--edit-malla {
+  width: min(1180px, 98vw);
+}
+
 .malla-modal__header {
   display: flex;
   align-items: flex-start;
@@ -593,6 +597,84 @@
   }
 }
 
+.malla-edit-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(47, 79, 115, 0.18);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+
+  strong {
+    color: #121722;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .malla-field-help {
+    margin: 0.2rem 0 0;
+  }
+}
+
+.malla-edit-toolbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.55rem;
+
+  .malla-button {
+    margin-top: 0;
+  }
+}
+
+.malla-edit-table-wrapper {
+  margin-top: 0.85rem;
+  overflow-x: auto;
+  border: 1px solid rgba(47, 79, 115, 0.18);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.malla-edit-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.65rem;
+    border-bottom: 1px solid rgba(47, 79, 115, 0.12);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    color: #2c4f73;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .malla-input {
+    margin-top: 0;
+  }
+}
+
+.malla-edit-table__code {
+  min-width: 110px;
+}
+
+.malla-edit-table__number {
+  width: 88px;
+}
+
 @media (max-width: 760px) {
   .malla-semesters {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -601,6 +683,19 @@
 
   .malla-board {
     flex-direction: column;
+  }
+
+  .malla-edit-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .malla-edit-toolbar__actions {
+    justify-content: stretch;
+
+    .malla-button {
+      width: 100%;
+    }
   }
 }
 
@@ -1107,4 +1202,3 @@
     }
   }
 }
-

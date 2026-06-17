@@ -10,6 +10,7 @@ import com.easyschedule.backend.auth.dto.request.GoogleLoginRequest;
 
 import com.easyschedule.backend.auth.repositories.UserRepository;
 import com.easyschedule.backend.auth.dto.request.ChangePasswordRequest;
+import com.easyschedule.backend.shared.admin.AdminUser;
 import com.easyschedule.backend.shared.exception.UserAlreadyExistsException;
 import java.util.Optional;
 import java.util.Map;
@@ -102,14 +103,7 @@ public class AuthService {
         String token = sessionTokenService.issueToken(user.getId());
         log.info("[AUTH_LOGIN] autenticacion exitosa | userId={} username={}", user.getId(), user.getUsername());
 
-        return ResponseEntity.ok().body(
-            Map.of(
-                "token", token,
-                "username", user.getUsername(),
-                "expiresInSeconds", sessionTokenService.getTokenTtlSeconds(),
-                "message", "Login exitoso"
-            )
-        );
+        return ResponseEntity.ok().body(buildLoginResponse(user, token, "Login exitoso"));
     }
 
     public ResponseEntity<?> loginWithGoogle(GoogleLoginRequest request) {
@@ -139,14 +133,7 @@ public class AuthService {
 
         log.info("[AUTH_GOOGLE] autenticacion exitosa | userId={} username={}", user.getId(), user.getUsername());
 
-        return ResponseEntity.ok().body(
-                Map.of(
-                        "token", token,
-                        "username", user.getUsername(),
-                        "expiresInSeconds", sessionTokenService.getTokenTtlSeconds(),
-                        "message", "Login con Google exitoso"
-                )
-        );
+        return ResponseEntity.ok().body(buildLoginResponse(user, token, "Login con Google exitoso"));
     }
 
     public ResponseEntity<?> logout(String authorizationHeader) {
@@ -230,6 +217,17 @@ public class AuthService {
         log.info("[AUTH_GOOGLE] usuario creado con Google | userId={} username={}", savedUser.getId(), savedUser.getUsername());
 
         return savedUser;
+    }
+
+    private Map<String, Object> buildLoginResponse(User user, String token, String message) {
+        return Map.of(
+            "token", token,
+            "username", user.getUsername(),
+            "email", user.getEmail(),
+            "isAdmin", AdminUser.isAdmin(user),
+            "expiresInSeconds", sessionTokenService.getTokenTtlSeconds(),
+            "message", message
+        );
     }
 
     private String buildUsernameFromEmail(String email) {
