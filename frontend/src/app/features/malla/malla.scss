@@ -123,6 +123,10 @@
   color: #2b3442;
   margin-top: 0;
   line-height: 1.05;
+
+  &:hover:not(:disabled) {
+    color: #fff;
+  }
 }
 
 .malla-button--save {
