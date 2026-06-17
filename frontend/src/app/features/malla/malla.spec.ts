@@ -175,12 +175,24 @@ describe('Malla component logic', () => {
     expect((component as any).selectedMallaId).toBe(3);
   });
 
-  it('enables university change flow and resets dependent selectors', () => {
+  it('shows confirmation modal before university change', () => {
     (component as any).selectedUniversidadId = 1;
     (component as any).selectedCarreraId = 2;
     (component as any).selectedMallaId = 3;
 
     (component as any).onCambiarUniversidadClick();
+
+    expect((component as any).showConfirmModal).toBeTrue();
+    expect((component as any).pendingConfirmAction).toBe('changeUniversidad');
+  });
+
+  it('executes university change flow after confirmation', () => {
+    (component as any).selectedUniversidadId = 1;
+    (component as any).selectedCarreraId = 2;
+    (component as any).selectedMallaId = 3;
+
+    (component as any).onCambiarUniversidadClick();
+    (component as any).onConfirmAction();
 
     expect((component as any).editMode).toBe('universidad');
     expect((component as any).step).toBe('universidad');
@@ -386,6 +398,80 @@ describe('Malla component logic', () => {
     const hasExportButton = buttons.some((button) => button.nativeElement.textContent.includes('malla.export.button'));
 
     expect(hasExportButton).toBeTrue();
+  });
+
+  describe('HU-148 confirm modal edge cases', () => {
+    it('onImportMallaClick does not open modal when no file is selected', () => {
+      (component as any).importFile = null;
+      (component as any).importMallaName = 'Test';
+      (component as any).importMallaVersion = '2024';
+
+      (component as any).onImportMallaClick();
+
+      expect((component as any).showConfirmModal).toBeFalse();
+    });
+
+    it('onImportMallaClick does not open modal when name is empty', () => {
+      (component as any).importFile = new File([''], 'test.json');
+      (component as any).importMallaName = '';
+      (component as any).importMallaVersion = '2024';
+
+      (component as any).onImportMallaClick();
+
+      expect((component as any).showConfirmModal).toBeFalse();
+    });
+
+    it('onImportMallaClick does not open modal when version is invalid', () => {
+      (component as any).importFile = new File([''], 'test.json');
+      (component as any).importMallaName = 'Test';
+      (component as any).importMallaVersion = 'abc';
+
+      (component as any).onImportMallaClick();
+
+      expect((component as any).showConfirmModal).toBeFalse();
+    });
+
+    it('onImportMallaClick does not open modal while already loading', () => {
+      (component as any).importFile = new File([''], 'test.json');
+      (component as any).importMallaName = 'Test';
+      (component as any).importMallaVersion = '2024';
+      (component as any).importLoading = true;
+
+      (component as any).onImportMallaClick();
+
+      expect((component as any).showConfirmModal).toBeFalse();
+    });
+
+    it('opens modal when canImportMalla returns true', () => {
+      (component as any).importFile = new File([''], 'test.json');
+      (component as any).importMallaName = 'Test';
+      (component as any).importMallaVersion = '2024';
+
+      (component as any).onImportMallaClick();
+
+      expect((component as any).showConfirmModal).toBeTrue();
+      expect((component as any).pendingConfirmAction).toBe('importMalla');
+    });
+
+    it('clears pendingConfirmAction on cancel and does not execute any action', () => {
+      (component as any).pendingConfirmAction = 'changeUniversidad';
+      (component as any).showConfirmModal = true;
+
+      (component as any).onCancelConfirm();
+
+      expect((component as any).showConfirmModal).toBeFalse();
+      expect((component as any).pendingConfirmAction).toBeNull();
+    });
+
+    it('onConfirmAction calls ejecutarLimpiarSeleccion only once for clearSelection', () => {
+      spyOn(component as any, 'ejecutarLimpiarSeleccion');
+      (component as any).pendingConfirmAction = 'clearSelection';
+
+      (component as any).onConfirmAction();
+      (component as any).onConfirmAction();
+
+      expect((component as any).ejecutarLimpiarSeleccion).toHaveBeenCalledTimes(1);
+    });
   });
 
   function buildBlobResponse(filename: string): HttpResponse<Blob> {

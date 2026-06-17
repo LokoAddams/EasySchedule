@@ -613,8 +613,8 @@
           {{ 'malla.import.cancel' | translate }}
         </button>
         <button class="malla-button malla-button--save" 
-                (click)="importMalla()" 
-                [disabled]="!importFile || importLoading || !importMallaName || !isValidImportVersion()">
+                (click)="onImportMallaClick()" 
+                [disabled]="!canImportMalla()">
           <span *ngIf="importLoading">{{ 'malla.import.importing' | translate }}</span>
           <span *ngIf="!importLoading">{{ 'malla.import.import' | translate }}</span>
         </button>
@@ -629,4 +629,12 @@
     (closeModal)="closeImportarOfertasModal()"
     (importFinished)="onOfertasImportFinished()"
   ></app-importar-ofertas-modal>
+
+  <app-confirm-modal
+    *ngIf="showConfirmModal"
+    [title]="confirmModalTitle"
+    [message]="confirmModalMessage"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelConfirm()"
+  ></app-confirm-modal>
 </ng-container>

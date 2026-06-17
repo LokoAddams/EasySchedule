@@ -26,6 +26,7 @@ import { TourHintsService } from '../../services/tour-hints.service';
 import { SeleccionTemporalService, SeleccionTemporalResponse } from '../../services/academico/seleccion-temporal.service';
 
 import { ImportarOfertasModal } from './importar-ofertas-modal/importar-ofertas-modal';
+import { ConfirmModal } from '../../shared/ui/confirm-modal/confirm-modal';
 
 type SeleccionStep = 'universidad' | 'carrera' | 'malla' | 'resumen';
 type EditMode = 'universidad' | 'malla' | null;
@@ -46,6 +47,7 @@ interface SeleccionSnapshot {
     TranslatePipe,
     NgbPopoverModule,
     ImportarOfertasModal,
+    ConfirmModal,
   ],
   templateUrl: './malla.html',
   styleUrl: './malla.scss',
@@ -121,6 +123,11 @@ export class Malla implements OnInit, OnDestroy {
   protected prereqGuardando = false;
   protected prereqError: string | null = null;
   protected prereqSuccess: string | null = null;
+
+  protected showConfirmModal = false;
+  protected pendingConfirmAction: 'changeMalla' | 'changeUniversidad' | 'clearSelection' | 'importMalla' | null = null;
+  protected confirmModalMessage = 'confirmModal.defaultMessage';
+  protected confirmModalTitle = 'confirmModal.defaultTitle';
 
   protected tourStep = 0;
 
@@ -238,12 +245,10 @@ Reglas obligatorias:
   }
 
   protected onCambiarUniversidadClick(): void {
-    this.editMode = 'universidad';
-    this.step = 'universidad';
-    this.mallaChangeWarningVisible = false;
-    this.clearErrors();
-    this.createSelectionSnapshot();
-    this.onUniversidadChange(null);
+    this.pendingConfirmAction = 'changeUniversidad';
+    this.confirmModalTitle = 'confirmModal.defaultTitle';
+    this.confirmModalMessage = 'confirmModal.changeUniversidad';
+    this.showConfirmModal = true;
   }
 
   protected onCambiarMallaClick(): void {
@@ -427,11 +432,11 @@ Reglas obligatorias:
       const isChangingMalla = mallaAnteriorId !== null && this.selectedMallaId !== mallaAnteriorId;
 
       if (isChangingMalla) {
-        const confirmed = window.confirm(this.translateService.instant('malla.modal.confirmChangeMalla'));
-
-        if (!confirmed) {
-          return;
-        }
+        this.pendingConfirmAction = 'changeMalla';
+        this.confirmModalTitle = 'confirmModal.defaultTitle';
+        this.confirmModalMessage = 'confirmModal.changeMalla';
+        this.showConfirmModal = true;
+        return;
       }
     }
 
@@ -751,18 +756,10 @@ Reglas obligatorias:
   }
 
   protected cancelarSeleccion(): void {
-    if (confirm(this.translateService.instant('malla.selection.confirmClear'))) {
-      this.seleccionTemporalService.limpiarSelecciones().subscribe({
-        next: () => {
-          this.seleccionesTemporales = [];
-          this.showFloatingPanel = false;
-          this.toastService.success('malla.selection.cleared');
-        },
-        error: () => {
-          this.toastService.error('malla.selection.errorClear');
-        }
-      });
-    }
+    this.pendingConfirmAction = 'clearSelection';
+    this.confirmModalTitle = 'confirmModal.defaultTitle';
+    this.confirmModalMessage = 'confirmModal.clearSelection';
+    this.showConfirmModal = true;
   }
 
   protected closeModal(): void {
@@ -1324,6 +1321,76 @@ Reglas obligatorias:
       this.importFileName = file.name;
       this.importError = null;
     }
+  }
+
+  protected canImportMalla(): boolean {
+    return !!this.importFile && !this.importLoading && !!this.importMallaName.trim() && this.isValidImportVersion();
+  }
+
+  public onImportMallaClick(): void {
+    if (!this.canImportMalla()) {
+      return;
+    }
+    this.pendingConfirmAction = 'importMalla';
+    this.confirmModalTitle = 'confirmModal.defaultTitle';
+    this.confirmModalMessage = 'confirmModal.importMalla';
+    this.showConfirmModal = true;
+  }
+
+  protected onConfirmAction(): void {
+    const action = this.pendingConfirmAction;
+    this.showConfirmModal = false;
+    this.pendingConfirmAction = null;
+
+    switch (action) {
+      case 'changeMalla':
+        void this.ejecutarGuardarSeleccion();
+        break;
+      case 'changeUniversidad':
+        this.ejecutarCambioUniversidad();
+        break;
+      case 'clearSelection':
+        this.ejecutarLimpiarSeleccion();
+        break;
+      case 'importMalla':
+        void this.ejecutarImportMalla();
+        break;
+    }
+  }
+
+  protected onCancelConfirm(): void {
+    this.showConfirmModal = false;
+    this.pendingConfirmAction = null;
+  }
+
+  private ejecutarCambioUniversidad(): void {
+    this.editMode = 'universidad';
+    this.step = 'universidad';
+    this.mallaChangeWarningVisible = false;
+    this.clearErrors();
+    this.createSelectionSnapshot();
+    this.onUniversidadChange(null);
+  }
+
+  private ejecutarLimpiarSeleccion(): void {
+    this.seleccionTemporalService.limpiarSelecciones().subscribe({
+      next: () => {
+        this.seleccionesTemporales = [];
+        this.showFloatingPanel = false;
+        this.toastService.success('malla.selection.cleared');
+      },
+      error: () => {
+        this.toastService.error('malla.selection.errorClear');
+      }
+    });
+  }
+
+  private async ejecutarGuardarSeleccion(): Promise<void> {
+    await this.guardarSeleccion();
+  }
+
+  private async ejecutarImportMalla(): Promise<void> {
+    await this.importMalla();
   }
 
   public async importMalla(): Promise<void> {

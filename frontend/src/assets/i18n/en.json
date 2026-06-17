@@ -9,6 +9,18 @@
       "codePT": "PT"
     }
   },
+  "confirmModal": {
+    "title": "Confirm action",
+    "defaultTitle": "Are you sure?",
+    "defaultMessage": "This action cannot be undone.",
+    "confirm": "Yes, confirm",
+    "cancel": "Cancel",
+    "changeMalla": "Changing the curriculum will reset your progress from the previous one. Do you want to continue?",
+    "changeUniversidad": "Changing the university will discard the current configuration. Do you want to continue?",
+    "clearSelection": "Are you sure you want to clear your temporary selection?",
+    "importMalla": "A new curriculum will be imported. This action will create records in the system. Do you want to continue?",
+    "importOfertas": "Academic offers will be imported for the current curriculum. This action will create or update records. Do you want to continue?"
+  },
   "toast": {
     "dismiss": "Close notification"
   },
