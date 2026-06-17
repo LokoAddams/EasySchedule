@@ -61,6 +61,33 @@ export interface OfertaImportResultResponse {
   warnings: OfertaImportWarningResponse[];
 }
 
+export interface HorarioDto {
+  dia: string;
+  horaInicio: string;
+  horaFin: string;
+}
+
+export interface OfertaMateriaUpdateRequest {
+  codigoMateria: string;
+  nombreMateria: string;
+  paralelo: string;
+  semestre: string;
+  docente: string;
+  aula: string;
+  horarios: HorarioDto[];
+}
+
+export interface OfertaMateriaEdicionResponse {
+  id: number;
+  codigoMateria: string;
+  nombreMateria: string;
+  paralelo: string;
+  semestre: string;
+  docente: string;
+  aula: string;
+  horarios: HorarioDto[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -103,6 +130,26 @@ export class OfertaImportService {
   listarParalelos(mallaId: number): Observable<string[]> {
     return this.apiService.get<string[]>(
       `/api/academico/ofertas/paralelos?mallaId=${mallaId}`,
+    );
+  }
+
+  obtenerOfertaParaEdicion(id: number): Observable<OfertaMateriaEdicionResponse> {
+    return this.apiService.get<OfertaMateriaEdicionResponse>(
+      `/api/academico/ofertas/${id}/edicion`,
+    );
+  }
+
+  validarActualizacion(id: number, request: OfertaMateriaUpdateRequest): Observable<void> {
+    return this.apiService.post<void, OfertaMateriaUpdateRequest>(
+      `/api/academico/ofertas/${id}/validar`,
+      request,
+    );
+  }
+
+  actualizarOferta(id: number, request: OfertaMateriaUpdateRequest): Observable<void> {
+    return this.apiService.put<void, OfertaMateriaUpdateRequest>(
+      `/api/academico/ofertas/${id}`,
+      request,
     );
   }
 }

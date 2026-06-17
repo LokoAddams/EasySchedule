@@ -351,9 +351,11 @@ public class HorarioGeneradorService {
                 String dia = text(slot, "dia");
                 String horaInicioStr = text(slot, "inicio");
                 if (horaInicioStr == null) horaInicioStr = text(slot, "hora_inicio");
+                if (horaInicioStr == null) horaInicioStr = text(slot, "horaInicio");
 
                 String horaFinStr = text(slot, "fin");
                 if (horaFinStr == null) horaFinStr = text(slot, "hora_fin");
+                if (horaFinStr == null) horaFinStr = text(slot, "horaFin");
 
                 if (dia != null && horaInicioStr != null && horaFinStr != null) {
                     bloques.add(new ClaseBloqueDTO(

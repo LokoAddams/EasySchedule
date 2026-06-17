@@ -5,18 +5,19 @@ import com.easyschedule.backend.academico.oferta_materia.dto.OfertaMateriaListRe
 import com.easyschedule.backend.academico.oferta_materia.service.OfertaMateriaService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.easyschedule.backend.academico.oferta_materia.dto.Importacion.OfertaImportResultResponse;
 import com.easyschedule.backend.academico.oferta_materia.service.OfertaMateriaImportService;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 import com.easyschedule.backend.academico.oferta_materia.dto.OfertaMateriaUpdateRequest;
+import com.easyschedule.backend.academico.oferta_materia.dto.OfertaMateriaEdicionResponse;
 import java.util.List;
 
 @RestController
@@ -37,6 +38,11 @@ public class OfertaMateriaController {
     @GetMapping("/detalles/{mallaMateriaId}")
     public OfertaDetalleResponse getDetallesMateria(@PathVariable("mallaMateriaId") Long mallaMateriaId) {
         return ofertaMateriaService.getDetalleParaInscripcion(mallaMateriaId);
+    }
+
+    @GetMapping("/{id}/edicion")
+    public OfertaMateriaEdicionResponse obtenerParaEdicion(@PathVariable("id") Long id) {
+        return ofertaMateriaService.obtenerParaEdicion(id);
     }
 
     @GetMapping("/listar")

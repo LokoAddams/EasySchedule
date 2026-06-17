@@ -87,6 +87,7 @@
               <th>{{ 'malla.manageOffers.colParalelo' | translate }}</th>
               <th>{{ 'malla.manageOffers.colDocente' | translate }}</th>
               <th>{{ 'malla.manageOffers.colAula' | translate }}</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -97,6 +98,11 @@
               <td>{{ o.paralelo }}</td>
               <td>{{ o.docente }}</td>
               <td>{{ o.aula }}</td>
+              <td>
+                <button type="button" class="go-button go-button--ghost" (click)="abrirEdicion(o.id)">
+                  Editar
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -110,3 +116,77 @@
     </button>
   </footer>
 </section>
+
+<!-- Edit Modal Overlay -->
+<div class="go-edit-backdrop" *ngIf="editingOferta" (click)="cerrarEdicion()"></div>
+<section class="go-edit-modal" *ngIf="editingOferta" role="dialog" aria-modal="true">
+  <header class="go-modal__header">
+    <div>
+      <p class="go-modal__eyebrow">Edición</p>
+      <h2>Editar Oferta</h2>
+    </div>
+    <button type="button" class="go-modal__close" (click)="cerrarEdicion()">×</button>
+  </header>
+
+  <div class="go-modal__body">
+    <div class="go-edit-form">
+      <div class="go-filters__group">
+        <label class="go-filters__label">Código de Materia</label>
+        <input class="go-input" type="text" [(ngModel)]="editingOferta.codigoMateria" />
+      </div>
+      <div class="go-filters__group">
+        <label class="go-filters__label">Semestre Académico</label>
+        <input class="go-input" type="text" [(ngModel)]="editingOferta.semestre" />
+      </div>
+      <div class="go-filters__group">
+        <label class="go-filters__label">Paralelo</label>
+        <input class="go-input" type="text" [(ngModel)]="editingOferta.paralelo" />
+      </div>
+      <div class="go-filters__group">
+        <label class="go-filters__label">Docente</label>
+        <input class="go-input" type="text" [(ngModel)]="editingOferta.docente" />
+      </div>
+      <div class="go-filters__group">
+        <label class="go-filters__label">Aula</label>
+        <input class="go-input" type="text" [(ngModel)]="editingOferta.aula" />
+      </div>
+
+      <div class="go-edit-horarios">
+        <h3>Horarios</h3>
+        <div class="go-horario-row" *ngFor="let h of editingOferta.horarios; let i = index">
+          <select class="go-input go-input--select" [(ngModel)]="h.dia">
+            <option value="LUNES">LUNES</option>
+            <option value="MARTES">MARTES</option>
+            <option value="MIERCOLES">MIERCOLES</option>
+            <option value="JUEVES">JUEVES</option>
+            <option value="VIERNES">VIERNES</option>
+            <option value="SABADO">SABADO</option>
+            <option value="DOMINGO">DOMINGO</option>
+          </select>
+          <input class="go-input" type="time" [(ngModel)]="h.horaInicio" />
+          <input class="go-input" type="time" [(ngModel)]="h.horaFin" />
+          <button type="button" class="go-button go-button--ghost" (click)="removeHorarioBlock(i)">X</button>
+        </div>
+        <button type="button" class="go-button go-button--ghost" (click)="addHorarioBlock()">+ Añadir Bloque</button>
+      </div>
+      
+      <div class="go-messages">
+        <div *ngIf="editErrorMsg" class="go-message-error">{{ editErrorMsg }}</div>
+        <div *ngIf="editSuccessMsg" class="go-message-success">{{ editSuccessMsg }}</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="go-modal__footer">
+    <button type="button" class="go-button go-button--ghost" (click)="cerrarEdicion()">Cancelar</button>
+    <button type="button" class="go-button go-button--ghost" [disabled]="isValidating || isSaving" (click)="validarEdicion()">
+      <span *ngIf="isValidating">Validando...</span>
+      <span *ngIf="!isValidating">Validar</span>
+    </button>
+    <button type="button" class="go-button" [disabled]="isValidating || isSaving" (click)="guardarEdicion()">
+      <span *ngIf="isSaving">Guardando...</span>
+      <span *ngIf="!isSaving">Guardar</span>
+    </button>
+  </footer>
+</section>
+
