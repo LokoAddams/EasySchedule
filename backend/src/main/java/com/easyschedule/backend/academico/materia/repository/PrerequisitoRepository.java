@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface PrerequisitoRepository extends JpaRepository<Prerequisito, Long> {
     List<Prerequisito> findByMallaMateria_Id(Long mallaMateriaId);
 
+    List<Prerequisito> findByMallaMateria_Malla_IdOrPrerequisito_Malla_Id(Long mallaId, Long prerequisitoMallaId);
+
     Optional<Prerequisito> findByMallaMateria_IdAndPrerequisito_Id(Long mallaMateriaId, Long prerequisitoId);
 
     boolean existsByMallaMateria_IdAndPrerequisito_Id(Long mallaMateriaId, Long prerequisitoId);

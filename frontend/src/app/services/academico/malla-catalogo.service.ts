@@ -23,6 +23,26 @@ export interface MallaMateria {
   prerequisitosIds: number[];
 }
 
+export interface MallaEditableMateria {
+  codigo: string;
+  nombre: string;
+  semestre: number;
+  creditos: number;
+  prerequisitos: string[];
+}
+
+export interface MallaEditableResponse {
+  mallaId: number;
+  nombre: string;
+  version: string;
+  carreraId: number;
+  materias: MallaEditableMateria[];
+}
+
+export interface MallaEditRequest {
+  materias: MallaEditableMateria[];
+}
+
 export interface OfertaMateriaSimple {
   id: number;
   semestre: string;
@@ -52,6 +72,20 @@ export class MallaCatalogoService {
 
   getMateriasPorMalla(mallaId: number): Observable<MallaMateria[]> {
     return this.apiService.get<MallaMateria[]>(`/api/academico/mallas/${mallaId}/materias`);
+  }
+
+  getMallaEditable(mallaId: number): Observable<MallaEditableResponse> {
+    return this.apiService.get<MallaEditableResponse>(`/api/academico/mallas/${mallaId}/edicion`);
+  }
+
+  actualizarMallaEditable(mallaId: number, request: MallaEditRequest): Observable<MallaEditableResponse> {
+    return this.apiService.put<MallaEditableResponse, MallaEditRequest>(`/api/academico/mallas/${mallaId}/edicion`, request);
+  }
+
+  actualizarMallaDesdeArchivo(mallaId: number, file: File): Observable<MallaEditableResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.apiService.put<MallaEditableResponse, FormData>(`/api/academico/mallas/${mallaId}/edicion/importar`, formData);
   }
 
   exportarAvanceGraduacion(): Observable<HttpResponse<Blob>> {

@@ -58,6 +58,9 @@
         <button type="button" class="malla-button malla-button--outline" (click)="onCambiarMallaClick()">
           {{ 'malla.actions.changeMalla' | translate }}
         </button>
+        <button type="button" class="malla-button malla-button--outline" [disabled]="loadingMaterias" (click)="onEditarMallaClick()">
+          {{ 'malla.actions.editMalla' | translate }}
+        </button>
         <button type="button" class="malla-button malla-button--outline" (click)="onCambiarUniversidadClick()">
           {{ 'malla.actions.changeUniversidad' | translate }}
         </button>
@@ -436,6 +439,103 @@
         <button class="malla-button malla-button--ghost" (click)="closeActualizarModal()">{{ 'malla.modal.cancel' | translate }}</button>
         <button class="malla-button malla-button--save" [disabled]="savingEstado" (click)="actualizarMateriaSeleccionada()">
           {{ savingEstado ? ('malla.UpdateCourse.saving' | translate) : ('malla.UpdateCourse.save' | translate) }}
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="malla-modal-overlay" *ngIf="showEditarMallaModal">
+    <div class="malla-modal malla-modal--edit-malla">
+      <header class="malla-modal__header">
+        <div>
+          <p class="malla-modal__eyebrow">{{ 'malla.edit.eyebrow' | translate }}</p>
+          <h3>{{ 'malla.edit.title' | translate: { malla: editMallaNombre || getResumenMalla() } }}</h3>
+        </div>
+        <button type="button" class="malla-modal__close" (click)="closeEditarMallaModal()" [disabled]="editMallaSaving">×</button>
+      </header>
+
+      <div class="malla-modal__body">
+        <div *ngIf="editMallaLoading" class="malla-modal__loading">
+          {{ 'malla.edit.loading' | translate }}
+        </div>
+
+        <ng-container *ngIf="!editMallaLoading">
+          <div class="malla-edit-toolbar">
+            <div>
+              <strong>{{ editMallaNombre }}</strong>
+              <p class="malla-field-help">{{ 'malla.edit.version' | translate: { version: editMallaVersion } }}</p>
+            </div>
+
+            <div class="malla-edit-toolbar__actions">
+              <input #editMallaCsvInput type="file" id="edit-malla-csv" style="display: none" accept=".csv" (change)="onEditMallaCsvSelected($event)">
+              <button type="button" class="malla-button malla-button--outline" (click)="editMallaCsvInput.click()" [disabled]="editMallaSaving">
+                {{ 'malla.edit.loadCsv' | translate }}
+              </button>
+              <button type="button" class="malla-button malla-button--save" (click)="addEditMallaRow()" [disabled]="editMallaSaving">
+                {{ 'malla.edit.addSubject' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <p class="malla-field-help" *ngIf="editMallaCsvFileName">
+            {{ 'malla.edit.csvLoaded' | translate: { file: editMallaCsvFileName } }}
+          </p>
+
+          <div class="malla-card malla-card--error" *ngIf="editMallaError">
+            <p>{{ editMallaError }}</p>
+          </div>
+
+          <div class="malla-edit-table-wrapper">
+            <table class="malla-edit-table">
+              <thead>
+                <tr>
+                  <th>{{ 'malla.edit.code' | translate }}</th>
+                  <th>{{ 'malla.edit.name' | translate }}</th>
+                  <th>{{ 'malla.edit.semester' | translate }}</th>
+                  <th>{{ 'malla.edit.credits' | translate }}</th>
+                  <th>{{ 'malla.edit.prerequisites' | translate }}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of editMallaRows">
+                  <td>
+                    <input class="malla-input malla-edit-table__code" type="text" [(ngModel)]="row.codigo" maxlength="30" [disabled]="editMallaSaving">
+                  </td>
+                  <td>
+                    <input class="malla-input" type="text" [(ngModel)]="row.nombre" maxlength="150" [disabled]="editMallaSaving">
+                  </td>
+                  <td>
+                    <input class="malla-input malla-edit-table__number" type="number" min="1" max="50" [(ngModel)]="row.semestre" [disabled]="editMallaSaving">
+                  </td>
+                  <td>
+                    <input class="malla-input malla-edit-table__number" type="number" min="1" max="99" [(ngModel)]="row.creditos" [disabled]="editMallaSaving">
+                  </td>
+                  <td>
+                    <input class="malla-input" type="text" [(ngModel)]="row.prerequisitos" [placeholder]="'malla.edit.prerequisitesPlaceholder' | translate" [disabled]="editMallaSaving">
+                  </td>
+                  <td>
+                    <button type="button" class="malla-button malla-button--ghost malla-button--small" (click)="removeEditMallaRow(row)" [disabled]="editMallaSaving">
+                      {{ 'malla.edit.remove' | translate }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="malla-field-help">
+            {{ 'malla.edit.help' | translate }}
+          </p>
+        </ng-container>
+      </div>
+
+      <footer class="malla-modal__footer">
+        <button class="malla-button malla-button--ghost" (click)="closeEditarMallaModal()" [disabled]="editMallaSaving">
+          {{ 'malla.modal.cancel' | translate }}
+        </button>
+        <button class="malla-button malla-button--save" (click)="saveEditarMalla()" [disabled]="editMallaLoading || editMallaSaving">
+          {{ editMallaSaving ? ('malla.edit.saving' | translate) : ('malla.edit.save' | translate) }}
         </button>
       </footer>
     </div>

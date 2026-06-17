@@ -11,7 +11,7 @@ import { environment } from '../../../environments/environment';
 import { CarreraCatalogoItem, CarreraService } from '../../services/academico/carrera.service';
 import { EstadoMateriaService, EstadoMateriaRequest } from '../../services/academico/estado-materia.service';
 import { FeatureToggleService } from '../../services/feature-toggle.service';
-import { MallaCatalogoItem, MallaCatalogoService, MallaMateria } from '../../services/academico/malla-catalogo.service';
+import { MallaCatalogoItem, MallaCatalogoService, MallaEditableMateria, MallaMateria } from '../../services/academico/malla-catalogo.service';
 import {
   SeleccionAcademica,
   SeleccionAcademicaService,
@@ -35,6 +35,15 @@ interface SeleccionSnapshot {
   universidadId: number | null;
   carreraId: number | null;
   mallaId: number | null;
+}
+
+interface MallaEditRow {
+  rowId: number;
+  codigo: string;
+  nombre: string;
+  semestre: number;
+  creditos: number;
+  prerequisitos: string;
 }
 
 @Component({
@@ -110,6 +119,16 @@ export class Malla implements OnInit, OnDestroy {
   protected selectedMateriaIdActualizar: number | null = null;
   protected selectedEstadoActualizar: 'APROBADA' | 'CURSANDO' | 'PENDIENTE' = 'PENDIENTE';
   protected savingEstado = false;
+
+  protected showEditarMallaModal = false;
+  protected editMallaRows: MallaEditRow[] = [];
+  protected editMallaNombre = '';
+  protected editMallaVersion = '';
+  protected editMallaLoading = false;
+  protected editMallaSaving = false;
+  protected editMallaError: string | null = null;
+  protected editMallaCsvFileName = '';
+  private nextEditRowId = 1;
 
   protected hoveredMateriaId: number | null = null;
   protected prereqLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
@@ -275,6 +294,123 @@ Reglas obligatorias:
     }
 
     this.onMateriaActualizarChange();
+  }
+
+  protected async onEditarMallaClick(): Promise<void> {
+    if (this.selectedMallaId === null) {
+      return;
+    }
+
+    this.showEditarMallaModal = true;
+    this.editMallaLoading = true;
+    this.editMallaSaving = false;
+    this.editMallaError = null;
+    this.editMallaCsvFileName = '';
+    this.editMallaRows = [];
+
+    try {
+      const response = await firstValueFrom(this.mallaCatalogoService.getMallaEditable(this.selectedMallaId));
+      this.editMallaNombre = response.nombre;
+      this.editMallaVersion = response.version;
+      this.nextEditRowId = 1;
+      this.editMallaRows = response.materias.map((materia) => this.toEditRow(materia));
+    } catch (error: any) {
+      this.editMallaError = this.resolveMallaEditError(error, 'malla.edit.errorLoad');
+    } finally {
+      this.editMallaLoading = false;
+    }
+  }
+
+  protected closeEditarMallaModal(): void {
+    if (this.editMallaSaving) {
+      return;
+    }
+
+    this.showEditarMallaModal = false;
+    this.editMallaRows = [];
+    this.editMallaError = null;
+    this.editMallaCsvFileName = '';
+  }
+
+  protected addEditMallaRow(): void {
+    this.editMallaRows = [
+      ...this.editMallaRows,
+      {
+        rowId: this.nextEditRowId++,
+        codigo: '',
+        nombre: '',
+        semestre: 1,
+        creditos: 4,
+        prerequisitos: '',
+      },
+    ];
+  }
+
+  protected removeEditMallaRow(row: MallaEditRow): void {
+    if (this.editMallaRows.length <= 1) {
+      this.editMallaError = this.translateService.instant('malla.edit.errorAtLeastOne');
+      return;
+    }
+
+    this.editMallaRows = this.editMallaRows.filter((item) => item.rowId !== row.rowId);
+  }
+
+  protected async onEditMallaCsvSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      this.editMallaError = this.translateService.instant('malla.edit.errorCsvOnly');
+      input.value = '';
+      return;
+    }
+
+    try {
+      const materias = await this.parseMallaCsv(file);
+      this.nextEditRowId = 1;
+      this.editMallaRows = materias.map((materia) => this.toEditRow(materia));
+      this.editMallaCsvFileName = file.name;
+      this.editMallaError = null;
+    } catch (error: any) {
+      this.editMallaError = error?.message || this.translateService.instant('malla.edit.errorCsvRead');
+    } finally {
+      input.value = '';
+    }
+  }
+
+  protected async saveEditarMalla(): Promise<void> {
+    if (this.selectedMallaId === null) {
+      return;
+    }
+
+    const validationError = this.validateEditMallaRows();
+    if (validationError) {
+      this.editMallaError = validationError;
+      return;
+    }
+
+    this.editMallaSaving = true;
+    this.editMallaError = null;
+
+    try {
+      await firstValueFrom(this.mallaCatalogoService.actualizarMallaEditable(this.selectedMallaId, {
+        materias: this.editMallaRows.map((row) => this.toEditableMateria(row)),
+      }));
+
+      this.materiasLoadedForMallaId = null;
+      await this.loadMaterias(this.selectedMallaId, true);
+      this.toastService.success('malla.edit.success');
+      this.editMallaSaving = false;
+      this.closeEditarMallaModal();
+    } catch (error: any) {
+      this.editMallaError = this.resolveMallaEditError(error, 'malla.edit.errorSave');
+    } finally {
+      this.editMallaSaving = false;
+    }
   }
 
   protected closeActualizarModal(): void {
@@ -1076,8 +1212,8 @@ Reglas obligatorias:
     this.selectedMallaId = this.previousSelectionSnapshot.mallaId;
   }
 
-  private async loadMaterias(mallaId: number): Promise<void> {
-    if (this.materiasLoadedForMallaId === mallaId && this.materias.length > 0) {
+  private async loadMaterias(mallaId: number, force = false): Promise<void> {
+    if (!force && this.materiasLoadedForMallaId === mallaId && this.materias.length > 0) {
       return;
     }
 
@@ -1088,20 +1224,7 @@ Reglas obligatorias:
     this.semestres = [];
 
     try {
-      this.materias = await firstValueFrom(this.mallaCatalogoService.getMateriasPorMalla(mallaId));
-
-      this.materias.forEach((materia) => {
-        const semestre = materia.semestreSugerido;
-
-        if (!this.materiasPorSemestre.has(semestre)) {
-          this.materiasPorSemestre.set(semestre, []);
-          this.semestres.push(semestre);
-        }
-
-        this.materiasPorSemestre.get(semestre)!.push(materia);
-      });
-
-      this.semestres.sort((a, b) => a - b);
+      this.setMaterias(await firstValueFrom(this.mallaCatalogoService.getMateriasPorMalla(mallaId)));
     } catch {
       this.loadMateriasError = true;
     } finally {
@@ -1112,6 +1235,153 @@ Reglas obligatorias:
         this.iniciarTour();
       }
     }
+  }
+
+  private setMaterias(materias: MallaMateria[]): void {
+    this.materias = materias;
+    this.materiasPorSemestre.clear();
+    this.semestres = [];
+
+    this.materias.forEach((materia) => {
+      const semestre = materia.semestreSugerido;
+
+      if (!this.materiasPorSemestre.has(semestre)) {
+        this.materiasPorSemestre.set(semestre, []);
+        this.semestres.push(semestre);
+      }
+
+      this.materiasPorSemestre.get(semestre)!.push(materia);
+    });
+
+    this.semestres.sort((a, b) => a - b);
+  }
+
+  private toEditRow(materia: MallaEditableMateria): MallaEditRow {
+    return {
+      rowId: this.nextEditRowId++,
+      codigo: materia.codigo,
+      nombre: materia.nombre,
+      semestre: materia.semestre,
+      creditos: materia.creditos,
+      prerequisitos: (materia.prerequisitos ?? []).join(';'),
+    };
+  }
+
+  private toEditableMateria(row: MallaEditRow): MallaEditableMateria {
+    return {
+      codigo: this.normalizeMateriaCode(row.codigo),
+      nombre: row.nombre.trim(),
+      semestre: Number(row.semestre),
+      creditos: Number(row.creditos),
+      prerequisitos: this.parsePrerequisitos(row.prerequisitos),
+    };
+  }
+
+  private validateEditMallaRows(): string | null {
+    if (this.editMallaRows.length === 0) {
+      return this.translateService.instant('malla.edit.errorAtLeastOne');
+    }
+
+    const codes = new Map<string, MallaEditRow>();
+    for (const row of this.editMallaRows) {
+      const code = this.normalizeMateriaCode(row.codigo);
+      if (!code || !row.nombre.trim()) {
+        return this.translateService.instant('malla.edit.errorRequiredFields');
+      }
+
+      if (!Number.isFinite(Number(row.semestre)) || Number(row.semestre) < 1 || Number(row.semestre) > 50) {
+        return this.translateService.instant('malla.edit.errorSemester');
+      }
+
+      if (!Number.isFinite(Number(row.creditos)) || Number(row.creditos) < 1 || Number(row.creditos) > 99) {
+        return this.translateService.instant('malla.edit.errorCredits');
+      }
+
+      if (codes.has(code)) {
+        return this.translateService.instant('malla.edit.errorDuplicateCode', { code });
+      }
+
+      codes.set(code, row);
+    }
+
+    for (const row of this.editMallaRows) {
+      const code = this.normalizeMateriaCode(row.codigo);
+      for (const prereqCode of this.parsePrerequisitos(row.prerequisitos)) {
+        const prereq = codes.get(prereqCode);
+        if (!prereq) {
+          return this.translateService.instant('malla.edit.errorUnknownPrereq', { code: prereqCode });
+        }
+
+        if (prereqCode === code) {
+          return this.translateService.instant('malla.edit.errorSelfPrereq');
+        }
+
+        if (Number(prereq.semestre) >= Number(row.semestre)) {
+          return this.translateService.instant('malla.edit.errorPrereqSemester');
+        }
+      }
+    }
+
+    return null;
+  }
+
+  private parsePrerequisitos(value: string): string[] {
+    return value
+      .split(';')
+      .map((item) => this.normalizeMateriaCode(item))
+      .filter((item, index, values) => item.length > 0 && values.indexOf(item) === index);
+  }
+
+  private normalizeMateriaCode(value: string): string {
+    return (value ?? '').trim();
+  }
+
+  private async parseMallaCsv(file: File): Promise<MallaEditableMateria[]> {
+    const content = await file.text();
+    const lines = content.split(/\r?\n/).filter((line) => line.trim().length > 0);
+
+    if (lines.length <= 1) {
+      throw new Error(this.translateService.instant('malla.edit.errorCsvEmpty'));
+    }
+
+    const materias: MallaEditableMateria[] = [];
+    for (let index = 1; index < lines.length; index++) {
+      const line = index === 1 ? lines[index].replace(/^\uFEFF/, '') : lines[index];
+      const parts = line.split(',', -1);
+
+      if (parts.length < 4) {
+        throw new Error(this.translateService.instant('malla.edit.errorCsvColumns', { line: index + 1 }));
+      }
+
+      const semestre = Number(parts[2].trim());
+      const creditos = parts[3].trim() ? Number(parts[3].trim()) : 0;
+      if (!Number.isFinite(semestre) || !Number.isFinite(creditos)) {
+        throw new Error(this.translateService.instant('malla.edit.errorCsvNumbers', { line: index + 1 }));
+      }
+
+      materias.push({
+        codigo: parts[0].trim(),
+        nombre: parts[1].trim(),
+        semestre,
+        creditos,
+        prerequisitos: parts.length > 4 ? this.parsePrerequisitos(parts[4]) : [],
+      });
+    }
+
+    return materias;
+  }
+
+  private resolveMallaEditError(error: any, fallbackKey: string): string {
+    const backendMessage = error?.error?.message;
+    if (typeof backendMessage === 'string' && backendMessage.trim()) {
+      return backendMessage;
+    }
+
+    if (typeof error?.message === 'string' && error.message.trim()) {
+      return error.message;
+    }
+
+    return this.translateService.instant(fallbackKey);
   }
 
   private getTourStorageKey(): string {
