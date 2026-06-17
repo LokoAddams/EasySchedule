@@ -150,11 +150,29 @@ export class GestionarOfertas implements OnInit {
     };
   }
 
+  private hasValidTimeRanges(): boolean {
+    if (!this.editingOferta || !this.editingOferta.horarios) return true;
+    for (const horario of this.editingOferta.horarios) {
+      if (horario.horaInicio && horario.horaFin) {
+        if (horario.horaInicio >= horario.horaFin) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   protected async validarEdicion(): Promise<void> {
     if (!this.editingOferta) return;
     this.isValidating = true;
     this.editErrorMsg = '';
     this.editSuccessMsg = '';
+
+    if (!this.hasValidTimeRanges()) {
+      this.editErrorMsg = 'El horario de fin debe ser posterior al horario de inicio.';
+      this.isValidating = false;
+      return;
+    }
     
     try {
       await firstValueFrom(this.ofertaImportService.validarActualizacion(
@@ -174,6 +192,12 @@ export class GestionarOfertas implements OnInit {
     this.isSaving = true;
     this.editErrorMsg = '';
     this.editSuccessMsg = '';
+
+    if (!this.hasValidTimeRanges()) {
+      this.editErrorMsg = 'El horario de fin debe ser posterior al horario de inicio.';
+      this.isSaving = false;
+      return;
+    }
     
     try {
       await firstValueFrom(this.ofertaImportService.actualizarOferta(
