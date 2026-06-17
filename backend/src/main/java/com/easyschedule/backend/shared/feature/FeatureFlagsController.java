@@ -8,18 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/features")
 public class FeatureFlagsController {
 
-    private final FeatureFlagsConfig featureFlagsConfig;
+    private final FeatureFlagsService featureFlagsService;
 
-    public FeatureFlagsController(FeatureFlagsConfig featureFlagsConfig) {
-        this.featureFlagsConfig = featureFlagsConfig;
+    public FeatureFlagsController(FeatureFlagsService featureFlagsService) {
+        this.featureFlagsService = featureFlagsService;
     }
 
     @GetMapping
     public FeatureFlagsDTO getFeatureFlags() {
-        return new FeatureFlagsDTO(
-            featureFlagsConfig.isMalla(),
-            featureFlagsConfig.isTomaMaterias(),
-            featureFlagsConfig.isOfertasImport()
-        );
+        return featureFlagsService.getFeatureFlags();
     }
 }

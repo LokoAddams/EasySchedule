@@ -10,7 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-@ConditionalOnBean(FeatureFlagsConfig.class)
+@ConditionalOnBean(FeatureFlagsService.class)
 public class FeatureToggleInterceptor implements HandlerInterceptor {
 
     private static final List<String> MALLA_PATH_PREFIXES = List.of(
@@ -32,25 +32,26 @@ public class FeatureToggleInterceptor implements HandlerInterceptor {
         "/api/academico/horario"
     );
 
-    private final FeatureFlagsConfig featureFlagsConfig;
+    private final FeatureFlagsService featureFlagsService;
 
-    public FeatureToggleInterceptor(FeatureFlagsConfig featureFlagsConfig) {
-        this.featureFlagsConfig = featureFlagsConfig;
+    public FeatureToggleInterceptor(FeatureFlagsService featureFlagsService) {
+        this.featureFlagsService = featureFlagsService;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String requestPath = request.getRequestURI();
+        FeatureFlagsDTO featureFlags = featureFlagsService.getFeatureFlags();
 
-        if (!featureFlagsConfig.isMalla() && matchesAny(requestPath, MALLA_PATH_PREFIXES)) {
+        if (!featureFlags.malla() && matchesAny(requestPath, MALLA_PATH_PREFIXES)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La funcionalidad de malla esta deshabilitada");
         }
 
-        if (!featureFlagsConfig.isOfertasImport() && matchesAny(requestPath, OFERTAS_IMPORT_PATH_PREFIXES)) {
+        if (!featureFlags.ofertasImport() && matchesAny(requestPath, OFERTAS_IMPORT_PATH_PREFIXES)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La importacion de ofertas esta deshabilitada");
         }
 
-        if (!featureFlagsConfig.isTomaMaterias() && matchesAny(requestPath, TOMA_MATERIAS_PATH_PREFIXES)) {
+        if (!featureFlags.tomaMaterias() && matchesAny(requestPath, TOMA_MATERIAS_PATH_PREFIXES)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La funcionalidad de toma de materias esta deshabilitada");
         }
 
