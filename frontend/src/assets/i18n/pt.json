@@ -165,9 +165,12 @@
     },
     "error": {
       "invalidCredentials": "Credenciais inválidas",
-      "generic": "Erro inesperado",
+      "generic": "Não foi possível concluir o login. Tente novamente.",
+      "backendConnection": "Não conseguimos acessar o serviço agora. Tente novamente em alguns minutos.",
       "googleUnavailable": "Não foi possível carregar o Login com Google. Por favor, tente novamente.",
-      "googleCancelled": "Nenhuma credencial do Google recebida."
+      "googleCancelled": "Nenhuma credencial do Google recebida.",
+      "googleInvalid": "Não foi possível entrar com Google. Tente novamente.",
+      "googleGeneric": "Ocorreu um erro ao entrar com Google."
     },
     "divider": {
       "or": "ou"
@@ -655,7 +658,7 @@
       "emailExists": "O email já está registrado",
       "weakPassword": "A senha não atende à política de segurança",
       "invalidData": "Dados inválidos",
-      "backendConnection": "Não foi possível conectar ao backend",
+      "backendConnection": "Não conseguimos acessar o serviço agora. Tente novamente em alguns minutos.",
       "server": "Erro no servidor. Tente novamente",
       "googleUnavailable": "Não foi possível carregar o Cadastro com Google. Tente novamente.",
       "googleCancelled": "Nenhuma credencial do Google recebida.",

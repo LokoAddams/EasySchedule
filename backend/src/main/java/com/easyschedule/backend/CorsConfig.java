@@ -14,6 +14,11 @@ import java.util.List;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
+    private static final List<String> DEFAULT_ALLOWED_ORIGINS = List.of(
+        "http://localhost:4200",
+        "https://easyschedule2.netlify.app"
+    );
+
     @Value("${app.cors.allowed-origins:http://localhost:4200}")
     private String allowedOrigins;
 
@@ -29,6 +34,10 @@ public class CorsConfig implements WebMvcConfigurer {
             .map(String::trim)
             .filter((origin) -> !origin.isEmpty())
             .toList();
+
+        if (originPatterns.isEmpty()) {
+            originPatterns = DEFAULT_ALLOWED_ORIGINS;
+        }
 
         registry.addMapping("/**")
             .allowedOriginPatterns(originPatterns.toArray(String[]::new))
