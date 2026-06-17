@@ -11,6 +11,8 @@ import {
   OfertaMateriaUpdateRequest 
 } from '../../../services/academico/oferta-import.service';
 
+import { ToastService } from '../../../core/services/toast.service';
+
 @Component({
   selector: 'app-gestionar-ofertas',
   imports: [NgIf, NgFor, FormsModule, TranslatePipe],
@@ -37,7 +39,10 @@ export class GestionarOfertas implements OnInit {
   protected isValidating = false;
   protected isSaving = false;
 
-  constructor(private readonly ofertaImportService: OfertaImportService) {}
+  constructor(
+    private readonly ofertaImportService: OfertaImportService,
+    private readonly toastService: ToastService
+  ) {}
 
   async ngOnInit(): Promise<void> {
     if (this.mallaId === null) return;
@@ -204,6 +209,7 @@ export class GestionarOfertas implements OnInit {
         this.editingOferta.id, 
         this.buildUpdateRequest()
       ));
+      this.toastService.success('Oferta académica actualizada exitosamente');
       this.cerrarEdicion();
       await this.loadOfertas();
     } catch (e: any) {
