@@ -10,8 +10,12 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-@ConditionalOnBean(FeatureFlagsConfig.class)
+@ConditionalOnBean(FeatureToggleService.class)
 public class FeatureToggleInterceptor implements HandlerInterceptor {
+
+    private static final String MALLA = "malla";
+    private static final String TOMA_MATERIAS = "tomaMaterias";
+    private static final String OFERTAS_IMPORT = "ofertasImport";
 
     private static final List<String> MALLA_PATH_PREFIXES = List.of(
         "/api/academico/universidades",
@@ -32,25 +36,25 @@ public class FeatureToggleInterceptor implements HandlerInterceptor {
         "/api/academico/horario"
     );
 
-    private final FeatureFlagsConfig featureFlagsConfig;
+    private final FeatureToggleService featureToggleService;
 
-    public FeatureToggleInterceptor(FeatureFlagsConfig featureFlagsConfig) {
-        this.featureFlagsConfig = featureFlagsConfig;
+    public FeatureToggleInterceptor(FeatureToggleService featureToggleService) {
+        this.featureToggleService = featureToggleService;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String requestPath = request.getRequestURI();
 
-        if (!featureFlagsConfig.isMalla() && matchesAny(requestPath, MALLA_PATH_PREFIXES)) {
+        if (!featureToggleService.isEnabled(MALLA) && matchesAny(requestPath, MALLA_PATH_PREFIXES)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La funcionalidad de malla esta deshabilitada");
         }
 
-        if (!featureFlagsConfig.isOfertasImport() && matchesAny(requestPath, OFERTAS_IMPORT_PATH_PREFIXES)) {
+        if (!featureToggleService.isEnabled(OFERTAS_IMPORT) && matchesAny(requestPath, OFERTAS_IMPORT_PATH_PREFIXES)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La importacion de ofertas esta deshabilitada");
         }
 
-        if (!featureFlagsConfig.isTomaMaterias() && matchesAny(requestPath, TOMA_MATERIAS_PATH_PREFIXES)) {
+        if (!featureToggleService.isEnabled(TOMA_MATERIAS) && matchesAny(requestPath, TOMA_MATERIAS_PATH_PREFIXES)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La funcionalidad de toma de materias esta deshabilitada");
         }
 

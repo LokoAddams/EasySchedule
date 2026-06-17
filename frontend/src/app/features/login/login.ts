@@ -46,6 +46,8 @@ interface GoogleCredentialResponse {
 interface LoginResponse {
   token?: string;
   username?: string;
+  email?: string;
+  isAdmin?: boolean;
   expiresInSeconds?: number;
   message?: string;
 }
@@ -192,6 +194,8 @@ export class LoginComponent implements AfterViewInit {
     );
 
     const backendUsername = typeof data.username === 'string' ? data.username.trim() : '';
+    const backendEmail = typeof data.email === 'string' ? data.email.trim().toLowerCase() : '';
+    const isAdmin = data.isAdmin === true;
     const identifierToUse = backendUsername || fallbackIdentifier.trim();
 
     if (!identifierToUse) {
@@ -200,9 +204,22 @@ export class LoginComponent implements AfterViewInit {
       return;
     }
 
+    this.authSessionService.setCurrentUsername(identifierToUse);
+    this.authSessionService.setCurrentEmail(backendEmail);
+    this.authSessionService.setAdmin(isAdmin);
+
+    if (isAdmin) {
+      this.authSessionService.setProfileCompleted(true);
+      await this.featureToggleService.loadFlags();
+      this.toastService.success('login.success.loggedIn');
+      this.router.navigate(['/admin/feature-toggles']);
+      return;
+    }
+
     const perfil = await firstValueFrom(this.perfilService.getPerfilByUsername(identifierToUse));
 
     this.authSessionService.setCurrentUsername(perfil.username);
+    this.authSessionService.setCurrentEmail(perfil.email ?? backendEmail);
     this.authSessionService.setProfileCompleted(perfil.profileCompleted ?? false);
 
     await this.featureToggleService.loadFlags();

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+import { adminGuard } from './admin.guard';
 import { authGuard } from './auth.guard';
 import { featureGuard } from './feature.guard';
 import { guestGuard } from './guest.guard';
@@ -31,6 +32,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () =>
       import('./features/perfil/perfil.routes').then((m) => m.PERFIL_ROUTES),
+  },
+  {
+    path: 'admin/feature-toggles',
+    canActivate: [authGuard, adminGuard],
+    loadChildren: () =>
+      import('./features/admin-feature-toggles/admin-feature-toggles.routes').then(
+        (m) => m.ADMIN_FEATURE_TOGGLES_ROUTES,
+      ),
   },
   {
     path: 'login',
