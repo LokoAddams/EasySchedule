@@ -32,6 +32,7 @@ dependencies {
 	implementation("com.github.librepdf:openpdf:1.3.30")
 	implementation("com.google.api-client:google-api-client:2.7.2")
 	implementation("com.google.http-client:google-http-client-gson:1.45.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
 }
 
 tasks.withType<Test> {
