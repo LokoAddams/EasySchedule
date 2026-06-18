@@ -10,7 +10,7 @@
     <li>
       <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'navbar.home' | translate }}</a>
     </li>
-    <li *ngIf="isLoggedIn() && !isAdmin() && mallaEnabled">
+    <li *ngIf="isLoggedIn() && !isAdmin()">
       <a routerLink="/malla" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
          [ngbPopover]="('navbar.hints.chooseMalla' | translate)"
          triggers="manual"

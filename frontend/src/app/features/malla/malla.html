@@ -1,4 +1,4 @@
-<ng-container *ngIf="mallaEnabled">
+<ng-container>
   <ng-template #tourStep1>
     <div style="max-width: 280px;">
       <p style="margin-bottom: 0.75rem; line-height: 1.5;">
@@ -62,7 +62,7 @@
       <div class="malla-page__actions" *ngIf="step === 'resumen'"
            [ngbPopover]="tourStep4" triggers="manual" placement="bottom" popoverClass="hint-popover" #popoverStep4="ngbPopover">
 
-        <button type="button" class="malla-button malla-button--outline" *ngIf="ofertasImportEnabled" [disabled]="materias.length === 0" (click)="onImportarOfertasClick()">
+        <button type="button" class="malla-button malla-button--outline" [disabled]="materias.length === 0" (click)="onImportarOfertasClick()">
         {{ 'malla.actions.importOffers' | translate }}
         </button>
         <button type="button" class="malla-button malla-button--outline" [disabled]="materias.length === 0" (click)="onGestionarOfertasClick()">

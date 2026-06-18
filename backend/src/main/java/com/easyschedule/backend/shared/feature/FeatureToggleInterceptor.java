@@ -13,23 +13,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @ConditionalOnBean(FeatureToggleService.class)
 public class FeatureToggleInterceptor implements HandlerInterceptor {
 
-    private static final String MALLA = "malla";
-    private static final String OFERTAS_IMPORT = "ofertasImport";
-
-    private static final List<String> MALLA_PATH_PREFIXES = List.of(
-        "/api/academico/universidades",
-        "/api/academico/carreras",
-        "/api/academico/mallas",
-        "/api/academico/seleccion",
-        "/api/academico/estados-materia",
-        "/api/estudiantes/me/avance-graduacion",
-        "/api/academico/prerequisitos"
-    );
-
-    private static final List<String> OFERTAS_IMPORT_PATH_PREFIXES = List.of(
-        "/api/academico/ofertas/importar"
-    );
-
     private final FeatureToggleService featureToggleService;
 
     public FeatureToggleInterceptor(FeatureToggleService featureToggleService) {
@@ -38,26 +21,6 @@ public class FeatureToggleInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String requestPath = request.getRequestURI();
-
-        if (!featureToggleService.isEnabled(MALLA) && matchesAny(requestPath, MALLA_PATH_PREFIXES)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La funcionalidad de malla esta deshabilitada");
-        }
-
-        if (!featureToggleService.isEnabled(OFERTAS_IMPORT) && matchesAny(requestPath, OFERTAS_IMPORT_PATH_PREFIXES)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La importacion de ofertas esta deshabilitada");
-        }
-
         return true;
-    }
-
-    private boolean matchesAny(String requestPath, List<String> prefixes) {
-        for (String prefix : prefixes) {
-            if (requestPath.equals(prefix) || requestPath.startsWith(prefix + "/")) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

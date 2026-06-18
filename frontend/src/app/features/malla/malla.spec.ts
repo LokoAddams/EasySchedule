@@ -12,7 +12,6 @@ import { CarreraService } from '../../services/academico/carrera.service';
 import { MallaCatalogoService } from '../../services/academico/malla-catalogo.service';
 import { SeleccionAcademicaService } from '../../services/academico/seleccion-academica.service';
 import { UniversidadService } from '../../services/academico/universidad.service';
-import { FeatureToggleService, FeatureFlags } from '../../services/feature-toggle.service';
 import { TomaSeleccionService } from '../../services/academico/toma-seleccion.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthSessionService } from '../../core/services/auth-session.service';
@@ -24,8 +23,6 @@ import { EstadoMateriaService } from '../../services/academico/estado-materia.se
 
 describe('Malla component logic', () => {
   let component: Malla;
-  let flagsSubject: BehaviorSubject<FeatureFlags>;
-  let featureServiceMock: jasmine.SpyObj<FeatureToggleService> & { flags$: BehaviorSubject<FeatureFlags> };
   let universidadServiceSpy: jasmine.SpyObj<UniversidadService>;
   let carreraServiceSpy: jasmine.SpyObj<CarreraService>;
   let mallaCatalogoServiceSpy: jasmine.SpyObj<MallaCatalogoService>;
@@ -43,12 +40,6 @@ describe('Malla component logic', () => {
   let activatedRouteStub: any;
 
   beforeEach(() => {
-    flagsSubject = new BehaviorSubject<FeatureFlags>({ malla: true, tomaMaterias: false, ofertasImport: true });
-
-    featureServiceMock = jasmine.createSpyObj<FeatureToggleService>('FeatureToggleService', ['loadFlags']) as any;
-    featureServiceMock.flags$ = flagsSubject;
-    featureServiceMock.loadFlags.and.returnValue(Promise.resolve());
-
     universidadServiceSpy = jasmine.createSpyObj<UniversidadService>('UniversidadService', ['getUniversidadesActivas']);
     carreraServiceSpy = jasmine.createSpyObj<CarreraService>('CarreraService', ['getCarrerasActivasPorUniversidad']);
     mallaCatalogoServiceSpy = jasmine.createSpyObj<MallaCatalogoService>('MallaCatalogoService', [
@@ -86,7 +77,6 @@ describe('Malla component logic', () => {
     activatedRouteStub = { snapshot: { queryParams: {} } };
 
     component = new (Malla as any)(
-      featureServiceMock,
       universidadServiceSpy,
       carreraServiceSpy,
       mallaCatalogoServiceSpy,
@@ -369,7 +359,6 @@ describe('Malla component logic', () => {
     await TestBed.configureTestingModule({
       imports: [Malla, TranslateModule.forRoot()],
       providers: [
-        { provide: FeatureToggleService, useValue: featureServiceMock },
         { provide: UniversidadService, useValue: universidadServiceSpy },
         { provide: CarreraService, useValue: carreraServiceSpy },
         { provide: MallaCatalogoService, useValue: mallaCatalogoServiceSpy },

@@ -10,8 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class FeatureToggleService {
 
-    private static final String MALLA = "malla";
-    private static final String OFERTAS_IMPORT = "ofertasImport";
+
 
     private final FeatureToggleRepository featureToggleRepository;
     private final FeatureFlagsConfig featureFlagsConfig;
@@ -24,10 +23,7 @@ public class FeatureToggleService {
     @Transactional
     public FeatureFlagsDTO getFeatureFlags() {
         ensureDefaultToggles();
-        return new FeatureFlagsDTO(
-            isEnabled(MALLA),
-            isEnabled(OFERTAS_IMPORT)
-        );
+        return new FeatureFlagsDTO();
     }
 
     @Transactional
@@ -104,20 +100,7 @@ public class FeatureToggleService {
     }
 
     private List<FeatureToggleDefinition> defaultToggles() {
-        return List.of(
-            new FeatureToggleDefinition(
-                MALLA,
-                "Malla curricular",
-                "Controla el acceso a la gestion y visualizacion de mallas curriculares.",
-                featureFlagsConfig.isMalla()
-            ),
-            new FeatureToggleDefinition(
-                OFERTAS_IMPORT,
-                "Importacion de ofertas",
-                "Controla la importacion de ofertas academicas.",
-                featureFlagsConfig.isOfertasImport()
-            )
-        );
+        return List.of();
     }
 
     private record FeatureToggleDefinition(String key, String name, String description, boolean active) {}

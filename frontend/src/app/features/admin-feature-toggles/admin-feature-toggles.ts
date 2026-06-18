@@ -57,7 +57,7 @@ export class AdminFeatureToggles implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (toggles) => {
-          this.toggles = toggles;
+          this.toggles = toggles.filter(t => !['malla', 'tomaMaterias', 'ofertasImport'].includes(t.key as string));
           this.loading = false;
         },
         error: (error: HttpErrorResponse) => {
@@ -88,7 +88,7 @@ export class AdminFeatureToggles implements OnInit {
     }
 
     const { toggle, active } = this.pendingUpdate;
-    this.savingKey = toggle.key;
+    this.savingKey = toggle.key as string;
     this.featureToggleService
       .updateToggle(toggle.key, active)
       .pipe(takeUntilDestroyed(this.destroyRef))
