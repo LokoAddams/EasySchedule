@@ -21,8 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Autenticación", description = "Endpoints para registro y login de usuarios")
 public class AuthController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
@@ -33,6 +39,8 @@ public class AuthController {
         this.authService = authService;
     }
 
+    @Operation(summary = "Registrar un nuevo usuario", description = "Crea una nueva cuenta de usuario en el sistema.")
+    @SecurityRequirements()
     @PostMapping("/registro")
     public ResponseEntity<Void> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         String identifier = signUpRequest.getUsername() == null ? "" : signUpRequest.getUsername().trim();
@@ -48,6 +56,8 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Iniciar sesión", description = "Autentica al usuario usando sus credenciales y devuelve un token JWT.")
+    @SecurityRequirements()
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         String identifier = request.getIdentifier() == null ? "" : request.getIdentifier().trim();
