@@ -25,7 +25,7 @@ class FeatureToggleServiceTest {
     void updateStatusRefreshesUpdatedAt() {
         FeatureToggleService service = new FeatureToggleService(
             featureToggleRepository,
-            new FeatureFlagsConfig(true, true, true)
+            new FeatureFlagsConfig()
         );
         OffsetDateTime previousUpdatedAt = OffsetDateTime.now().minusDays(1);
         FeatureToggle toggle = new FeatureToggle(
@@ -36,7 +36,7 @@ class FeatureToggleServiceTest {
         );
         toggle.setUpdatedAt(previousUpdatedAt);
 
-        when(featureToggleRepository.existsByKey(anyString())).thenReturn(true);
+
         when(featureToggleRepository.findByKey("malla")).thenReturn(Optional.of(toggle));
         when(featureToggleRepository.save(any(FeatureToggle.class))).thenAnswer(invocation -> invocation.getArgument(0));
 

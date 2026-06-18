@@ -10,7 +10,6 @@ import { NgbPopover, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../../../environments/environment';
 import { CarreraCatalogoItem, CarreraService } from '../../services/academico/carrera.service';
 import { EstadoMateriaService, EstadoMateriaRequest } from '../../services/academico/estado-materia.service';
-import { FeatureToggleService } from '../../services/feature-toggle.service';
 import { MallaCatalogoItem, MallaCatalogoService, MallaEditableMateria, MallaMateria } from '../../services/academico/malla-catalogo.service';
 import {
   SeleccionAcademica,
@@ -64,7 +63,6 @@ interface MallaEditRow {
   styleUrl: './malla.scss',
 })
 export class Malla implements OnInit, OnDestroy {
-  protected mallaEnabled = false;
   protected step: SeleccionStep = 'universidad';
   protected editMode: EditMode = null;
 
@@ -108,7 +106,6 @@ export class Malla implements OnInit, OnDestroy {
   protected currentTourStep = 0;
 
   private routeSubscription: Subscription | undefined;
-  private featureToggleSubscription: Subscription | undefined;
   private tomaSeleccionSubscription?: Subscription;
   private tourHintsSubscription?: Subscription;
   private previousSelectionSnapshot: SeleccionSnapshot | null = null;
@@ -122,7 +119,6 @@ export class Malla implements OnInit, OnDestroy {
   protected selectedOfertaId: number | null = null;
   protected materiasSeleccionadas: Set<number> = new Set();
 
-  protected ofertasImportEnabled = true;
   protected showImportarOfertasModal = false;
   protected showGestionarOfertasModal = false;
 
@@ -220,7 +216,6 @@ Reglas obligatorias:
   protected loadingSelecciones = false;
 
   constructor(
-    private readonly featureService: FeatureToggleService,
     private readonly universidadService: UniversidadService,
     private readonly carreraService: CarreraService,
     private readonly mallaCatalogoService: MallaCatalogoService,
@@ -239,10 +234,6 @@ Reglas obligatorias:
   ) {}
 
   ngOnInit(): void {
-    this.flagsSubscription = this.featureService.flags$.subscribe((flags) => {
-      this.mallaEnabled = flags.malla;
-      this.ofertasImportEnabled = flags.ofertasImport ?? true;
-    });
 
     this.routerEventsSubscription = this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
@@ -259,13 +250,11 @@ Reglas obligatorias:
       this.materiasSeleccionadas = new Set(materias.map((materia) => materia.id));
     });
 
-    void this.featureService.loadFlags();
     void this.loadUniversidades();
     void this.cargarSeleccionesTemporales();
   }
 
   ngOnDestroy(): void {
-    this.flagsSubscription?.unsubscribe();
     this.routerEventsSubscription?.unsubscribe();
     this.tomaSeleccionSubscription?.unsubscribe();
   }

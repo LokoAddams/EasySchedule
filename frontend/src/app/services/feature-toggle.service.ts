@@ -5,9 +5,7 @@ import { BehaviorSubject, Observable, firstValueFrom, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface FeatureFlags {
-  malla: boolean;
-  tomaMaterias: boolean;
-  ofertasImport: boolean;
+  [key: string]: boolean;
 }
 
 export type FeatureName = keyof FeatureFlags;
@@ -24,11 +22,7 @@ export interface FeatureToggle {
   providedIn: 'root',
 })
 export class FeatureToggleService {
-  private flags: FeatureFlags = {
-    malla: false,
-    tomaMaterias: false,
-    ofertasImport: true,
-  };
+  private flags: FeatureFlags = {};
   private readonly flagsSubject = new BehaviorSubject<FeatureFlags>(this.flags);
   readonly flags$ = this.flagsSubject.asObservable();
 

@@ -7,7 +7,6 @@ import { Subscription, filter } from 'rxjs';
 import { LanguageService } from '../../core/services/language.service';
 import { NgbPopover, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthSessionService } from '../../core/services/auth-session.service';
-import { FeatureToggleService } from '../../services/feature-toggle.service';
 import { ApiService } from '../../services/api.service';
 import { TourHintsService } from '../../services/tour-hints.service';
 
@@ -18,10 +17,7 @@ import { TourHintsService } from '../../services/tour-hints.service';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  protected mallaEnabled = false;
-  protected tomaMateriasEnabled = false;
   protected currentLanguage: string = 'es';
-  private flagsSubscription?: Subscription;
   private profileCompletedSubscription?: Subscription;
   private tomaMateriasPopoverSubscription?: Subscription;
   private languageSubscription?: Subscription;
@@ -36,18 +32,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly languageService: LanguageService,
     private readonly authSessionService: AuthSessionService,
-    private readonly featureToggleService: FeatureToggleService,
     private readonly apiService: ApiService,
     private readonly tourHintsService: TourHintsService,
   ) {}
 
   ngOnInit(): void {
-    this.flagsSubscription = this.featureToggleService.flags$.subscribe((flags) => {
-      this.mallaEnabled = flags.malla;
-      this.tomaMateriasEnabled = flags.tomaMaterias;
-    });
-
-    void this.featureToggleService.loadFlags();
 
     this.profileCompletedSubscription = this.authSessionService.profileCompleted$.subscribe((completed) => {
       if (completed && this.mallaPopover) {
@@ -82,7 +71,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.flagsSubscription?.unsubscribe();
     this.profileCompletedSubscription?.unsubscribe();
     this.tomaMateriasPopoverSubscription?.unsubscribe();
     this.languageSubscription?.unsubscribe();
